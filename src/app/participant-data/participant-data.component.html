@@ -1,0 +1,65 @@
+<div>
+  <app-navbar></app-navbar>
+  <h1 class="participant-data">Participant Data</h1>
+  <form class="participant-form">
+    <div class="form-column">
+      <label>User ID:</label>
+        <input type="text" name="userId">
+      <br>
+      <label>No Pegawai:</label>
+        <input type="text" name="noPegawai">
+      <br>
+      <label>Nama:</label>
+        <input type="text" name="nama">
+      <br>
+      <label>Dinas:</label>
+        <input type="text" name="dinas">
+      <br>
+      <label>Bidang:</label>
+        <input type="text" name="bidang">
+      <br>
+      <label>Perusahaan:</label>
+        <input type="text" name="perusahaan">
+      <br>
+      <label>Email:</label>
+        <input type="email" name="email">
+      <br>
+      <label>Nomor Telepon:</label>
+        <input type="tel" name="nomorTelepon">
+      <br>
+      <label>Negara:</label>
+        <input type="text" name="negara">
+      <br>
+    </div>
+    <div class="form-column">
+      <label>Tempat Lahir:</label>
+        <input type="text" name="tempatLahir">
+      <br>
+      <label>Tanggal Lahir:</label>
+        <input type="date" name="tanggalLahir">
+      <br>
+      <label>SIM:</label>
+        <input type="text" name="sim">
+      <br>
+      <label>KTP:</label>
+        <input type="text" name="ktp">
+      <br>
+      <label>Foto:</label>
+        <input type="file" name="foto">
+      <br>
+      <label>Keterangan Kesehatan dan Buta Warna:</label>
+        <input type="text" name="keteranganKesehatan">
+      <br>
+      <label>Ket Bebas Narkoba:</label>
+        <input type="text" name="ketBebasNarkoba">
+      <br>
+      <label>GMF/Non GMF:</label>
+        <input type="text" name="gmfNonGmf">
+      <br>
+    </div>
+  </form>
+  <div class="button-group">
+    <button class="back-button" (click)="onBack()">Back</button>
+    <button class="save-button" (click)="onSave()">Save</button>
+  </div>
+</div>

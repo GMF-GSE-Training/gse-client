@@ -32,6 +32,7 @@ Pastikan Anda memiliki prasyarat berikut ini:
 - [Node.js](https://nodejs.org/) (versi terbaru disarankan)
 - [npm](https://www.npmjs.com/) (versi terbaru disarankan)
 - [Angular CLI](https://angular.io/cli) (disarankan versi 17.3.8)
+- [Angular Material](https://material.angular.io/) - Komponen UI untuk Angular
 
 1. **Clone repository**
 

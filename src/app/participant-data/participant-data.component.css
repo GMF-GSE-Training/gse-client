@@ -1,0 +1,77 @@
+.participant-data {
+  text-align: center;
+  font-family: "Petrona", serif;
+  text-decoration: underline;
+}
+
+.participant-form {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+}
+
+.form-column label {
+  display: block;
+  margin-bottom: 20px; /* Add some space between each label-input pair */
+}
+
+.form-column input[type="text"],
+.form-column input[type="email"],
+.form-column input[type="tel"],
+.form-column input[type="date"],
+.form-column input[type="file"] {
+  width: 474px; /* Set width */
+  height: 41px; /* Set height */
+  padding: 5px;
+  margin-top: 5px;
+  border-radius: 20px; /* Rounded corners for input fields */
+  border: 3px solid #ccc; /* Set border */
+  box-sizing: border-box;
+  transition: border-radius 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.form-column input[type="text"]:hover,
+.form-column input[type="email"]:hover,
+.form-column input[type="tel"]:hover,
+.form-column input[type="date"]:hover,
+.form-column input[type="file"]:hover {
+  border-color: #02507E; /* Change border color on hover */
+  border-radius: 30px; /* More rounded corners on hover */
+}
+
+.button-group {
+  display: flex;
+  justify-content: center; /* Center align buttons */
+  margin-top: 20px;
+}
+
+.back-button, .save-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  margin: 0 10px; /* Add margin between buttons */
+  border-radius: 20px; /* Rounded corners */
+  text-align: center;
+  transition: background-color 0.3s, border-radius 0.3s; /* Smooth transition */
+}
+
+.back-button {
+  background-color: #F6F5F5;
+  color: #000; /* Text color for back button */
+}
+
+.save-button {
+  background-color: #02507E;
+  color: #fff; /* Text color for save button */
+}
+
+.back-button:hover, .save-button:hover {
+  border-radius: 50px; /* More rounded corners on hover */
+}
