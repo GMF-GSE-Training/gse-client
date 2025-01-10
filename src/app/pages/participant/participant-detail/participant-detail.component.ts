@@ -134,7 +134,11 @@ export class ParticipantDetailComponent implements OnInit {
     });
 
     if(this.userProfile.role.name === 'user') {
-      this.getParticipantFromLocalStorage();
+      if(this.id !== this.userProfile.participant.id) {
+        this.getParticipantById();
+      } else {
+        this.getParticipantFromLocalStorage();
+      }
     } else {
       this.getParticipantById();
     }
@@ -229,7 +233,7 @@ export class ParticipantDetailComponent implements OnInit {
       next: () => {
         this.sweetalertService.alert(
           'Berhasil',
-          'Password berhadil diubah',
+          'Password berhasil diubah',
           'success');
       },
       error: (error) => {
