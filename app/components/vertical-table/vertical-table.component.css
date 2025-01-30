@@ -1,0 +1,74 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.table-container {
+  width: 100%;
+  font-size: 1em;
+  display: flex;
+  gap: 2em;
+  padding: 1em;
+}
+
+.fill {
+  text-align: left;
+}
+
+.fill, a {
+  color: #266E99;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #800080;
+}
+
+.left-table,
+.right-table {
+  width: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  height: 100%;
+}
+
+.table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.download {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  padding: 1em;
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .table {
+    width: 100%;
+  }
+
+  .table tr {
+    border: 1px solid red;
+  }
+
+  .label {
+    max-width: 35%;
+    width: 35%;
+  }
+}

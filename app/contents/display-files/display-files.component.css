@@ -1,0 +1,44 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+  padding: 1em;
+}
+
+.display-container {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  border-radius: 25px;
+  border: 4px #02507E solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5em;
+  overflow: auto;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button {
+  width: 190px;
+  height: 45px;
+}
+
+@media (max-width: 768px) {
+  .button-container {
+    width: 100%;
+    margin-top: 2em;
+  }
+
+  .button {
+    max-width: 40%;
+  }
+}

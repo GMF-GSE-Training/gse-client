@@ -1,0 +1,7 @@
+<app-user-form
+  [isCreate]="false"
+  [pageTitle]="'Edit Account'"
+  [user]="updateUser"
+  [initialRole]="updateUser.roleId!"
+  (formSubmit)="onUpdate($event)">
+</app-user-form>

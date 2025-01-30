@@ -1,0 +1,17 @@
+<div class="container">
+  <label for="company-select">Perusahaan <span *ngIf="isRequired">*</span></label>
+  <select id="company-select" [(ngModel)]="selectedCompany" (change)="toggleCompanyInput()">
+    <option value="GMF">GMF</option>
+    <option value="Non GMF">Non GMF</option>
+  </select>
+  <input
+    *ngIf="showCompanyInput"
+    type="text"
+    id="company-input"
+    [name]="name"
+    [required]="showCompanyInput"
+    placeholder="Nama Perusahaan"
+    [(ngModel)]="companyName"
+  >
+  <ng-content></ng-content>
+</div>

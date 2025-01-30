@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="table-container">
+    <!-- Bagian Pertama -->
+    <div class="left-table">
+      <table class="table">
+        @for (row of firstHalf; track $index) {
+          <ng-container>
+            <tr>
+              <td class="label">{{ row.label }}</td>
+              <td class="fill">
+                @if (row.link) {
+                  <a [routerLink]="row.link">{{ row.value ?? 'lihat' }}</a>
+                } @else {
+                <span>{{ row.value }}</span>
+                }
+              </td>
+            </tr>
+          </ng-container>
+        }
+      </table>
+    </div>
+
+    <!-- Bagian Kedua -->
+    <div class="right-table">
+      <table class="table">
+        @for (row of secondHalf; track $index) {
+          <ng-container>
+            <tr>
+              <td class="label">{{ row.label }}</td>
+              <td class="fill">
+                @if (row.link) {
+                  <a [routerLink]="row.link">{{ row.value ?? 'lihat' }}</a>
+                } @else {
+                  <span>{{ row.value }}</span>
+                }
+              </td>
+            </tr>
+          </ng-container>
+        }
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="isParticipantDetail" class="download">
+    <a *appRoleBasedAccess="['super admin']" (click)="downloadDocument()">Download Semua File</a>
+  </div>
+</div>

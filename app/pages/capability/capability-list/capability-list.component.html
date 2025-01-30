@@ -1,0 +1,15 @@
+<app-header></app-header>
+<app-data-management
+  [pageTitle]="pageTitle"
+  [columns]="columns"
+  [data]="capability"
+  [isLoading]="isLoading"
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChanged($event)"
+  (searchChange)="onSearchChanged($event)"
+  [placeHolder]="placeHolder"
+  (viewAllChange)="viewAll()"
+  [blueButtonRoute]="'/capability/add'"
+  [roleBassedAccess]="['super admin']"
+></app-data-management>

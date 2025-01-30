@@ -1,0 +1,36 @@
+<div class="dropdown-wrapper">
+  <app-base-input
+    class="dropdown-select"
+    [label]="label"
+    type="text"
+    [isRequired]="isRequired"
+    [readOnly]="true"
+    (click)="onActive()"
+    [value]="selectedValue || placeholder"
+  >
+  </app-base-input>
+  <i class="fa-solid fa-less-than"></i>
+
+  <div class="dropdown-content" [ngClass]="isActive ? 'active' : ''">
+    <div *ngIf="showSearchItem" class="search-item">
+      <app-base-input
+        type="text"
+        placeholder="--- Cari ---"
+        (input)="onSearch($event)"
+      >
+      </app-base-input>
+    </div>
+
+    <div class="dropdown-list">
+      <ul>
+        <li
+          class="dropdown-item"
+          *ngFor="let option of filteredOptions"
+          (click)="onSelectOption(option)"
+        >
+          {{ option.label }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+div {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+i:hover {
+  cursor: pointer;
+  color: #02507E;
+}
+
+.fa-square-check {
+  color: #02507E;
+}

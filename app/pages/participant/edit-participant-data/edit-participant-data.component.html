@@ -1,0 +1,11 @@
+<app-participant-form
+  [pageTitle]="'Edit Participant Data'"
+  [selectedCompany]="selectedCompany"
+  [companyName]="companyName"
+  [showCompanyInput]="showCompanyInput"
+  [participant]="updateParticipant"
+  (formSubmit)="onUpdate($event)"
+  (fileChange)="onFileChange($event.property, $event.file)"
+  [isUpdate]="true"
+  [backButtonRoute]="backButtonRoute">
+</app-participant-form>

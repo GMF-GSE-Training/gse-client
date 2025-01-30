@@ -1,0 +1,194 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  padding: 2em;
+}
+
+.container.loading {
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  justify-content: center;
+  gap: 40%;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo {
+  max-width: 148px;
+  max-height: 100%;
+}
+
+.name {
+  font-size: 1em;
+  margin-top: 10px;
+}
+
+.qr-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.file {
+  width: 100%;
+  height: 100%;
+}
+
+.file.blank {
+  border: 1px solid #fff;
+}
+
+.qr-code {
+  max-width: 180px;
+  max-height: 180px;
+}
+
+.download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  font-size: 1em;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.data-section {
+  display: flex;
+  gap: 1em;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  font-size: 1em;
+  width: 12%;
+}
+
+.settings-nav div {
+  height: 50px;
+}
+
+.menu-setting-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-left 0.2s ease;
+}
+
+.menu-setting-item i {
+  margin-left: 1em;
+}
+
+.menu-setting-item:hover {
+  background-color: #d8dadb;
+}
+
+.menu-setting-item.active {
+  border-left: 5px solid #02507E;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.account-form {
+  display: flex;
+  padding: 20px;
+  gap: 5%;
+}
+
+.form-content {
+  margin: 0;
+  width: 100%;
+  height: auth;
+  padding-right: 10%;
+}
+
+.certificate-table {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 4em;
+  width: 100%;
+}
+
+.button {
+  width: 190px;
+  height: 45px;
+}
+
+.download a {
+  color: #000;
+}
+
+.download a:hover {
+  cursor: pointer;
+  color: #266E99;
+}
+
+.section span {
+  text-align: center;
+}
+
+.section span:hover {
+  cursor: pointer;
+  color: #266E99;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1em;
+  }
+
+  .qr-section {
+    flex-direction: column;
+  }
+
+  .data-section {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .settings-nav {
+    flex-direction: row;
+    width: 50%;
+  }
+
+  .menu-setting-item.active {
+    border-left: none;
+    border-bottom: 5px solid #02507E;
+  }
+
+  .account-form {
+    flex-direction: column;
+    gap: 3em;
+  }
+}

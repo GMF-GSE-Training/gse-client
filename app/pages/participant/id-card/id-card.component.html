@@ -1,0 +1,14 @@
+<app-display-files
+  pageTitle="ID Card"
+  [isLoading]="isLoading"
+  [navigationLinks]="navigationLink"
+  (downloadChange)="downloadIdCard()"
+>
+  @if(id_card) {
+    <div [innerHTML]="id_card"></div>
+  } @else {
+    <div class="no-files">
+      <p>ID Card Error. Silahkan cek kembali apakah data anda sudah lengkap atau belum.</p>
+    </div>
+  }
+</app-display-files>

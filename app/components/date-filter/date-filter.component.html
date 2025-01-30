@@ -1,0 +1,35 @@
+<button class="show-filter-button" (click)="toggleFilterContainer()">
+  <i class="fa-solid fa-filter"></i>
+  <span *ngIf="!startDate || !endDate || !showIndikator">Filter</span>
+  <span *ngIf="(startDate || endDate) && showIndikator">
+  {{ startDate ? (startDate | date: 'd MMMM yyyy') : '...' }} -
+  {{ endDate ? (endDate | date: 'd MMMM yyyy') : '...' }}
+</span>
+
+  <i class="fa-solid" [ngClass]="isFilterVisible ? 'fa-caret-up' : 'fa-caret-down'"></i>
+</button>
+
+<form *ngIf="isFilterVisible" #filterForm="ngForm" (ngSubmit)="applyFilter(startDate, endDate)" class="date-filter-form">
+  <div class="input-container">
+    <app-base-input
+      [(ngModel)]="startDate"
+      class="input"
+      label="Tanggal Mulai"
+      type="date"
+      name="startDate">
+    </app-base-input>
+
+    <app-base-input
+      [(ngModel)]="endDate"
+      class="input"
+      label="Tanggal Selesai"
+      type="date"
+      name="endDate">
+    </app-base-input>
+  </div>
+
+  <div class="filter-button-container">
+    <app-white-button type="button" class="filter-button" (whiteButtonClick)="clearFilter()">Hapus</app-white-button>
+    <app-blue-button type="submit" class="filter-button">Terapkan</app-blue-button>
+  </div>
+</form>

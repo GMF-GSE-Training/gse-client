@@ -1,0 +1,10 @@
+<form (submit)="onSearch($event)">
+  <input
+    [(ngModel)]="searchQuery"
+    (ngModelChange)="this.autoSearchClear ? onSearchInputChange() : undefined"
+    #inputElement
+    name="q"
+    type="search"
+    [placeholder]="placeHolder">
+  <button type="submit" class="submit" [disabled]="autoSearchClear"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>

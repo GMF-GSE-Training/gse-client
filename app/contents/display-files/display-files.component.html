@@ -1,0 +1,21 @@
+<app-header ></app-header>
+
+<div class="container" [ngStyle]="{'height': isLoading ? '50%' : 'auto'}">
+  @if(isLoading) {
+    <app-loader></app-loader>
+  } @else {
+    <app-title [pageTitle]="pageTitle"></app-title>
+    <div class="display-container" >
+      <ng-content></ng-content>
+    </div>
+
+    <div class="buttons-container">
+      <app-white-button class="button" [routerLink]="navigationLinks">
+        Kembali
+      </app-white-button>
+      <app-blue-button class="button" (blueButtonClick)="onDownloadChanged()">
+        Download
+      </app-blue-button>
+    </div>
+  }
+</div>

@@ -1,0 +1,10 @@
+.title-container {
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  text-decoration: underline 4px;
+  font-size: 30px;
+  text-align: center;
+}

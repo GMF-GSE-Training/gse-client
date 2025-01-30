@@ -1,0 +1,30 @@
+/* General styling for View All component */
+.view-all {
+  width: 250px;
+  height: 45px;
+  font-size: 20px;
+  color: #02507E;
+  border: 1px solid #e0e0e0;
+  background-color: #e0e0e0;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+  gap: 1em;
+  transition: all 0.3s ease;
+}
+
+.view-all i {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.view-all:hover {
+  cursor: pointer;
+  background-color: #d8dadb;
+}
+
+button:active i {
+  transform: rotate(180deg);
+}

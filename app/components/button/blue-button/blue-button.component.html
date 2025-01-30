@@ -1,0 +1,9 @@
+<button
+  class="blue-button"
+  [type]="type"
+  [disabled]="disabled"
+  (click)="onBlueButtonClick()"
+  [class.disabled-blue-button]="disabled"
+>
+  <ng-content></ng-content>
+</button>

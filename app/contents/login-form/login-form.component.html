@@ -1,0 +1,52 @@
+<app-auth>
+  <div class="form-container">
+    <div *ngIf="loginError" class="error-message">
+      <span>{{ message }}</span>
+    </div>
+    <form #form="ngForm" (ngSubmit)="onSubmit()" class="login-form">
+      <app-title pageTitle="Login Account"></app-title>
+
+      <div>
+        <i class="fa-solid fa-user user-icon"></i>
+
+        <input
+          [(ngModel)]="loginRequest.identifier"
+          type="text"
+          name="identifier"
+          autocomplete="username"
+          placeholder="Email atau No Pegawai"
+          #identifier="ngModel"
+          required
+        >
+
+        <i class="fa-solid fa-lock pass-icon"></i>
+
+        <app-toggle-password-visibility
+          [isPassVisible]="isPassVisible"
+          (togglePassClick)="passVisible()">
+        </app-toggle-password-visibility>
+
+        <input
+          [(ngModel)]="loginRequest.password"
+          [type]="isPassVisible ? 'text' : 'password'"
+          name="password"
+          autocomplete="current-password"
+          placeholder="Password"
+          #password="ngModel"
+          required
+        >
+      </div>
+
+      <div>
+        <a routerLink="/password-reset" class="auth-helper-links">Lupa Password?</a>
+        <a routerLink="/verification" class="auth-helper-links">Kirim Ulang Link Verifikasi Akun</a>
+      </div>
+
+      <div class="register-link-container">
+        <span class="register-link">Belum punya akun? <a routerLink="/register">Daftar</a></span>
+      </div>
+
+      <app-blue-button [type]="'submit'" class="button" [disabled]="form.invalid || isLoading">Masuk</app-blue-button>
+    </form>
+  </div>
+</app-auth>

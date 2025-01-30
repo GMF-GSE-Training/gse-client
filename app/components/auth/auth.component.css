@@ -1,0 +1,81 @@
+.auth-container {
+  background-color: #02507E;
+  display: flex;
+  align-items: center;
+  gap: 2em;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  position: fixed;
+}
+
+.auth-description {
+  width: 50%;
+  padding: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  color: #ffffff;
+  font-size: 2em;
+}
+
+.brand-logo {
+  width: 235px;
+  height: 48px;
+  position: absolute;
+  top: 52px;
+  left: 36px;
+}
+
+.form-container {
+  background-color: #ffffff;
+  height: 100%;
+  width: 100%;
+  border-bottom-left-radius: 30px;
+  border-top-left-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .auth-description {
+    font-size: 25px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .auth-container {
+    padding: 2em 0;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .auth-description {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    padding: 1em;
+  }
+
+  .brand-logo {
+    position: static;
+    width: 200px;
+    height: auto;
+  }
+
+  .form-container {
+    width: 90%;
+    height: auto;
+    border-radius: 20px;
+    padding: 2em 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .auth-description {
+    font-size: 20px;
+  }
+}

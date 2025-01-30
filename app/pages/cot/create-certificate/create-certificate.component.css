@@ -1,0 +1,41 @@
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.title {
+  border-bottom: 4px solid #000;
+  font-size: 25px;
+}
+
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 90%;
+  margin: auto;
+}
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-column, .right-column {
+  width: 48%;
+}
+
+.left-column, .right-column {
+  width: 48%;
+}
+
+.container-button {
+  display: flex;
+  justify-content: center;
+  gap: 4em;
+  width: 90%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 4em;
+}

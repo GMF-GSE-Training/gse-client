@@ -1,0 +1,40 @@
+<app-header></app-header>
+
+<div class="container">
+  <div class="section">
+    <div class="settings-nav">
+      <div
+        class="menu-setting-item"
+        [ngClass]="{'active': selectedItem === 0}"
+        [routerLink]="['/users', id, 'profile']">
+        <i class="fa-solid fa-user"></i>
+        <span>Profil</span>
+      </div>
+      <div
+        class="menu-setting-item"
+        [ngClass]="{'active': selectedItem === 1}"
+        [routerLink]="['/users', id, 'account']">
+        <i class="fa-solid fa-user-gear"></i>
+        <span>Akun</span>
+      </div>
+    </div>
+    <div class="card">
+      <app-vertical-table *ngIf="selectedItem === 0" [data]="verticalTableData"></app-vertical-table>
+      <div *ngIf="selectedItem === 1" class="account-form">
+        <div class="form-content">
+          <app-email-form-card
+            cardTitle="Ubah Email"
+            (formSubmit)="updateEmailSubmit($event)">
+          </app-email-form-card>
+        </div>
+        <div class="form-content">
+          <app-password-update-form-card
+            cardTitle="Ubah Password"
+            (formSubmit)="updatePasswordSubmit($event)">
+          </app-password-update-form-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

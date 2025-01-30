@@ -1,0 +1,23 @@
+<app-display-files
+  pageTitle="View E-Sign"
+  navigationLinks="/e-sign"
+  (downloadChange)="downloadFile()"
+>
+  @if(isLoading) {
+    <app-loader></app-loader>
+  } @else {
+    @if(safeUrl) {
+        <img
+          [src]="safeUrl"
+          (load)="onImageLoad()"
+          (error)="onImageError()"
+          loading="lazy"
+          class="image"
+        >
+      } @else {
+        <div class="no-files">
+          <p>File tidak ditemukan!!</p>
+        </div>
+      }
+    }
+</app-display-files>

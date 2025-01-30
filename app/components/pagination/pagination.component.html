@@ -1,0 +1,41 @@
+<div class="container">
+  <ul class="pagination">
+    <!-- Tombol Previous -->
+    <li
+      class="page-item"
+      [class.disabled]="currentPage === 1 || isLoading"
+    >
+      <a class="page-link" (click)="previousPage()">Previous</a>
+    </li>
+
+    <!-- Render angka halaman atau '...' berdasarkan logika pages -->
+    @for (pageItem of pages; track $index) {
+      <li
+        class="page-item"
+        [class.active]="pageItem === currentPage"
+        [class.disabled]="isLoading"
+      >
+      <a
+        *ngIf="pageItem !== '...'"
+        class="page-link"
+        (click)="goToPage(pageItem)"
+        [class.disabled]="isLoading"
+      >
+        {{ pageItem }}
+      </a>
+        <span *ngIf="pageItem === '...'" class="page-link">...</span>
+      </li>
+    }
+
+    <!-- Tombol Next -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages  || isLoading">
+      <a
+        class="page-link"
+        (click)="nextPage()"
+        [class.disabled]="isLoading"
+      >
+        Next
+      </a>
+    </li>
+  </ul>
+</div>

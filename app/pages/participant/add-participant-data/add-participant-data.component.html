@@ -1,0 +1,6 @@
+<app-participant-form
+  [pageTitle]="'Add Participant Data'"
+  [participant]="createParticipant"
+  (formSubmit)="onCreate($event)"
+  (fileChange)="onFileChange($event.property, $event.file)">
+</app-participant-form>

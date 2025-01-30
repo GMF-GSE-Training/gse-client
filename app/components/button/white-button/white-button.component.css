@@ -1,0 +1,21 @@
+.white-button {
+  width: 100%;
+  height: 100%;
+  color: #02507E;
+  font-size: 2em;
+  background-color: #fff;
+  border: 3px solid #02507E;
+  border-radius: 50px;
+}
+
+.white-button:hover {
+  cursor: pointer;
+  background-color: #d8dadb;
+  border: 3px solid #003a5c;
+}
+
+@media (max-width: 768px) {
+  .white-button {
+    font-size: 1.5em;
+  }
+}

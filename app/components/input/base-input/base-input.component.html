@@ -1,0 +1,61 @@
+<label>{{ label }}<span *ngIf="isRequired" class="required-label">*</span></label>
+
+<div [class.container]="name === 'password'">
+  <div class="input-group">
+    <input
+      [ngStyle]="{ 'outline': readOnly || disabled ? 'none' : '#000'  }"
+      [type]="type"
+      [autocomplete]="autocomplete"
+      [inputMode]="inputMode"
+      [placeholder]="placeholder"
+      [name]="name"
+      [(ngModel)]="value"
+      (input)="onValueChange()"
+      [disabled]="disabled"
+      [ngClass]="{'error-input': (inputControl.invalid && inputControl.touched)}"
+      (keydown)="onKeyDown($event)"
+      [readOnly]="readOnly"
+      [required]="isRequired"
+      [minlength]="minLength"
+      [email]="email"
+      [pattern]="pattern"
+      #inputControl="ngModel"
+    />
+
+    <app-toggle-password-visibility
+      class="password-visibility-toggle"
+      *ngIf="name.toLowerCase().includes('password')"
+      [isPassVisible]="isPassVisible"
+      (togglePassClick)="passVisible()">
+    </app-toggle-password-visibility>
+  </div>
+    <!-- [ngStyle]="{ 'bottom': inputControl.invalid && inputControl.touched ? '3.2em' : '2.2em' }" -->
+
+  <ng-content></ng-content>
+
+  <div>
+    <!-- Tampilkan hanya satu pesan error jika input tidak valid -->
+    <span *ngIf="inputControl.invalid && inputControl.touched" class="error-message">
+      <!-- Tampilkan pesan error yang relevan -->
+      <ng-container *ngIf="inputControl.errors">
+        <span *ngIf="inputControl.errors['required']; else nextError">Wajib diisi</span>
+        <ng-template #nextError>
+          <span *ngIf="inputControl.errors['minlength']; else patternError">
+            {{ minLengthErrorMessage }}
+          </span>
+        </ng-template>
+        <ng-template #patternError>
+          <span *ngIf="inputControl.errors['pattern']; else emailError">
+            {{ patternErrorMessage }}
+          </span>
+        </ng-template>
+        <ng-template #emailError>
+          <span *ngIf="inputControl.errors['email']">Alamat email tidak valid</span>
+        </ng-template>
+      </ng-container>
+    </span>
+
+    <!-- Tampilkan pesan default jika tidak ada error atau belum disentuh -->
+    <span *ngIf="!inputControl.errors || (!inputControl.dirty && !inputControl.touched)">{{ helperMessage }}</span>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pdf {
+  width: 40%;
+  min-height: 100vh;
+}
+
+.no-files {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  height: 50vh;
+}
+
+a {
+  position: relative;
+  color: #266E99;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #800080;
+}

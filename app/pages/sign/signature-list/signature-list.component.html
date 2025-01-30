@@ -1,0 +1,16 @@
+<app-header></app-header>
+
+<app-data-management
+  pageTitle="E-Sign"
+  [columns]="columns"
+  [data]="eSign"
+  [isLoading]="isLoading"
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChanged($event)"
+  placeHolder="Cari E-Sign"
+  (searchChange)="onSearchChanged($event)"
+  (viewAllChange)="viewAll()"
+  [blueButtonRoute]="'/e-sign/add'"
+  [roleBassedAccess]="['super admin']">
+</app-data-management>

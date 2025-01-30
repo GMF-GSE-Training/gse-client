@@ -1,0 +1,33 @@
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 90%;
+  margin: auto;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-column {
+  align-items: center;
+  width: 48%;
+}
+
+.container-button {
+  display: flex;
+  justify-content: center;
+  gap: 4em;
+  width: 90%;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  margin-left: 4em;
+}
+
+.button {
+  width: 190px;
+  height: 45px;
+}

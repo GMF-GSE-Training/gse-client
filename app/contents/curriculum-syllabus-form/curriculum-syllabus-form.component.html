@@ -1,0 +1,154 @@
+<app-header></app-header>
+
+<div class="container">
+  <app-title [pageTitle]="pageTitle"></app-title>
+
+  <form #form="ngForm" (ngSubmit)="handleSubmit($event)">
+    <div class="top-form-container">
+      <div class="form-section">
+        <app-base-input
+          label="Kode Rating"
+          [(ngModel)]="capability.ratingCode"
+          name="kodeRating"
+          [disabled]="true">
+        </app-base-input>
+      </div>
+      <div class="form-section">
+        <app-base-input
+          label="Nama Training"
+          type="text"
+          [(ngModel)]="capability.trainingName"
+          name="namaTraining"
+          [disabled]="true">
+        </app-base-input>
+      </div>
+    </div>
+
+    <div class="bottom-form-container">
+      <div class="form-section" id="reg-gse">
+        <div class="input-group" [ngStyle]="{ 'grid-template-columns': isView ? '50% 22% 22%' : '50% 20% 20% 1%' }">
+          <!-- Dynamic inputs for first group -->
+          @for (input of regulasiGSEs; track $index) {
+            <ng-container>
+              <app-base-input
+                [(ngModel)]="regulasiGSEs[$index].name"
+                name="reg_gse_{{$index}}"
+                label="{{ $index+1 }}. Regulasi GSE"
+                type="text"
+                [isRequired]="true"
+                [disabled]="isView"
+                required>
+              </app-base-input>
+
+              <app-base-input
+                [(ngModel)]="regulasiGSEs[$index].theoryDuration"
+                name="durasi_teori_{{$index}}"
+                label="Durasi Teori"
+                type="text"
+                inputMode="tel"
+                class="duration"
+                [disabled]="isView"
+                pattern="^[0-9]+$"
+                [restrictToPattern]="'^[0-9]+$'">
+              </app-base-input>
+
+              <app-base-input
+                [(ngModel)]="regulasiGSEs[$index].practiceDuration"
+                name="durasi_praktek_{{$index}}"
+                label="Durasi Praktik"
+                type="text"
+                inputMode="tel"
+                class="duration"
+                [disabled]="isView"
+                pattern="^[0-9]+$"
+                [restrictToPattern]="'^[0-9]+$'">
+              </app-base-input>
+
+              <i
+                *ngIf="!isView"
+                (click)="deleteInput('regulasiGSEs', $index)"
+                class="fa-solid fa-trash-can delete-button"
+              >
+              </i>
+            </ng-container>
+          }
+        </div>
+        <div class="add-form-button-container">
+          <app-white-button
+            *ngIf="!isView" (whiteButtonClick)="addInput('regulasiGSEs')"
+            type="button"
+          >
+            <i class="fa-solid fa-plus"></i>
+          </app-white-button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="input-group" [ngStyle]="{ 'grid-template-columns': isView ? '50% 22% 22%' : '50% 20% 20% 1%' }">
+          <!-- Dynamic inputs for second group -->
+          @for (input of kompetensis; track $index;) {
+            <ng-container>
+              <app-base-input
+                [(ngModel)]="kompetensis[$index].name"
+                name="kompetensi_{{$index}}"
+                label="{{ $index+1 }}. Kompetensi"
+                type="text"
+                [isRequired]="true"
+                [disabled]="isView"
+                required>
+              </app-base-input>
+
+              <app-base-input
+                [(ngModel)]="kompetensis[$index].theoryDuration"
+                name="durasi_teori_kompetensi_{{$index}}"
+                label="Durasi Teori"
+                type="text"
+                inputMode="tel"
+                class="duration"
+                [disabled]="isView"
+                pattern="^[0-9]+$"
+                [restrictToPattern]="'^[0-9]+$'">
+              </app-base-input>
+
+              <app-base-input
+                [(ngModel)]="kompetensis[$index].practiceDuration"
+                name="durasi_praktek_kompetensi_{{$index}}"
+                label="Durasi Praktik"
+                type="text"
+                inputMode="tel"
+                class="duration"
+                [disabled]="isView"
+                pattern="^[0-9]+$"
+                [restrictToPattern]="'^[0-9]+$'">
+              </app-base-input>
+
+              <i
+                *ngIf="!isView"
+                (click)="deleteInput('kompetensis', $index)"
+                class="fa-solid fa-trash-can delete-button">
+              </i>
+            </ng-container>
+          }
+        </div>
+        <div class="add-form-button-container">
+          <app-white-button
+            *ngIf="!isView"
+            (whiteButtonClick)="addInput('kompetensis')"
+            type="button"
+          >
+            <i class="fa-solid fa-plus"></i>
+          </app-white-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons-container">
+      <app-white-button type="button" routerLink="/capability" class="button">Kembali</app-white-button>
+      @if(isView) {
+        <app-blue-button *appRoleBasedAccess="['super admin']" [routerLink]="blueButtonRoute" type="button" class="button">Edit</app-blue-button>
+      } @else {
+        <app-blue-button type="submit" [disabled]="form.invalid!" class="button">Simpan</app-blue-button>
+      }
+    </div>
+  </form>
+</div>

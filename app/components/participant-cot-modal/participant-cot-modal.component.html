@@ -1,0 +1,72 @@
+<div class="container">
+  <div class="search-container">
+    <app-search
+      [placeHolder]="placeHolder"
+      [autoSearchClear]="true"
+      (searchChange)="onSearchChanged($event)">
+    </app-search>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          @for (column of columns; track $index) {
+            <th>{{ column.header }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if(!isLoading) {
+          @if(data.length > 0) {
+            @for (item of data; track $index) {
+              <tr>
+                @for (column of columns; track $index) {
+                  <td>
+                    @if(column.field !== 'action'){
+                      <div>
+                        {{ item[column.field] }}
+                      </div>
+                    } @else {
+                      <div>
+                        <app-icon-action
+                          [showSelectIcon]="true"
+                          [select]="item.select"
+                          [itemId]="item.id"
+                          (selectChange)="onSelectChange($event)">
+                        </app-icon-action>
+                      </div>
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          }
+        } @else {
+          <tr *ngFor="let _ of [].constructor(placeholderRows)">
+            @for (column of columns; track $index) {
+              <td [class.hidden]="column.field === 'action' && !hasActionColumn()">
+                <div class="placeholder"></div>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (!isLoading && data.length === 0) {
+      <p>Data Tidak ditemukan!!</p>
+    }
+  </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalPages]="totalPage"
+    (pageChange)="onPageChanged($event)">
+  </app-pagination>
+
+  <div class="button-container">
+    <app-blue-button class="button" (click)="onSave()" [disabled]="isSaveDisabled">Simpan</app-blue-button>
+    <app-white-button class="button" (click)="onCancel()">Batal</app-white-button>
+  </div>
+</div>

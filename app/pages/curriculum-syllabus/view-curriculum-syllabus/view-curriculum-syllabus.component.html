@@ -1,0 +1,14 @@
+@if(isLoading) {
+  <div class="loading-container">
+    <app-loader></app-loader>
+  </div>
+} @else {
+  <app-curriculum-syllabus-form
+    [pageTitle]="'View Curriculum & Syllabus'"
+    [capability]="capability"
+    [regulasiGSEs]="regulasiGSEs"
+    [kompetensis]="kompetensis"
+    [isView]="true"
+    [blueButtonRoute]="editLink">
+  </app-curriculum-syllabus-form>
+}

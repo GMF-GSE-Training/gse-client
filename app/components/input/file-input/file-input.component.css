@@ -1,0 +1,42 @@
+.file-upload {
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  overflow: hidden;
+  width: calc(100%);
+  border: 3px solid #ccc;
+}
+
+.file-upload-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #424352;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 25px;
+  width: auto;
+  margin: 0;
+  height: 100%;
+}
+
+.file-upload-text {
+  padding-left: 1em;
+  color: #000;
+  flex-grow: 1;
+  overflow-x: auto;
+}
+
+label {
+  display: flex;
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.error-message,
+span {
+  color: red;
+}

@@ -1,0 +1,32 @@
+<div class="sidebar-overlay"
+  [class.visible]="isMenuVisible"
+  (click)="onOverlayClick()">
+  <div class="sidebar"
+    [class.visible]="isMenuVisible"
+    (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeMenu()">
+      Tutup <i class="fa-solid fa-x"></i>
+    </button>
+    <nav class="nav-menu">
+      @for (item of sidebarMenu; track $index) {
+        @if (item.routerLink) {
+          <a
+            [routerLink]="item.routerLink"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            {{ item.name }}
+          </a>
+        } @else {
+          <a
+            [routerLink]="item.routerLink"
+            routerLinkActive="active"
+            (click)="onLogout()"
+          >
+            {{ item.name }}
+          </a>
+        }
+      }
+    </nav>
+  </div>
+</div>

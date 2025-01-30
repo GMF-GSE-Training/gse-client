@@ -1,0 +1,7 @@
+<app-user-form
+  [isCreate]="true"
+  [pageTitle]="'Create Account'"
+  [user]="createUser"
+  [initialRole]="initialRole"
+  (formSubmit)="onCreate($event)">
+</app-user-form>

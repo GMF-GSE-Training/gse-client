@@ -1,0 +1,25 @@
+<form #form="ngForm" (ngSubmit)="onSubmit()" class="form">
+  <h2>{{ cardTitle }}</h2>
+
+  <div class="input-container">
+    <app-base-input
+      class="input"
+      label="Email"
+      type="email"
+      autocomplete="email"
+      inputMode="email"
+      placeholder="Email"
+      name="email"
+      [(ngModel)]="data.email"
+      #email="ngModel"
+      [email]="true"
+      required
+    >
+    </app-base-input>
+    <span>Email akan berubah ketika Anda sudah menekan link verifikasi yang dikirimkan ke email baru Anda.</span>
+  </div>
+
+  <div class="button">
+    <app-blue-button class="submit" type="submit" [disabled]="form.invalid!">Kirim</app-blue-button>
+  </div>
+</form>

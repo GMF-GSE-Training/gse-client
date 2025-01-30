@@ -1,0 +1,64 @@
+.fa-less-than {
+  position: absolute;
+  right: 1em;
+  top: 75%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+ul {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: start;
+  list-style: none;
+}
+
+li:hover {
+  background-color: rgb(230 230 230)
+}
+
+.search-item {
+  margin-top: -10px;
+  margin-left: 3px;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  width: 100%;
+  display: inline-block; /* agar sesuai dengan lebar dari <app-base-input> */
+}
+
+.dropdown-select {
+  outline: none;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 120%; /* letakkan di bawah <app-base-input> */
+  left: 0;
+  width: 100%; /* mengikuti lebar elemen pembungkus */
+  background-color: white;
+  margin-top: -1em;
+  border: 2px solid;
+  box-shadow: 0 5px 15px rgb(0 0 0 / 20%);
+  border-radius: 25px;
+  max-height: 350px;
+  overflow: auto;
+  z-index: 99; /* pastikan dropdown berada di atas elemen lain */
+  display: none;
+}
+
+.dropdown-content.active {
+  display: block;
+}
+
+li.active {
+  color: grey;
+}
+
+span {
+  color: red;
+}

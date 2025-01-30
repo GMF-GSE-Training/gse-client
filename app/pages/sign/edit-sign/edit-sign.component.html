@@ -1,0 +1,7 @@
+<app-e-sign-form
+  pageTitle="Edit E-Sign"
+  [isUpdate]="true"
+  [eSign]="eSign"
+  (fileChange)="onFileChange($event.property, $event.file)"
+  (formSubmit)="onUpdate($event)">
+</app-e-sign-form>

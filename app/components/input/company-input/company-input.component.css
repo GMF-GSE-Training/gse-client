@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  display: flex;
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+select, input {
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 5px;
+  border: 3px solid #ccc;
+  height: 40px;
+  font-weight: bold;
+  padding-left: 8px;
+  font-size: 15px
+}
+
+span {
+  color: red;
+}
+
+@media(max-width: 768px) {
+  input {
+    border: 2px solid #ccc;
+  }
+}
