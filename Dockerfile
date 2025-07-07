@@ -6,20 +6,15 @@ RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Salin package.json dan package-lock.json
-COPY package.json package-lock.json ./
-
-# Install dependensi dengan NPM
+# Salin file package.json dan package-lock.json
+COPY package*.json ./
 RUN npm ci
-
-# Install Angular CLI secara global
-RUN npm install -g @angular/cli
 
 # Salin seluruh kode sumber
 COPY . .
 
-# Build konfigurasi dengan NPM
-RUN npm run build
+# Build dengan konfigurasi production
+RUN npm run build -- --configuration=production
 
 # Tahap 2: Menyajikan aplikasi dengan Nginx
 FROM nginx:1.25-alpine
