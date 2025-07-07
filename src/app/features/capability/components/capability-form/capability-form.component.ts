@@ -7,6 +7,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from "../../../../components/header/header.component";
+import { LoaderComponent } from "../../../../components/loader/loader.component";
 
 @Component({
   selector: 'app-capability-form',
@@ -19,7 +20,8 @@ import { HeaderComponent } from "../../../../components/header/header.component"
     FormsModule,
     CommonModule,
     RouterLink,
-    HeaderComponent
+    HeaderComponent,
+    LoaderComponent
 ],
   templateUrl: './capability-form.component.html',
   styleUrl: './capability-form.component.css'
@@ -27,6 +29,7 @@ import { HeaderComponent } from "../../../../components/header/header.component"
 export class CapabilityFormComponent {
   @Input() capability: any = {};
   @Input() pageTitle: string = '';
+  @Input() isLoading: boolean = false;
 
   @Output() formSubmit = new EventEmitter<any>();
   @ViewChild('form') form!: NgForm;
