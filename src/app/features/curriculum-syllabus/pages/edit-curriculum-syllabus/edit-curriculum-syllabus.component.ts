@@ -4,14 +4,12 @@ import { CapabilityService } from '../../../../shared/service/capability.service
 import { CurriculumSyllabusService } from '../../../../shared/service/curriculum-syllabus.service';
 import { SweetalertService } from '../../../../shared/service/sweetaler.service';
 import { CurriculumSyllabusFormComponent } from "../../components/curriculum-syllabus-form/curriculum-syllabus-form.component";
-import { LoaderComponent } from "../../../../components/loader/loader.component";
 
 @Component({
   selector: 'app-edit-curriculum-syllabus',
   standalone: true,
   imports: [
     CurriculumSyllabusFormComponent,
-    LoaderComponent
 ],
   templateUrl: './edit-curriculum-syllabus.component.html',
   styleUrl: './edit-curriculum-syllabus.component.css'
