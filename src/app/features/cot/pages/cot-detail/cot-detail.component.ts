@@ -60,7 +60,6 @@ export class CotDetailComponent implements OnInit {
   itemsPerPage: number = 10;
   searchQuery: string = '';
   state: { data: string } = { data: '' };
-  certificateState: any[] = [];
   isParticipantCotLoading: boolean = false;
 
   modalColumns = [
@@ -142,14 +141,6 @@ export class CotDetailComponent implements OnInit {
       next: ({ data }) => {
         const cot = data.cot;
         const participantCot = cot.participants;
-
-        this.certificateState = participantCot.data?.map((participant: any) => ({
-          participantIdd: participant.id,
-          link: `/cot/${this.cotId}/detail`,
-          idNumber: participant?.idNumber ?? '-',
-          name: participant?.name ?? '-',
-          trainingName: this.trainingName,
-        })) ?? [];
 
         this.participantCots = participantCot.data?.map((participant: any) => {
           if (!participant) return null;
