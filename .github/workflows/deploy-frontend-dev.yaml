@@ -23,6 +23,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set IMAGE_TAG
+        id: vars
+        run: echo "IMAGE_TAG=dev-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -40,16 +44,18 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t gcr.io/gmf-training/dev-frontend-web-server:latest .
+          docker build -t gcr.io/gmf-training/dev-frontend-web-server:${{ env.IMAGE_TAG }} .
+          docker tag gcr.io/gmf-training/dev-frontend-web-server:${{ env.IMAGE_TAG }} gcr.io/gmf-training/dev-frontend-web-server:latest
 
-      - name: Push to Google Container Registry
+      - name: Push Docker images
         run: |
+          docker push gcr.io/gmf-training/dev-frontend-web-server:${{ env.IMAGE_TAG }}
           docker push gcr.io/gmf-training/dev-frontend-web-server:latest
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy dev-frontend-service \
-          --image gcr.io/gmf-training/dev-frontend-web-server:latest \
+          --image gcr.io/gmf-training/dev-frontend-web-server:${{ env.IMAGE_TAG }} \
           --platform managed \
           --region asia-southeast1 \
           --allow-unauthenticated \
