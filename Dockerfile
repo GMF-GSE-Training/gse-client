@@ -6,21 +6,20 @@ RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Instal PNPM secara global
-RUN npm install -g pnpm
+# Salin package.json dan package-lock.json
+COPY package.json package-lock.json ./
 
-# Salin package.json dan pnpm-lock.yaml
-# PASTIKAN pnpm-lock.yaml SUDAH ADA SEBELUM BUILD IMAGE INI
-COPY package.json pnpm-lock.yaml ./
+# Install dependensi dengan NPM
+RUN npm ci
 
-# Install dependensi dengan PNPM
-RUN pnpm install --frozen-lockfile
+# Install Angular CLI secara global
+RUN npm install -g @angular/cli
 
 # Salin seluruh kode sumber
 COPY . .
 
-# Build konfigurasi dengan PNPM
-RUN pnpm run build
+# Build konfigurasi dengan NPM
+RUN npm run build
 
 # Tahap 2: Menyajikan aplikasi dengan Nginx
 FROM nginx:1.25-alpine
