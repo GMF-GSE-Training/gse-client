@@ -46,6 +46,7 @@ export class EditParticipantDataComponent implements OnInit {
   };
 
   participantId = this.route.snapshot.paramMap.get('participantId');
+  isLoading = false;
 
   // Company Input
   @Input() selectedCompany: string = '';
@@ -103,12 +104,15 @@ export class EditParticipantDataComponent implements OnInit {
   getParticipantFromLocalStorage(): void {
     const participantData = this.userProfile.participant;
     if (participantData) {
+      this.isLoading = true;
       this.setParticipantData(participantData);
+      this.isLoading = false;
     }
   }
 
   getParticipantById(): void {
     if (this.participantId) {
+      this.isLoading = true;
       this.participantService.getParticipantById(this.participantId).subscribe({
         next: (response) => {
           const responseData = response.data;
@@ -117,6 +121,7 @@ export class EditParticipantDataComponent implements OnInit {
           }
         },
         error: (error) => console.log(error),
+        complete: () => this.isLoading = false
       });
     }
   }

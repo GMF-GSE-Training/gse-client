@@ -20,6 +20,7 @@ export class EditCapabilityComponent implements OnInit {
     trainingCode: '',
     trainingName: '',
   };
+  isLoading: boolean = false;
 
   constructor(
     private readonly capabilityService: CapabilityService,
@@ -32,11 +33,13 @@ export class EditCapabilityComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('capabilityId');
     if(id) {
+      this.isLoading = true;
       this.capabilityService.getCapabilityById(id).subscribe({
         next: (response) => {
           this.capability = response.data;
         },
-        error: (error) => console.log(error)
+        error: (error) => console.log(error),
+        complete: () => this.isLoading = false
       })
     }
   }

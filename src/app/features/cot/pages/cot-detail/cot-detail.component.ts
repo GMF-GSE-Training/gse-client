@@ -34,7 +34,7 @@ export class CotDetailComponent implements OnInit {
   cotId!: string;
   userProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
   verticalTableData: TableData[] = [];
-  
+
   columns = [
     { header: 'No Pegawai', field: 'idNumber' },
     { header: 'Nama', field: 'name' },
@@ -60,7 +60,6 @@ export class CotDetailComponent implements OnInit {
   itemsPerPage: number = 10;
   searchQuery: string = '';
   state: { data: string } = { data: '' };
-  certificateState: any[] = [];
   isParticipantCotLoading: boolean = false;
 
   modalColumns = [
@@ -143,14 +142,6 @@ export class CotDetailComponent implements OnInit {
         const cot = data.cot;
         const participantCot = cot.participants;
 
-        this.certificateState = participantCot.data?.map((participant: any) => ({
-          participantIdd: participant.id,
-          link: `/cot/${this.cotId}/detail`,
-          idNumber: participant?.idNumber ?? '-',
-          name: participant?.name ?? '-',
-          trainingName: this.trainingName,
-        })) ?? [];
-
         this.participantCots = participantCot.data?.map((participant: any) => {
           if (!participant) return null;
 
@@ -158,7 +149,7 @@ export class CotDetailComponent implements OnInit {
             ...participant,
             idNumber: participant.idNumber ?? '-',
             dinas: participant.dinas ?? '-',
-            printLink: participantCot.actions?.canPrint && participant?.id ? `/certificate/${this.cotId}/create/${participant.id}` : null,
+            printLink: participantCot.actions?.canPrint && participant?.id ? `/cot/certificate/${this.cotId}/create/${participant.id}` : null,
             detailLink: participantCot.actions?.canView && participant?.id ? `/participants/${participant.id}/detail` : null,
             deleteMethod: participantCot.actions?.canDelete ? () => this.deleteParticipantFromCot(cotId, participant?.id) : null,
           };
@@ -190,7 +181,7 @@ export class CotDetailComponent implements OnInit {
     this.participantCotService.getUnregisteredParticipants(cotId, searchQuery, currentPage, itemsPerPage).subscribe({
       next: ({ paging, data }) => {
         this.modalTotalPages = paging?.totalPage ?? 1;
-        this.unregisteredParticipants = data.map((item: any) => 
+        this.unregisteredParticipants = data.map((item: any) =>
           Object.fromEntries(
             Object.entries(item).map(([key, value]) => [key, value ?? '-'])
           )
@@ -218,7 +209,7 @@ export class CotDetailComponent implements OnInit {
         this.sweetalertService.alert('Berhasil!', 'Participant berhasil dihapus dari COT ini', 'success');
         this.participantCots = this.participantCots.filter(p => p.id !== participantId);
         this.currentPage = this.participantCots.length === 0 && this.currentPage > 1 ? this.currentPage - 1 : this.currentPage;
-        
+
         this.getCot();
         this.getListParticipantCot(cotId, this.searchQuery, this.currentPage, this.itemsPerPage);
 

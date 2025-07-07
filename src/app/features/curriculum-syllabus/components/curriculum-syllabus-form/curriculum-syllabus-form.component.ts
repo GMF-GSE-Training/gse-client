@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RoleBasedAccessDirective } from '../../../../shared/directive/role-based-access.directive';
 import { HeaderComponent } from "../../../../components/header/header.component";
+import { LoaderComponent } from "../../../../components/loader/loader.component";
 
 @Component({
   selector: 'app-curriculum-syllabus-form',
@@ -22,7 +23,8 @@ import { HeaderComponent } from "../../../../components/header/header.component"
     CommonModule,
     RouterLink,
     RoleBasedAccessDirective,
-    HeaderComponent
+    HeaderComponent,
+    LoaderComponent
 ],
   templateUrl: './curriculum-syllabus-form.component.html',
   styleUrl: './curriculum-syllabus-form.component.css'
@@ -54,6 +56,7 @@ export class CurriculumSyllabusFormComponent {
 
   @Input() isView: boolean = false;
   @Input() blueButtonRoute: string = '';
+  @Input() isLoading: boolean = false;
 
   @Output() formSubmit = new EventEmitter<any>();
   @ViewChild('form') form!: NgForm;

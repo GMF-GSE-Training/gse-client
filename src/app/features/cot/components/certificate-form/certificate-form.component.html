@@ -1,65 +1,72 @@
 <app-header></app-header>
 
-<div class="container">
-  <app-title [pageTitle]="pageTitle"></app-title>
+@if(isLoading) {
+  <app-loader></app-loader>
+} @else {
+  <div class="container">
+    <app-title [pageTitle]="pageTitle"></app-title>
 
-  <form #form="ngForm" (ngSubmit)="onSubmit()">
-    <div class="form-container">
-      <div class="left-column">
-        <app-base-input
-          [(ngModel)]="certificate.idNumber"
-          name="noPegawai"
-          label="No Pegawai"
-          [isRequired]="true"
-          [readOnly]="true"
-          autocomplete="username">
-        </app-base-input>
+    <form #form="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-container">
+        <div class="left-column">
+          <app-base-input
+            [(ngModel)]="certificate.idNumber"
+            name="noPegawai"
+            label="No Pegawai"
+            [isRequired]="true"
+            [readOnly]="true"
+            autocomplete="username"
+            [readOnly]="true">
+          </app-base-input>
 
-        <app-base-input
-          [(ngModel)]="certificate.name"
-          name="nama"
-          label="Nama"
-          [isRequired]="true"
-          [readOnly]="true"
-          autocomplete="name">
-        </app-base-input>
+          <app-base-input
+            [(ngModel)]="certificate.name"
+            name="nama"
+            label="Nama"
+            [isRequired]="true"
+            [readOnly]="true"
+            autocomplete="name"
+            [readOnly]="true">
+          </app-base-input>
 
-        <app-base-input
-          [(ngModel)]="certificate.trainingName"
-          name="namaTraining"
-          label="Nama Training"
-          [isRequired]="true"
-          [readOnly]="true"
-          autocomplete="off">
-        </app-base-input>
+          <app-base-input
+            [(ngModel)]="certificate.trainingName"
+            name="namaTraining"
+            label="Nama Training"
+            [isRequired]="true"
+            [readOnly]="true"
+            autocomplete="off"
+            [readOnly]="true">
+          </app-base-input>
+        </div>
+
+        <div class="right-column">
+          <app-base-input
+            [(ngModel)]="certificate.theoryScore"
+            name="nilaiTeori"
+            label="Nilai Tori"
+            type="tel"
+            [isRequired]="true"
+            required
+            autocomplete="off">
+          </app-base-input>
+
+          <app-base-input
+            [(ngModel)]="certificate.practiceScore"
+            name="nilaiPraktek"
+            label="Nilai Praktek"
+            type="tel"
+            [isRequired]="true"
+            required
+            autocomplete="off">
+          </app-base-input>
+        </div>
       </div>
 
-      <div class="right-column">
-        <app-base-input
-          [(ngModel)]="certificate.theoryScore"
-          name="nilaiTeori"
-          label="Nilai Tori"
-          type="tel"
-          [isRequired]="true"
-          required
-          autocomplete="off">
-        </app-base-input>
-
-        <app-base-input
-          [(ngModel)]="certificate.practiceScore"
-          name="nilaiPraktek"
-          label="Nilai Praktek"
-          type="tel"
-          [isRequired]="true"
-          required
-          autocomplete="off">
-        </app-base-input>
+      <div class="container-button">
+        <app-white-button type="button" class="button" [routerLink]="backButtonRoute">Kembali</app-white-button>
+        <app-blue-button type="submit" class="button" [disabled]="form.invalid!">Simpan</app-blue-button>
       </div>
-    </div>
-
-    <div class="container-button">
-      <app-white-button type="button" class="button" [routerLink]="backButtonRoute">Kembali</app-white-button>
-      <app-blue-button type="submit" class="button" [disabled]="form.invalid!">Simpan</app-blue-button>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>
+}
