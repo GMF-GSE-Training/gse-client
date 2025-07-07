@@ -9,6 +9,7 @@ import { TitleComponent } from '../../../../components/title/title.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from "../../../../components/header/header.component";
+import { LoaderComponent } from "../../../../components/loader/loader.component";
 
 @Component({
   selector: 'app-participant-form',
@@ -23,7 +24,8 @@ import { HeaderComponent } from "../../../../components/header/header.component"
     FormsModule,
     TitleComponent,
     CommonModule,
-    HeaderComponent
+    HeaderComponent,
+    LoaderComponent
 ],
   templateUrl: './participant-form.component.html',
   styleUrl: './participant-form.component.css',
@@ -32,6 +34,7 @@ export class ParticipantFormComponent implements OnInit {
   @Input() pageTitle: string = '';
   @Input() participant: any = {};
   @Input() isUpdate: boolean = false;
+  @Input() isLoading: boolean = false;
 
   fileType: string = '.png, .jpg, .jpeg, .pdf';
   fileTypeFoto: string = '.png, .jpg, .jpeg';
