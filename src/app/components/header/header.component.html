@@ -1,11 +1,20 @@
 <header *ngIf="shouldShowHeader" class="header">
-  <img
-    routerLink="/home"
-    class="header-logo"
-    src="/assets/image/logo-GMF.png"
-    alt="logo"
-    aria-hidden="true"
-  >
-  <h1 class="menu" (click)="toggleMenu()"><span>Menu </span> <i class="fa-solid fa-bars"></i></h1>
+  <div class="left-section">
+    <img
+      routerLink="/dashboard"
+      class="header-logo"
+      src="assets/image/logo-GMF.png"
+      alt="logo"
+      aria-hidden="true"
+    >
+    <div class="greeting">
+      <a [routerLink]="['/users', userId, 'profile']" class="greeting-link"> Halo, {{ userName }}!</a>
+    </div>
+  </div>
+  <div class="right-section">
+    <h1 class="menu" (click)="toggleMenu()" aria-label="Toggle menu">
+      <span>Menu </span><i class="fa-solid fa-bars"></i>
+    </h1>
+  </div>
 </header>
 <app-sidebar [isMenuVisible]="isMenuVisible" (menuClose)="onMenuClose()"></app-sidebar>

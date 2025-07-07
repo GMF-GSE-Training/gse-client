@@ -1,0 +1,118 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  padding: 2em;
+}
+
+.section {
+  display: flex;
+  gap: 1em;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  font-size: 1em;
+  width: 12%;
+  min-width: 150px;
+}
+
+.settings-nav div {
+  height: 50px;
+}
+
+.menu-setting-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-left: 5px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.menu-setting-item i {
+  margin-left: 1em;
+  transition: color 0.3s ease;
+}
+
+.menu-setting-item:hover {
+  background-color: #d8dadb;
+}
+
+.menu-setting-item.active {
+  border-left: 5px solid #02507E;
+  background-color: rgba(2, 80, 126, 0.1);
+}
+
+.menu-setting-item.active i,
+.menu-setting-item.active span {
+  color: #02507E;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  padding: 20px;
+}
+
+.account-form {
+  display: flex;
+  gap: 5%;
+}
+
+.form-content {
+  margin: 0;
+  width: 100%;
+  height: auto;
+  padding-right: 10%;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1em;
+  }
+
+  .section {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .settings-nav {
+    flex-direction: row;
+    width: 100%;
+    min-width: unset;
+  }
+
+  .menu-setting-item {
+    justify-content: center;
+    border-left: none;
+    border-bottom: 5px solid transparent;
+  }
+
+  .menu-setting-item.active {
+    border-left: none;
+    border-bottom: 5px solid #02507E;
+  }
+
+  .menu-setting-item i {
+    margin-left: 0;
+  }
+
+  .account-form {
+    flex-direction: column;
+    gap: 3em;
+  }
+
+  .form-content {
+    padding-right: 0;
+  }
+}

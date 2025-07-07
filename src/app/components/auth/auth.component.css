@@ -3,10 +3,10 @@
   display: flex;
   align-items: center;
   gap: 2em;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
-  position: fixed;
+  position: relative;
 }
 
 .auth-description {
@@ -26,17 +26,19 @@
   position: absolute;
   top: 52px;
   left: 36px;
+  cursor: pointer;
 }
 
 .form-container {
   background-color: #ffffff;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   border-bottom-left-radius: 30px;
   border-top-left-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: auto;
 }
 
 @media screen and (max-width: 1024px) {
@@ -67,9 +69,9 @@
 
   .form-container {
     width: 90%;
-    height: auto;
+    min-height: auto;
     border-radius: 20px;
-    padding: 2em 0;
+    padding: 2em 0 3em 0;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
 }

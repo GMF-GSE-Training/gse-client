@@ -1,0 +1,19 @@
+<div *ngIf="status === 'success'; else failedBlock">
+  <h2>Verifikasi Berhasil</h2>
+  <p>Akun Anda berhasil diverifikasi. Silakan login untuk melanjutkan.</p>
+  <button (click)="goToLogin()">Ke Login</button>
+</div>
+<ng-template #failedBlock>
+  <div *ngIf="status === 'failed'; else defaultBlock">
+    <h2>Verifikasi Gagal</h2>
+    <p>Tautan verifikasi tidak valid atau sudah kadaluarsa.</p>
+    <button (click)="goToResend()">Minta Ulang Verifikasi</button>
+  </div>
+</ng-template>
+<ng-template #defaultBlock>
+  <app-email-form
+    pageTitle="Account Verification"
+    [data]="data"
+    (formSubmit)="onSubmit($event)">
+  </app-email-form>
+</ng-template>

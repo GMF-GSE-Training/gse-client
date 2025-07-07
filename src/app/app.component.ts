@@ -27,6 +27,11 @@ export class AppComponent implements OnInit {
     '/password-reset',
     '/verification',
     '/users/add',
+    // Tambahkan rute auth/ untuk mendukung lazy loading
+    '/auth/login',
+    '/auth/register',
+    '/auth/password-reset',
+    '/auth/verification',
   ];
 
   private excludedRoutesRegex = [

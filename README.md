@@ -30,44 +30,60 @@ Ikuti langkah-langkah di bawah ini untuk menginstal dan menjalankan proyek ini s
 ### Prasyarat
 Pastikan Anda memiliki prasyarat berikut ini:
 - [Node.js](https://nodejs.org/) (versi terbaru disarankan)
-- [npm](https://www.npmjs.com/) (versi terbaru disarankan)
+- [pnpm](https://pnpm.io/) (versi terbaru disarankan)
 - [Angular CLI](https://angular.io/cli) (disarankan versi 17.3.8)
 
 1. **Clone repository**
 
    ```bash
-   git clone https://github.com/AminudinAbdulloh/frontend-projek-sertifikat-berbasis-web.git
-   cd frontend-projek-sertifikat-berbasis-web
+   git clone https://github.com/GMF-GSE-Training/gse-client.git
+   cd gse-client
 
 2. **Instal Dependensi**
 
-    ``` bash
-    Salin kode
-    npm install
+```bash
+npm install -g @angular/cli
+```
+
+```bash
+npm install -g pnpm
+```
+
+```bash
+npm install -g npm
+```
+
+    ```bash
+    pnpm install
 
 3. **Jalankan Server Pembangunan**
 
     ```bash
-    Salin kode
-    npm start
+    pnpm start
 
 4. **Buka Aplikasi**
     ```bash
     Buka browser dan kunjungi http://localhost:4200/. Aplikasi akan secara otomatis dimuat ulang jika Anda melakukan perubahan pada file.
   
 5. **Build**
-    ``` bash
-    Jalankan `ng build` untuk membangun proyek tersebut. Artefak build akan disimpan di direktori `dist/`.
+    ```bash
+    pnpm run build
+    ```
+    Jalankan `pnpm run build` untuk membangun proyek tersebut. Artefak build akan disimpan di direktori `dist/`.
 
 6. **Menjalankan unit tests**
 
-    `````` bash
-    Jalankan `ng test` untuk menjalankan pengujian unit melalui [Karma](https://karma-runner.github.io).
+    ```bash
+    pnpm run test
+    ```
+    Jalankan `pnpm run test` untuk menjalankan pengujian unit melalui [Karma](https://karma-runner.github.io).
 
 7. **Menjalankan end-to-end tests**
 
-    ``` bash
-    Jalankan `ng e2e` untuk menjalankan pengujian end-to-end melalui platform pilihan Anda. Untuk menggunakan perintah ini, Anda harus terlebih dahulu menambahkan paket yang mengimplementasikan kemampuan pengujian end-to-end.
+    ```bash
+    pnpm run e2e
+    ```
+    Jalankan `pnpm run e2e` untuk menjalankan pengujian end-to-end melalui platform pilihan Anda. Untuk menggunakan perintah ini, Anda harus terlebih dahulu menambahkan paket yang mengimplementasikan kemampuan pengujian end-to-end.
 
 ## Konfigurasi
 
@@ -83,7 +99,7 @@ Pastikan Anda memiliki prasyarat berikut ini:
 
 ## Development server
 
-Jalankan `ng serve` untuk server pengembang. Navigasi ke `http://localhost:4200/`. Aplikasi akan dimuat ulang secara otomatis jika Anda mengubah salah satu file sumber.
+Jalankan `pnpm start` (atau `pnpm run serve` jika skrip `serve` didefinisikan di `package.json` untuk `ng serve`) untuk server pengembang. Navigasi ke `http://localhost:4200/`. Aplikasi akan dimuat ulang secara otomatis jika Anda mengubah salah satu file sumber.
 
 ## Perancah kode
 

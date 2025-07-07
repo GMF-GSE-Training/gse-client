@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
-import { HttpClient, HttpResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { ParticipantResponse } from "../model/participant.model";
 import { WebResponse } from "../model/web.model";
@@ -12,9 +12,7 @@ export class ParticipantService {
   private apiUrl = environment.apiUrl;
   private endpoints = environment.endpoints.participant;
 
-  constructor(
-    private readonly http: HttpClient,
-  ) { }
+  constructor(private readonly http: HttpClient) {}
 
   createParticipant(request: FormData): Observable<WebResponse<ParticipantResponse>> {
     return this.http.post<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}`, request, { withCredentials: true });
@@ -36,16 +34,25 @@ export class ParticipantService {
     return this.http.get<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.list}?q=${q}&page=${page}&size=${size}`, { withCredentials: true });
   }
 
-  getFile({ id }: { id: string; }, fileName: string): Observable<WebResponse<string>> {
-    return this.http.get<WebResponse<string>>(`${this.apiUrl}/participants/${id}/${fileName}`, { withCredentials: true });
+  getFile({ id }: { id: string; }, fileName: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/participants/${id}/${fileName}`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
   }
 
-  getFoto(id: string): Observable<WebResponse<string>> {
-    return this.http.get<WebResponse<string>>(`${this.apiUrl}/participants/${id}/foto`, { withCredentials: true });
+  getFoto(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/participants/${id}/foto`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
   }
 
-  getQrCode(id: string): Observable<WebResponse<string>> {
-    return this.http.get<WebResponse<string>>(`${this.apiUrl}/participants/${id}/qr-code`, { withCredentials: true });
+  getQrCode(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/qr-code`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
   }
 
   downloadIdCard(id: string): Observable<Blob> {
@@ -56,20 +63,27 @@ export class ParticipantService {
   }
 
   downloadDocument(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/${this.endpoints.downloadDocument}`, {
+    return this.http.get(`${this.apiUrl}/${id}/download-id-card`, {
       withCredentials: true,
-      responseType: 'blob'
+      responseType: 'blob',
     });
   }
 
   viewIdCard(id: string): Observable<string> {
-      return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/${this.endpoints.idCard}`, {
-          responseType: 'text', // Mengatur responseType ke 'text'
-          withCredentials: true
-      });
+    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/${this.endpoints.idCard}`, {
+      responseType: 'text',
+      withCredentials: true,
+    });
   }
 
   isDataComplete(id: string): Observable<WebResponse<boolean>> {
     return this.http.get<WebResponse<boolean>>(`${this.apiUrl}/${this.endpoints.isComplete}/${id}`, { withCredentials: true });
+  }
+
+  downloadAllFiles(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/participants/${id}/download-all`, {
+      withCredentials: true,
+      responseType: 'blob',
+    });
   }
 }

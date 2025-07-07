@@ -1,0 +1,137 @@
+.container {
+  padding: 1em;
+  box-sizing: border-box;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.chart-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(310px, 1fr));
+  gap: 20px;
+  padding-right: 1.2em;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 1200px) {
+  .chart-container {
+    grid-template-columns: repeat(2, minmax(310px, 1fr));
+    overflow-x: hidden;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .chart-container {
+    grid-template-columns: repeat(1, minmax(210px, 1fr));
+    overflow-x: hidden;
+    padding: 0 0.5em;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .chart-container {
+    grid-template-columns: repeat (1, minmax(200px, 1fr));
+    padding: 0 0.2em;
+    overflow-x: auto;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #3e799b;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+  margin-top: 50px;
+}
+
+h1 {
+  color: #ffffff;
+  margin: 0;
+  font-size: 1.8rem;
+  font-family: 'Petrona', Arial, sans-serif;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.refresh-icon.spin {
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.table-container {
+  width: 100%;
+  background: linear-gradient(to bottom, #3e799b, #3e799b00);
+  padding: 1em;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.loading {
+  text-align: center;
+  color: #3e799b;
+  padding: 20px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+    padding: 0.5em;
+  }
+  .table-header {
+    margin-top: 20px;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  .refresh-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}

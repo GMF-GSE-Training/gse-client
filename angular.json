@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend-projek-sertifikat-berbasis-web": {
+    "gse-client": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/frontend-projek-sertifikat-berbasis-web",
+            "outputPath": "dist/gse-client",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -27,10 +27,14 @@
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/sweetalert2/dist/sweetalert2.min.css"
+              "@fortawesome/fontawesome-free/css/all.min.css",
+              "sweetalert2/dist/sweetalert2.min.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "file-saver",
+              "sweetalert2"
+            ]
           },
           "configurations": {
             "production": {
@@ -56,7 +60,8 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.production.ts"
                 }
-              ]
+              ],
+              "baseHref": "/gse-client/"
             },
             "development": {
               "optimization": false,
@@ -74,12 +79,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
-              "buildTarget": "frontend-projek-sertifikat-berbasis-web:build:production"
+              "buildTarget": "gse-client:build:production"
             },
             "development": {
-              "buildTarget": "frontend-projek-sertifikat-berbasis-web:build:development"
+              "buildTarget": "gse-client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -87,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "frontend-projek-sertifikat-berbasis-web:build"
+            "buildTarget": "gse-client:build"
           }
         },
         "test": {
@@ -108,6 +116,9 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }

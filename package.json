@@ -1,13 +1,14 @@
 {
-  "name": "frontend-web-based-certificate-project",
-  "version": "0.0.2",
+  "name": "gse-client",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
     "build": "ng build --configuration=production",
     "watch": "ng build --watch --configuration=development",
-    "http-server": "http-server dist/frontend-projek-sertifikat-berbasis-web/browser -s index.html -a 0.0.0.0 -p 4200",
-    "test": "ng test"
+    "http-server": "http-server dist/gse-client/browser -s index.html -a 0.0.0.0 -p 4200",
+    "test": "ng test",
+    "start:once": "ng serve --host 0.0.0.0 --watch=false"
   },
   "private": true,
   "dependencies": {
@@ -26,28 +27,31 @@
     "chart.js": "^4.4.7",
     "chartjs-plugin-datalabels": "^2.2.0",
     "html2canvas": "^1.4.1",
+    "ng-hcaptcha": "^2.6.0",
     "ngx-cookie-service": "^19.1.0",
     "rxjs": "~7.8.1",
-    "sweetalert2": "^11.16.1",
+    "sweetalert2": "^11.4.8",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.1.7",
-    "@angular/cli": "^19.1.7",
+    "@angular/cli": "^19.2.15",
     "@angular/compiler-cli": "^19.1.6",
     "@types/express": "^5.0.0",
     "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~5.1.6",
     "@types/node": "^22.13.4",
+    "angular-cli-ghpages": "^2.0.3",
     "file-saver": "^2.0.5",
+    "http-server": "^14.1.1",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.4",
+    "karma-brave-launcher": "^1.0.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "^5.7.3",
-    "http-server": "^14.1.1"
+    "typescript": "^5.8.3"
   }
 }

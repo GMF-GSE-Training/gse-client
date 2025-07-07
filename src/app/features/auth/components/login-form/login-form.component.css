@@ -1,0 +1,142 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 2em 2em;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+  width: 100%;
+  max-width: 520px;
+  min-width: 320px;
+  padding: 0 1.5em;
+}
+
+input {
+  font-size: 1em;
+  font-weight: bold;
+  padding-left: 50px;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #000;
+  height: 40px;
+}
+
+i {
+  font-size: 30px;
+  position: relative;
+  max-width: 30px;
+  max-height: 30px;
+}
+
+.user-icon {
+  top: 1.5em;
+}
+
+.pass-icon {
+  top: 2.5em;
+}
+
+app-toggle-password-visibility {
+  position: relative;
+  top: 2em;
+  left: 90%;
+}
+
+.register-link a {
+  color: #02507E;
+}
+
+.login-form div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  gap: 10px;
+}
+
+.register-link-container {
+  align-items: center;
+}
+
+.auth-helper-links {
+  color: #02507E;
+}
+
+.error-message {
+  display: flex;
+  justify-content: center;
+  background-color: #ffeeba;
+  padding: 2px;
+  position: relative;
+  top: 6em;
+  color: red;
+  font-weight: bold;
+  width: 100%;
+}
+
+.button {
+  width: 190px;
+  height: 45px;
+}
+
+@media screen and (max-width: 1200px) {
+  .login-form {
+    max-width: 420px;
+    padding: 0 1em;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .form-container {
+    padding: 2em 1em;
+  }
+  .login-form {
+    max-width: 100%;
+    min-width: 0;
+    padding: 0 0.5em;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .form-container {
+    padding: 1em 0.5em;
+  }
+  .login-form {
+    max-width: 100%;
+    min-width: 0;
+    padding: 0 0.25em;
+  }
+}
+
+.alert-error-custom {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-error-custom i {
+  color: #b71c1c;
+  font-size: 18px;
+}

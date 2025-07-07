@@ -1,0 +1,75 @@
+.form-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 2em;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 4em;
+  width: 100%;
+  margin-top: 2em;
+}
+
+.button {
+  width: 190px;
+  height: 45px;
+}
+
+.alert-error-custom {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-error-custom i {
+  color: #b71c1c;
+  font-size: 18px;
+}
+
+.captcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px 0 10px 0;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .captcha-container {
+    margin: 12px 0 8px 0;
+    transform: scale(0.95);
+  }
+  .h-captcha iframe {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+  }
+}

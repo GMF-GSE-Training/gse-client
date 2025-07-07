@@ -35,32 +35,17 @@
 
   <div>
     <!-- Tampilkan hanya satu pesan error jika input tidak valid -->
-    @if (customErrorMessage) {
-      <span class="error-message">{{ customErrorMessage }}</span>
-    } @else if (inputControl.invalid && inputControl.touched) {
-      <span class="error-message">
-        <!-- Tampilkan pesan error yang relevan -->
-        @if (inputControl.errors) {
-          <ng-container>
-            @if (inputControl.errors['required']) {
-              <span>Wajib diisi</span>
-            } @else if (inputControl.errors['minlength']) {
-              <span>
-                {{ minLengthErrorMessage }}
-              </span>
-            } @else if (inputControl.errors['pattern']) {
-              <span>
-                {{ patternErrorMessage }}
-              </span>
-            } @else if (inputControl.errors['email']) {
-              <span>Alamat email tidak valid</span>
-            }
-          </ng-container>
-        }
-      </span>
-    } @else {
-      <!-- Tampilkan pesan default jika tidak ada error atau belum disentuh -->
-      <span>{{ helperMessage }}</span>
-    }
+    <span *ngIf="customErrorMessage" class="alert-error-custom"> <i class='fa-solid fa-circle-exclamation'></i> {{ customErrorMessage }} </span>
+    <span *ngIf="!customErrorMessage && inputControl.invalid && inputControl.touched && inputControl.errors" class="alert-error-custom">
+      <i class='fa-solid fa-circle-exclamation'></i>
+      <!-- Tampilkan pesan error yang relevan -->
+      <ng-container>
+        <span *ngIf="inputControl.errors['required']">Wajib diisi</span>
+        <span *ngIf="inputControl.errors['minlength']">{{ minLengthErrorMessage }}</span>
+        <span *ngIf="inputControl.errors['pattern']">{{ patternErrorMessage }}</span>
+        <span *ngIf="inputControl.errors['email']">Alamat email tidak valid</span>
+      </ng-container>
+    </span>
+    <span *ngIf="!customErrorMessage && !(inputControl.invalid && inputControl.touched && inputControl.errors)">{{ helperMessage }}</span>
   </div>
 </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Swal, { SweetAlertIcon } from 'sweetalert2';
+import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +22,8 @@ export class SweetalertService {
     });
   }
 
-  alert(title: string, message: string, icon: SweetAlertIcon): void {
-    Swal.fire({
+  alert(title: string, message: string, icon: SweetAlertIcon): Promise<SweetAlertResult<any>> {
+    return Swal.fire({
       title: title,
       text: message,
       icon: icon,

@@ -1,0 +1,27 @@
+/* Styling for verification component */
+h2 {
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+p {
+  margin-bottom: 16px;
+}
+
+button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1565c0;
+}
+
+/* Gaya untuk error */
+div[ng-reflect-ng-if='false'] h2 {
+  color: #c62828;
+}

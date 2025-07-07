@@ -1,6 +1,7 @@
 interface EnvConfigProd {
   BACKEND_URL?: string;
   API_URL?: string;
+  HCAPTCHA_SITEKEY?: string;
 }
 
 declare global {
@@ -12,6 +13,7 @@ declare global {
 export const environment = {
   production: true,
   apiUrl: window.__env?.API_URL || '/',
+  hcaptchaSiteKey: window.__env?.HCAPTCHA_SITEKEY || window._env?.HCAPTCHA_SITEKEY || '',
   endpoints: {
     auth: {
       base: 'auth/current',
@@ -23,6 +25,7 @@ export const environment = {
       resetPassword: 'auth/reset-password',
       updateEmailRequest: 'auth/update-email',
       updatePassword: 'auth/update-password',
+      verify: 'auth/verify',
     },
     user: {
       base: 'users',

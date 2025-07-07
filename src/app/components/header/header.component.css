@@ -1,3 +1,10 @@
+:root {
+  --primary-color: #02507e;
+  --secondary-color: #3e799b;
+  --text-color: #ffffff;
+  --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
 .header {
   background-color: #02507E;
   border-bottom-right-radius: 30px;
@@ -5,26 +12,60 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-left: 70px;
-  padding-right: 70px;
-  height: 150px;
+  padding: 10px 20px;
+  height: 80px;
   width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-img:hover {
-  cursor: pointer;
+.left-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.greeting {
+  padding-left: 17px;
+  padding-right: 2px;
+  font-family: 'Petrona', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+}
+
+.greeting-link {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.greeting-link:hover {
+  opacity: 0.5;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
 .header-logo {
-  width: 15em;
+  width: 8em;
   height: auto;
+  cursor: pointer;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
 }
 
 .menu {
-  font-size: 2em;
+  font-size: 1.5em;
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .menu:hover {
@@ -37,34 +78,43 @@ img:hover {
   color: #3E799B;
 }
 
-/* Responsiveness for tablets */
-@media (max-width: 769px) {
+@media (min-width: 425px) {
   .header {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding: 15px 40px;
     height: 120px;
   }
-
   .header-logo {
     width: 10em;
   }
+  .greeting {
+    font-size: 16px;
+  }
+  .menu {
+    font-size: 1.75em;
+  }
 }
 
-/* Responsiveness for mobiles */
-@media (max-width: 426px) {
+@media (min-width: 768px) {
   .header {
-    padding-left: 20px;
-    padding-right: 20px;
-    height: 80px;
+    padding: 20px 70px;
+    height: 150px;
   }
-
+  .header-logo {
+    width: 15em;
+  }
+  .greeting {
+    font-size: 19px;
+  }
   .menu {
-    font-size: 1.5em;
+    font-size: 2em;
+  }
+  .left-section {
+    gap: 20px;
   }
 }
 
 @media (max-width: 320px) {
-  h1 span {
+  .menu span {
     display: none;
   }
 }

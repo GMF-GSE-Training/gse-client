@@ -1,7 +1,8 @@
 declare const window: any;
 export const environment = {
   production: false,
-  apiUrl: window.__env?.BASE_URL || `http://${window.location.hostname}:3000`,
+  apiUrl: window._env?.BASE_URL || window.__env?.BASE_URL || `http://${window.location.hostname}:3000`,
+  hcaptchaSiteKey: window._env?.HCAPTCHA_SITEKEY || window.__env?.HCAPTCHA_SITEKEY || '',
   endpoints: {
     auth: {
       base: 'auth/current',
@@ -13,6 +14,7 @@ export const environment = {
       resetPassword: 'auth/reset-password',
       updateEmailRequest: 'auth/update-email',
       updatePassword: 'auth/update-password',
+      verify: 'auth/verify',
     },
     user: {
       base: 'users',

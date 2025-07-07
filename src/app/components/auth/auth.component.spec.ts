@@ -8,7 +8,11 @@ describe('AuthComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthComponent]
+      imports: [AuthComponent],
+      providers: [
+        require('@angular/router').provideRouter([]),
+        require('@angular/common/testing').provideLocationMocks()
+      ]
     })
     .compileComponents();
 

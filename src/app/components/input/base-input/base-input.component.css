@@ -52,3 +52,21 @@ div {
     border: 2px solid #ccc;
   }
 }
+
+.alert-error-custom {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-error-custom i {
+  color: #b71c1c;
+  font-size: 18px;
+}

@@ -1,0 +1,49 @@
+<app-header></app-header>
+<div class="main-content" [class.modal-active]="showModal" [class.loading]="isLoading">
+  @if(isLoading) {
+    <app-loader></app-loader>
+  } @else {
+    <div class="title-container">
+      <h1 class="title">Calendar Of Training</h1>
+    </div>
+
+    <div class="cot-table">
+      <app-vertical-table [data]="verticalTableData"></app-vertical-table>
+    </div>
+
+    <app-data-management
+      placeHolder="Cari participant"
+      [columns]="columns"
+      [data]="participantCots"
+      [roleBassedAccess]="['super admin', 'lcu']"
+      (onClickChange)="openModal()"
+      [isLoading]="isParticipantCotLoading"
+      [state]="state"
+      [certificateState]="certificateState"
+      [totalPages]="totalPages"
+      [currentPage]="currentPage"
+      (searchChange)="onSearchChanged($event)"
+      (pageChange)="onPageChanged($event)"
+      (viewAllChange)="viewAll()"
+      whiteButtonRoute="/cot"
+      [cotStatus]="cotStatus"
+    ></app-data-management>
+  }
+</div>
+
+<div *ngIf="showModal" class="modal-container">
+  <app-modal
+    placeHolder="Cari Participant"
+    [columns]="modalColumns"
+    [data]="unregisteredParticipants"
+    [isLoading]="isLoadingModal"
+    [currentPage]="modalCurrentPage"
+    [totalPage]="modalTotalPages"
+    (searchChange)="modalSearchChanged($event)"
+    (searchCleared)="modalSearchCleared()"
+    (pageChange)="modalPageChanged($event)"
+    (selectedIdsChange)="onSelectedIdsChange($event)"
+    (save)="saveSelectedParticipants()"
+    (cancel)="closeModal()">
+  </app-modal>
+</div>

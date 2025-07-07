@@ -20,6 +20,9 @@ export interface Participant {
   suratBebasNarkoba: File | null;
   tglKeluarSuratBebasNarkoba: string;
   qrCode?: string | File;
+  detailLink?: string;
+  editLink?: string;
+  deleteMethod?: () => void;
 }
 
 export interface UpdateParticipant {

@@ -1,0 +1,16 @@
+<app-header></app-header>
+<app-data-management
+  pageTitle="Calendar Of Training"
+  [isParticipantCot]="true"
+  placeHolder="Cari COT"
+  [columns]="columns"
+  [data]="cot"
+  [isLoading]="isLoading"
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (searchChange)="onSearchChanged($event)"
+  (pageChange)="onPageChanged($event)"
+  (viewAllChange)="viewAll()"
+  [blueButtonRoute]="'/cot/add'"
+  [roleBassedAccess]="['super admin']"
+></app-data-management>

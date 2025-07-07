@@ -22,7 +22,7 @@ import { TogglePasswordVisibilityComponent } from "../../toggle-password-visibil
 export class BaseInputComponent {
   @Input() label: string = '';
   @Input() type: string = '';
-  @Input() autocomplete: string = '';
+  @Input() autocomplete: string = 'off';
   @Input() inputMode: string = '';
   @Input() placeholder: string = '';
   @Input() name: string = '';

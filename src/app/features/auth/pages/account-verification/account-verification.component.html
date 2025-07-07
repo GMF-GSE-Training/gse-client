@@ -1,0 +1,8 @@
+<app-email-form
+  pageTitle="Account Verification"
+  [data]="data"
+  [errorMessage]="errorMessage"
+  (formSubmit)="onSubmit($event)"
+  (captchaVerified)="onCaptchaVerify($event)"
+  [hcaptchaToken]="hcaptchaToken">
+</app-email-form>
