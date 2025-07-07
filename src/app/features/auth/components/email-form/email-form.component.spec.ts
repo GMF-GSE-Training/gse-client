@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
+import { CAPTCHA_CONFIG } from 'ng-hcaptcha';
 
 import { EmailFormComponent } from './email-form.component';
 
@@ -13,7 +14,8 @@ describe('EmailFormComponent', () => {
       imports: [EmailFormComponent],
       providers: [
         provideRouter([]),
-        provideLocationMocks()
+        provideLocationMocks(),
+        { provide: CAPTCHA_CONFIG, useValue: { siteKey: 'dummy' } }
       ]
     })
     .compileComponents();
