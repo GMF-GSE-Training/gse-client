@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideLocationMocks } from '@angular/common/testing';
+import { CAPTCHA_CONFIG } from 'ng-hcaptcha';
 
 import { AccountVerificationComponent } from './account-verification.component';
 
@@ -17,7 +18,8 @@ describe('AccountVerificationComponent', () => {
         provideRouter([]),
         provideLocationMocks(),
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        { provide: CAPTCHA_CONFIG, useValue: { siteKey: 'dummy' } }
       ]
     })
     .compileComponents();
