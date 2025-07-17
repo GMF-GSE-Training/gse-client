@@ -10,6 +10,7 @@ th, td {
   border: 2px solid #dddddd;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 13px;
 }
 
 th {
@@ -66,5 +67,79 @@ a:hover {
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: inherit;
+  font-weight: 500;
+}
+
+.sort-icons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2px;
+  gap: 0;
+  line-height: 1;
+  height: 24px;
+  justify-content: center;
+}
+
+.sort-icons svg {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  padding: 0;
+  display: block;
+  line-height: 1;
+}
+
+.sort-icons svg.active {
+  color: #1976d2;
+  font-weight: bold;
+  filter: drop-shadow(0 0 1px #1976d2);
+}
+
+th.active-sort {
+  background: #28587b;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 2px solid #1976d2;
+  transition: background 0.2s;
+}
+
+th {
+  background: #3e799b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 8px 10px;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+th:hover {
+  background: #28587b;
+}
+
+@media (max-width: 600px) {
+  th, td {
+    font-size: 11px;
+  }
+  .th-content {
+    font-size: inherit;
+    gap: 1px;
+  }
+  .sort-icons svg {
+    width: 11px;
+    height: 11px;
+  }
+  th {
+    font-size: 11px;
+    padding: 6px 6px;
   }
 }
