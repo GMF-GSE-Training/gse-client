@@ -45,6 +45,10 @@ export class ParticipantListComponent implements OnInit {
   // Role Bassed Access
   roleBassedAccess: string[] = ['super admin', 'supervisor', 'lcu'];
 
+  // State sorting universal
+  sortBy: string = 'idNumber';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   constructor(
     private participantService: ParticipantService,
     private sweetalertService: SweetalertService,
@@ -56,13 +60,15 @@ export class ParticipantListComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['keyword'] || '';
       this.currentPage =+ params['page'] || 1;
-      this.getListParticipants(this.searchQuery, this.currentPage, this.itemsPerPage);
+      this.sortBy = params['sort_by'] || 'idNumber';
+      this.sortOrder = params['sort_order'] || 'asc';
+      this.getListParticipants(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
     });
   }
 
-  getListParticipants(query: string, page: number, size: number): void {
+  getListParticipants(query: string, page: number, size: number, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
-    this.participantService.listParticipants(query, page, size).subscribe({
+    this.participantService.listParticipants(query, page, size, sortBy, sortOrder).subscribe({
       next: (response) => {
         this.participants = this.mapParticipants(response);
         this.totalPages = response.paging?.totalPage ?? 1;
@@ -91,7 +97,7 @@ export class ParticipantListComponent implements OnInit {
             this.currentPage -= 1;
           }
 
-          this.getListParticipants(this.searchQuery, this.currentPage, this.itemsPerPage);
+          this.getListParticipants(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
 
           // Cek apakah halaman saat ini lebih besar dari total halaman
           if (this.currentPage > this.totalPages) {
@@ -148,6 +154,23 @@ export class ParticipantListComponent implements OnInit {
       queryParamsHandling: 'merge',
     });
     this.searchQuery = '';
+  }
+
+  toggleSort(col: string) {
+    if (this.sortBy === col) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = col;
+      this.sortOrder = 'asc';
+    }
+    this.router.navigate([], {
+      queryParams: { sort_by: this.sortBy, sort_order: this.sortOrder, page: 1 },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
+    this.toggleSort(event.sortBy);
   }
 
   private mapParticipants(response: any): Participant[] {

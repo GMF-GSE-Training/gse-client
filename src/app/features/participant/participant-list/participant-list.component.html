@@ -12,4 +12,7 @@
   (viewAllChange)="viewAll()"
   [blueButtonRoute]="'/participants/add'"
   [roleBassedAccess]="roleBassedAccess"
+  [sortBy]="sortBy"
+  [sortOrder]="sortOrder"
+  (sortChange)="onSortChange($event)"
 ></app-data-management>
