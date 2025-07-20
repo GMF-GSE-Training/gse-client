@@ -21,7 +21,14 @@
 
   <div class="table-container">
     <div class="loading" *ngIf="isLoading">Loading...</div>
-    <app-table *ngIf="!isLoading" [columns]="columns" [data]="cot"></app-table>
+    <app-table 
+      *ngIf="!isLoading" 
+      [columns]="columns" 
+      [data]="cot"
+      [sortBy]="sortBy"
+      [sortOrder]="sortOrder"
+      (sortChange)="onSortChange($event)"
+    ></app-table>
   </div>
 
   <div class="pagination-container">
