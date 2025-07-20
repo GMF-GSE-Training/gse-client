@@ -3,7 +3,7 @@ name: Deploy Frontend to Cloud Run
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   test:
