@@ -156,17 +156,14 @@ export class AuthService {
   // Update 2025: Improved token management
   setUserProfile(data: AuthResponse | null) {
     console.log('🔍 AuthService: setUserProfile called with:', data ? 'data' : 'null');
-    
     if (data) {
       // Validate required fields
-      if (!data.accessToken) {
-        console.error('🔍 AuthService: No access token in user profile');
+      if (!data.accessToken || typeof data.accessToken !== 'string' || data.accessToken.length < 20) {
+        console.error('🔍 AuthService: No valid access token in user profile', data);
         return;
       }
-
       const existingProfileString = localStorage.getItem('user_profile');
       let existingProfile: AuthResponse | null = null;
-      
       if (existingProfileString) {
         try {
           existingProfile = JSON.parse(existingProfileString);
@@ -176,25 +173,20 @@ export class AuthService {
           });
         } catch (e) {
           console.error('🔍 AuthService: Error parsing existing profile:', e);
+          localStorage.removeItem('user_profile');
         }
       }
-
-      // Update: Merge profiles with priority to new data
+      // Merge profiles with priority to new data
       const updatedProfile: AuthResponse = {
-        ...existingProfile, // Existing data
-        ...data,            // New data (overwrites existing)
-        // Ensure tokens are preserved
+        ...existingProfile,
+        ...data,
         accessToken: data.accessToken || existingProfile?.accessToken,
         refreshToken: data.refreshToken || existingProfile?.refreshToken,
       };
-
-      console.log('🔍 AuthService: Saving updated profile:', {
-        hasAccessToken: !!updatedProfile.accessToken,
-        hasRefreshToken: !!updatedProfile.refreshToken,
-        accessTokenLength: updatedProfile.accessToken?.length,
-        refreshTokenLength: updatedProfile.refreshToken?.length
-      });
-
+      if (!updatedProfile.accessToken || typeof updatedProfile.accessToken !== 'string' || updatedProfile.accessToken.length < 20) {
+        console.error('🔍 AuthService: Refusing to save profile with invalid accessToken', updatedProfile);
+        return;
+      }
       try {
         localStorage.setItem('user_profile', JSON.stringify(updatedProfile));
         this.userProfile$.next(updatedProfile);
@@ -214,37 +206,32 @@ export class AuthService {
     try {
       const profileString = localStorage.getItem('user_profile');
       console.log('🔍 AuthService: getUserProfile - raw string length:', profileString?.length);
-      
       if (!profileString) {
         console.log('🔍 AuthService: No profile found in localStorage');
         return null;
       }
-
-      const parsedProfile = JSON.parse(profileString);
-      
-      // Validate parsed profile
-      if (!parsedProfile || typeof parsedProfile !== 'object') {
-        console.error('🔍 AuthService: Invalid profile format');
+      let parsedProfile: any = null;
+      try {
+        parsedProfile = JSON.parse(profileString);
+      } catch (e) {
+        console.error('🔍 AuthService: Error parsing user profile from localStorage, clearing storage', e);
+        localStorage.removeItem('user_profile');
         return null;
       }
-
-      // Check for required tokens
-      if (!parsedProfile.accessToken) {
-        console.error('🔍 AuthService: No access token in profile');
+      if (!parsedProfile || typeof parsedProfile !== 'object' || !parsedProfile.accessToken || typeof parsedProfile.accessToken !== 'string' || parsedProfile.accessToken.length < 20) {
+        console.error('🔍 AuthService: Invalid or missing accessToken in profile, clearing storage', parsedProfile);
+        localStorage.removeItem('user_profile');
         return null;
       }
-
       console.log('🔍 AuthService: Profile retrieved successfully:', {
         hasAccessToken: !!parsedProfile.accessToken,
         hasRefreshToken: !!parsedProfile.refreshToken,
         accessTokenLength: parsedProfile.accessToken?.length,
         refreshTokenLength: parsedProfile.refreshToken?.length
       });
-
       return parsedProfile;
     } catch (e) {
       console.error('🔍 AuthService: Error retrieving user profile:', e);
-      // Clear corrupted data
       localStorage.removeItem('user_profile');
       return null;
     }
