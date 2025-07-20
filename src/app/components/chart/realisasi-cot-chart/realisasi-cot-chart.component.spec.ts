@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { RealisasiCotChartComponent } from './realisasi-cot-chart.component';
 
@@ -8,7 +9,8 @@ describe('RealisasiCotChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RealisasiCotChartComponent]
+      imports: [RealisasiCotChartComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

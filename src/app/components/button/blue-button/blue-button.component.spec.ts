@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { BlueButtonComponent } from './blue-button.component';
 
@@ -8,7 +9,8 @@ describe('BlueButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BlueButtonComponent]
+      imports: [BlueButtonComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
     
