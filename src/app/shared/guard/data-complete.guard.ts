@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { SweetalertService } from '../service/sweetaler.service';
+import { SweetalertService } from '../service/sweetalert.service';
 import { Participant } from '../model/participant.model';
 
 export const DataCompleteGuard: CanActivateFn = (route, state) => {

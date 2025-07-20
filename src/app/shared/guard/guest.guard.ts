@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { SweetalertService } from '../service/sweetaler.service';
+import { SweetalertService } from '../service/sweetalert.service';
 import { AuthService } from '../service/auth.service';
 
 export const guestGuard: CanActivateFn = (route, state) => {

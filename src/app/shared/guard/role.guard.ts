@@ -2,7 +2,7 @@ import { inject } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
 import { AuthService } from "../service/auth.service";
 import { filter, map } from "rxjs";
-import { SweetalertService } from "../service/sweetaler.service";
+import { SweetalertService } from "../service/sweetalert.service";
 
 export const RoleGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
