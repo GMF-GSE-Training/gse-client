@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ParticipantResponse } from '../model/participant.model';
 import {
@@ -9,15 +8,17 @@ import {
   AddParticipantResponse,
 } from '../model/participant-cot.model';
 import { WebResponse } from '../model/web.model';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ParticipantCotService {
-  constructor(private readonly http: HttpClient) {}
 
-  private apiUrl = environment.apiUrl;
-  private endpoint = environment.endpoints.participantCot;
+  constructor(
+    private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
+  ) {}
 
   getUnregisteredParticipants(
     cotId: string,
@@ -25,31 +26,31 @@ export class ParticipantCotService {
     page?: number,
     size?: number,
   ): Observable<WebResponse<ParticipantResponse[]>> {
-    return this.http.get<WebResponse<ParticipantResponse[]>>(
-      `${this.apiUrl}/${this.endpoint.getUnregisteredParticipants}/${cotId}?q=${searchQuery}&page=${page}&size=${size}`,
-      { withCredentials: true },
-    );
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participantCot', 'getUnregisteredParticipants')}/${cotId}?q=${searchQuery}&page=${page}&size=${size}`);
+    
+    console.log('🔍 Participant COT Service Debug - URL:', url);
+    console.log('🔍 Participant COT Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<ParticipantResponse[]>>(url, { withCredentials: true });
   }
 
   addParticipantToCot(
     cotId: string,
     participantIds: addParticipantToCot,
   ): Observable<WebResponse<AddParticipantResponse>> {
-    return this.http.post<WebResponse<AddParticipantResponse>>(
-      `${this.apiUrl}/${this.endpoint.base}/${cotId}`,
-      participantIds,
-      { withCredentials: true },
-    );
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participantCot', 'base')}/${cotId}`);
+    return this.http.post<WebResponse<AddParticipantResponse>>(url, participantIds, { withCredentials: true });
   }
 
   deleteParticipantFromCot(
     cotId: string,
     participantId: string,
   ): Observable<WebResponse<string>> {
-    return this.http.delete<WebResponse<string>>(
-      `${this.apiUrl}/${this.endpoint.base}/${cotId}/${participantId}`,
-      { withCredentials: true },
-    );
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participantCot', 'base')}/${cotId}/${participantId}`);
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
   }
 
   listParticipantCot(
@@ -67,9 +68,16 @@ export class ParticipantCotService {
     if (sortBy) params.append('sort_by', sortBy);
     if (sortOrder) params.append('sort_order', sortOrder);
 
-    return this.http.get<WebResponse<ListParticipantCotResponse>>(
-      `${this.apiUrl}/${this.endpoint.base}/${cotId}/${this.endpoint.list}?${params.toString()}`,
-      { withCredentials: true },
-    );
+    const baseEndpoint = this.envService.getEndpoint('participantCot', 'base');
+    const listEndpoint = this.envService.getEndpoint('participantCot', 'list');
+    const url = this.envService.buildUrl(`${baseEndpoint}/${cotId}/${listEndpoint}?${params.toString()}`);
+    
+    console.log('🔍 Participant COT List Service Debug - URL:', url);
+    console.log('🔍 Participant COT List Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<ListParticipantCotResponse>>(url, { withCredentials: true });
   }
 }

@@ -1,32 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { CreateUserRequest, UpdateUserRequest, User, UserResponse } from '../model/user.model';
 import { WebResponse } from '../model/web.model';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
 
-  private apiUrl = environment.apiUrl;
-  private endpoints = environment.endpoints.user;
-
   constructor(
     private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
   ) { }
 
   createUser(request: CreateUserRequest): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoints.base}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('user', 'base'));
+    return this.http.post<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   get(id: string): Observable<WebResponse<UserResponse>> {
-    return this.http.get<WebResponse<UserResponse>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('user', 'base')}/${id}`);
+    return this.http.get<WebResponse<UserResponse>>(url, { withCredentials: true });
   }
 
   updateUser(id: string, request: UpdateUserRequest): Observable<WebResponse<string>> {
-    return this.http.patch<WebResponse<string>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('user', 'base')}/${id}`);
+    return this.http.patch<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   listUsers(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<UserResponse[]>> {
@@ -34,10 +35,20 @@ export class UserService {
     if (q) params.keyword = q;
     if (sortBy) params.sort_by = sortBy;
     if (sortOrder) params.sort_order = sortOrder;
-    return this.http.get<WebResponse<UserResponse[]>>(`/users/list/result`, { params, withCredentials: true });
+    
+    const url = this.envService.buildUrl(this.envService.getEndpoint('user', 'list'));
+    
+    console.log('🔍 User Service Debug - URL:', url);
+    console.log('🔍 User Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<UserResponse[]>>(url, { params, withCredentials: true });
   }
 
   deleteUser(id: string): Observable<WebResponse<string>> {
-    return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('user', 'base')}/${id}`);
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
   }
 }

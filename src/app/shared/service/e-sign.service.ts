@@ -1,39 +1,43 @@
 import { Injectable } from "@angular/core";
-import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { ESignResponse, UpdateESign } from "../model/e-sign.model";
 import { Observable } from "rxjs";
 import { WebResponse } from "../model/web.model";
+import { EnvironmentService } from "./environment.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ESignService {
-  private apiUrl = environment.apiUrl;
-  private endpoint = environment.endpoints.eSign;
 
   constructor(
     private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
   ) { }
 
   createESign(request: FormData): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('eSign', 'base'));
+    return this.http.post<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   getESignById(id: string): Observable<WebResponse<ESignResponse>> {
-    return this.http.get<WebResponse<ESignResponse>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('eSign', 'base')}/${id}`);
+    return this.http.get<WebResponse<ESignResponse>>(url, { withCredentials: true });
   }
 
   updateESign(id: string, request: FormData): Observable<WebResponse<ESignResponse>> {
-    return this.http.patch<WebResponse<ESignResponse>> (`${this.apiUrl}/${this.endpoint.base}/${id}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('eSign', 'base')}/${id}`);
+    return this.http.patch<WebResponse<ESignResponse>>(url, request, { withCredentials: true });
   }
 
   getESignFile(id: string): Observable<WebResponse<string>> {
-    return this.http.get<WebResponse<string>>(`${this.apiUrl}/e-sign/${id}/view`, { withCredentials: true });
+    const url = this.envService.buildUrl(`e-sign/${id}/view`);
+    return this.http.get<WebResponse<string>>(url, { withCredentials: true });
   }
 
   deleteESign(id: string): Observable<WebResponse<string>> {
-    return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('eSign', 'base')}/${id}`);
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
   }
 
   listESign(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<ESignResponse[]>> {
@@ -41,6 +45,15 @@ export class ESignService {
     if (q) params.q = q;
     if (sortBy) params.sort_by = sortBy;
     if (sortOrder) params.sort_order = sortOrder;
-    return this.http.get<WebResponse<ESignResponse[]>>(`/e-sign/list/result`, { params, withCredentials: true });
+    
+    const url = this.envService.buildUrl(this.envService.getEndpoint('eSign', 'list'));
+    
+    console.log('🔍 E-Sign Service Debug - URL:', url);
+    console.log('🔍 E-Sign Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<ESignResponse[]>>(url, { params, withCredentials: true });
   }
 }

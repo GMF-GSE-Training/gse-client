@@ -1,36 +1,38 @@
 import { Injectable } from "@angular/core";
-import { environment } from "../../../environments/environment";
 import { HttpClient, HttpHeaders, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { CotResponse, CreateCot, UpdateCot } from "../model/cot.model";
 import { WebResponse } from "../model/web.model";
+import { EnvironmentService } from "./environment.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CotService {
-  private apiUrl = environment.apiUrl;
-  private endpoint = environment.endpoints.cot;
-
   constructor(
     private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
   ) { }
 
   createCot(request: CreateCot): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('cot', 'base'));
+    return this.http.post<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   getCotById(id: string): Observable<WebResponse<CotResponse>> {
-    return this.http.get<WebResponse<CotResponse>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('cot', 'base')}/${id}`);
+    return this.http.get<WebResponse<CotResponse>>(url, { withCredentials: true });
   }
 
   updateCot(id: string, request: UpdateCot): Observable<WebResponse<string>> {
-    return this.http.patch<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('cot', 'base')}/${id}`);
+    return this.http.patch<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   deleteCot(id: string): Observable<WebResponse<string>> {
-    return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('cot', 'base')}/${id}`);
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
   }
 
   listCot(
@@ -53,13 +55,17 @@ export class CotService {
     if (sortBy) params.append('sort_by', sortBy);
     if (sortOrder) params.append('sort_order', sortOrder);
 
-    const url = `${this.apiUrl}/${this.endpoint.list}${params.toString() ? `?${params.toString()}` : ''}`;
+    const endpoint = this.envService.getEndpoint('cot', 'list');
+    const url = this.envService.buildUrl(endpoint);
+    const fullUrl = `${url}${params.toString() ? `?${params.toString()}` : ''}`;
     
-    console.log('🔍 COT Service Debug - URL:', url);
-    console.log('🔍 COT Service Debug - API URL:', this.apiUrl);
-    console.log('🔍 COT Service Debug - Endpoint:', this.endpoint.list);
+    console.log('🔍 COT Service Debug - URL:', fullUrl);
+    console.log('🔍 COT Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
     
-    return this.http.get<WebResponse<CotResponse[]>>(url, {
+    return this.http.get<WebResponse<CotResponse[]>>(fullUrl, {
       withCredentials: true,
       ...options
     }).pipe(

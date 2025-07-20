@@ -1,33 +1,38 @@
 import { Injectable } from "@angular/core";
-import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { ParticipantResponse } from "../model/participant.model";
 import { WebResponse } from "../model/web.model";
+import { EnvironmentService } from "./environment.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ParticipantService {
-  private apiUrl = environment.apiUrl;
-  private endpoints = environment.endpoints.participant;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
+  ) {}
 
   createParticipant(request: FormData): Observable<WebResponse<ParticipantResponse>> {
-    return this.http.post<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('participant', 'base'));
+    return this.http.post<WebResponse<ParticipantResponse>>(url, request, { withCredentials: true });
   }
 
   getParticipantById(id: string): Observable<WebResponse<ParticipantResponse>> {
-    return this.http.get<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}`);
+    return this.http.get<WebResponse<ParticipantResponse>>(url, { withCredentials: true });
   }
 
   updateParticipant(id: string, request: FormData): Observable<WebResponse<ParticipantResponse>> {
-    return this.http.patch<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}`);
+    return this.http.patch<WebResponse<ParticipantResponse>>(url, request, { withCredentials: true });
   }
 
   deleteParticipant(id: string): Observable<WebResponse<ParticipantResponse>> {
-    return this.http.delete<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}`);
+    return this.http.delete<WebResponse<ParticipantResponse>>(url, { withCredentials: true });
   }
 
   listParticipants(query: string, page: number, size: number, sortBy: string, sortOrder: string) {
@@ -35,57 +40,74 @@ export class ParticipantService {
     if (query) params.keyword = query;
     if (sortBy) params.sort_by = sortBy;
     if (sortOrder) params.sort_order = sortOrder;
-    return this.http.get<{data:any[],paging:any,actions?:any}>(`/participants/list/result`, { params });
+    
+    const url = this.envService.buildUrl(this.envService.getEndpoint('participant', 'list'));
+    
+    console.log('🔍 Participant Service Debug - URL:', url);
+    console.log('🔍 Participant Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<{data:any[],paging:any,actions?:any}>(url, { params });
   }
 
   getFile({ id }: { id: string; }, fileName: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/participants/${id}/${fileName}`, {
+    const url = this.envService.buildUrl(`participants/${id}/${fileName}`);
+    return this.http.get(url, {
       responseType: 'blob',
       withCredentials: true,
     });
   }
 
   getFoto(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/participants/${id}/foto`, {
+    const url = this.envService.buildUrl(`participants/${id}/foto`);
+    return this.http.get(url, {
       responseType: 'blob',
       withCredentials: true,
     });
   }
 
   getQrCode(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/qr-code`, {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}/qr-code`);
+    return this.http.get(url, {
       responseType: 'blob',
       withCredentials: true,
     });
   }
 
   downloadIdCard(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/${this.endpoints.downloadIdCard}`, {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}/${this.envService.getEndpoint('participant', 'downloadIdCard')}`);
+    return this.http.get(url, {
       withCredentials: true,
       responseType: 'blob',
     });
   }
 
   downloadDocument(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}/download-id-card`, {
+    const url = this.envService.buildUrl(`${id}/download-id-card`);
+    return this.http.get(url, {
       withCredentials: true,
       responseType: 'blob',
     });
   }
 
   viewIdCard(id: string): Observable<string> {
-    return this.http.get(`${this.apiUrl}/${this.endpoints.base}/${id}/${this.endpoints.idCard}`, {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}/${this.envService.getEndpoint('participant', 'idCard')}`);
+    return this.http.get(url, {
       responseType: 'text',
       withCredentials: true,
     });
   }
 
   isDataComplete(id: string): Observable<WebResponse<boolean>> {
-    return this.http.get<WebResponse<boolean>>(`${this.apiUrl}/${this.endpoints.isComplete}/${id}`, { withCredentials: true });
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'isComplete')}/${id}`);
+    return this.http.get<WebResponse<boolean>>(url, { withCredentials: true });
   }
 
   downloadAllFiles(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/participants/${id}/download-all`, {
+    const url = this.envService.buildUrl(`participants/${id}/download-all`);
+    return this.http.get(url, {
       withCredentials: true,
       responseType: 'blob',
     });
