@@ -25,7 +25,7 @@ export class UserListComponent implements OnInit {
     { header: 'Nama', field: 'name' },
     { header: 'Dinas', field: 'dinas' },
     { header: 'Role', field: 'roleName' },
-    { header: 'email', field: 'email' },
+    { header: 'Email', field: 'email' },
     { header: 'Action', field: 'action' }
   ];
 
@@ -42,6 +42,10 @@ export class UserListComponent implements OnInit {
   // Komponen Search
   placeHolder: string = 'Cari User';
 
+  // State sorting universal
+  sortBy: string = 'idNumber';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   constructor(
     private userService: UserService,
     private sweetalertService: SweetalertService,
@@ -53,38 +57,50 @@ export class UserListComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['keyword'] || '';
       this.currentPage =+ params['page'] || 1;
-      this.getListUsers(this.searchQuery, this.currentPage, this.itemsPerPage);
+      this.sortBy = params['sort_by'] || 'idNumber';
+      this.sortOrder = params['sort_order'] || 'asc';
+      this.getListUsers(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
     });
   }
 
-  getListUsers(searchQuery: string, page: number, size: number): void {
+  getListUsers(query: string, page: number, size: number, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
-    this.isLoadingPagination = true;
-    this.userService.listUsers(searchQuery, page, size).subscribe({
-      next: ({ data, actions, paging }) => {
-        this.users = data.map((user: User) => {
-          return {
-            ...user,
-            idNumber: user.idNumber ?? '-',
-            dinas: user.dinas ?? '-',
-            roleName: user.role.name,
-            editLink: actions?.canEdit ? `/users/${user.id}/edit` : null,
-            deleteMethod: actions?.canDelete ? () => this.deleteParticipant(user) : null,
-          };
-        });
-        this.totalPages = paging?.totalPage ?? 1;
+    this.userService.listUsers(query, page, size, sortBy, sortOrder).subscribe({
+      next: (response) => {
+        this.users = response.data.map((user: User) => ({
+          ...user,
+          idNumber: user.idNumber ?? '-',
+          dinas: user.dinas ?? '-',
+          roleName: user.role?.name ?? '-',
+        }));
+        this.totalPages = response.paging?.totalPage ?? 1;
       },
       error: (error) => {
         console.log(error);
-        this.isLoading = false;
-        this.isLoadingPagination = false;
         this.sweetalertService.alert('Pemberitahuan', 'Server sedang sibuk atau terjadi gangguan. Silakan coba beberapa saat lagi.', 'error');
+        this.isLoading = false;
       },
       complete: () => {
         this.isLoading = false;
-        this.isLoadingPagination = false;
       }
     });
+  }
+
+  toggleSort(col: string) {
+    if (this.sortBy === col) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = col;
+      this.sortOrder = 'asc';
+    }
+    this.router.navigate([], {
+      queryParams: { sort_by: this.sortBy, sort_order: this.sortOrder, page: 1 },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
+    this.toggleSort(event.sortBy);
   }
 
   async deleteParticipant(user: User): Promise<void> {
@@ -100,7 +116,7 @@ export class UserListComponent implements OnInit {
             this.currentPage -= 1;
           }
 
-          this.getListUsers(this.searchQuery, this.currentPage, this.itemsPerPage);
+          this.getListUsers(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
           // Cek apakah halaman saat ini lebih besar dari total halaman
           if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages; // Pindah ke halaman sebelumnya

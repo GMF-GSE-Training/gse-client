@@ -2,10 +2,18 @@
 
 <app-data-management
   [pageTitle]="pageTitle"
-  [columns]="columns" [data]="users" [isLoading]="isLoading"
-  [totalPages]="totalPages" [currentPage]="currentPage" [isLoading]="isLoadingPagination" (pageChange)="onPageChanged($event)"
-  [placeHolder]="placeHolder" (searchChange)="onSearchChanged($event)"
+  [columns]="columns"
+  [data]="users"
+  [isLoading]="isLoading"
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChanged($event)"
+  (searchChange)="onSearchChanged($event)"
   (viewAllChange)="viewAll()"
+  [placeHolder]="placeHolder"
+  [sortBy]="sortBy"
+  [sortOrder]="sortOrder"
+  (sortChange)="onSortChange($event)"
   [blueButtonRoute]="'/users/add'"
   [roleBassedAccess]="['super admin', 'supervisor', 'lcu']"
 ></app-data-management>
