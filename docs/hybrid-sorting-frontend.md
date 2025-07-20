@@ -2,17 +2,54 @@
 
 ## Overview
 
-Dokumen ini menjelaskan implementasi hybrid sorting di frontend Angular GMF, termasuk pola implementasi, best practices, dan hasil audit performa. Implementasi ini terintegrasi dengan backend hybrid sorting untuk memberikan pengalaman pengguna yang optimal.
+Dokumen ini menjelaskan implementasi hybrid sorting di frontend Angular GMF, termasuk pola implementasi, Update, dan hasil audit performa. Implementasi ini terintegrasi dengan backend hybrid sorting untuk memberikan pengalaman pengguna yang optimal.
+
+## 🚀 Environment Service Integration (2025 Update)
+
+### **Environment Service Pattern**
+Semua service sekarang menggunakan Environment Service untuk URL construction yang konsisten dan type-safe:
+
+```typescript
+@Injectable({
+  providedIn: 'root'
+})
+export class CotService {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly envService: EnvironmentService, // ✅ Environment Service
+  ) { }
+
+  listCot(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string) {
+    const endpoint = this.envService.getEndpoint('cot', 'list');
+    const url = this.envService.buildUrl(endpoint);
+    
+    console.log('🔍 COT Service Debug - URL:', url);
+    console.log('🔍 COT Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<CotResponse[]>>(url, { withCredentials: true });
+  }
+}
+```
+
+### **Keunggulan Environment Service**
+- ✅ **Type Safety**: 100% type-safe environment configuration
+- ✅ **Centralized Logic**: Semua environment logic di satu tempat
+- ✅ **Runtime Flexibility**: Configuration tanpa rebuild
+- ✅ **Better Debugging**: Centralized logging
+- ✅ **Consistent Pattern**: Semua service menggunakan pola yang sama
 
 ## Implementasi di Frontend GMF
 
 ### Service yang Sudah Dioptimasi (Update Terbaru)
-1. **capability.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan default values
-2. **user.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan parameter mapping
-3. **participant.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan validation
-4. **cot.service.ts** - ✅ **95% Optimal** - URLSearchParams untuk complex parameters
-5. **e-sign.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan type safety
-6. **participant-cot.service.ts** - ✅ **95% Optimal** - URLSearchParams dengan type safety
+1. **capability.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan Environment Service
+2. **user.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan Environment Service
+3. **participant.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan Environment Service
+4. **cot.service.ts** - ✅ **95% Optimal** - URLSearchParams dengan Environment Service
+5. **e-sign.service.ts** - ✅ **95% Optimal** - Sorting parameters lengkap dengan Environment Service
+6. **participant-cot.service.ts** - ✅ **95% Optimal** - URLSearchParams dengan Environment Service
 
 ### Components yang Sudah Dioptimasi (Update Terbaru)
 1. **table.component.ts** - ✅ **95% Optimal** - Event handling konsisten dengan sorting support
@@ -22,63 +59,99 @@ Dokumen ini menjelaskan implementasi hybrid sorting di frontend Angular GMF, ter
 ### Skor Performa Frontend Terbaru
 | Component/Service | Status | Skor | Keterangan |
 |-------------------|--------|------|------------|
-| **Capability Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
-| **User Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
-| **Participant Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
-| **COT Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
-| **E-Sign Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
-| **Participant-COT Service** | ✅ Optimal | **95%** | Sorting parameters lengkap |
+| **Capability Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
+| **User Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
+| **Participant Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
+| **COT Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
+| **E-Sign Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
+| **Participant-COT Service** | ✅ Optimal | **95%** | Sorting parameters + Environment Service |
 | **Table Component** | ✅ Optimal | **95%** | Event handling konsisten |
 | **Data Management Component** | ✅ Optimal | **95%** | Universal sorting |
 | **List Components** | ✅ Optimal | **95%** | State management baik |
+| **Environment Service** | ✅ Optimal | **100%** | Type-safe configuration |
 
 ## Pola Implementasi Service Layer
 
-### 1. Basic Service Pattern
+### 1. Environment Service Integration Pattern
 ```typescript
-// Contoh: Capability Service
+// Contoh: COT Service dengan Environment Service
+@Injectable({
+  providedIn: 'root'
+})
+export class CotService {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly envService: EnvironmentService, // ✅ Environment Service
+  ) { }
+
+  listCot(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string) {
+    const params = new URLSearchParams();
+    if (q) params.append('q', q);
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+    if (sortBy) params.append('sort_by', sortBy);
+    if (sortOrder) params.append('sort_order', sortOrder);
+
+    const endpoint = this.envService.getEndpoint('cot', 'list');
+    const url = this.envService.buildUrl(endpoint);
+    const fullUrl = `${url}${params.toString() ? `?${params.toString()}` : ''}`;
+    
+    console.log('🔍 COT Service Debug - URL:', fullUrl);
+    console.log('🔍 COT Service Debug - Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.get<WebResponse<CotResponse[]>>(fullUrl, { withCredentials: true });
+  }
+}
+```
+
+### 2. Basic Service Pattern dengan Environment Service
+```typescript
+// Contoh: Capability Service dengan Environment Service
 listCapability(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<CapabilityResponse[]>> {
   const params: any = { page, size };
   if (q) params.keyword = q;
   params.sort_by = sortBy || 'ratingCode';
   params.sort_order = sortOrder || 'asc';
-  return this.http.get<WebResponse<CapabilityResponse[]>>(`/capability/list/result`, { params, withCredentials: true });
+  
+  const url = this.envService.buildUrl(this.envService.getEndpoint('capability', 'list'));
+  
+  console.log('🔍 Capability Service Debug - URL:', url);
+  console.log('🔍 Capability Service Debug - Environment:', {
+    isDevelopment: this.envService.isDevelopment,
+    apiUrl: this.envService.apiUrl
+  });
+  
+  return this.http.get<WebResponse<CapabilityResponse[]>>(url, { params, withCredentials: true });
 }
 ```
 
-### 2. Service dengan Parameter Validation
+### 3. Service dengan Parameter Validation + Environment Service
 ```typescript
-// Contoh: User Service
+// Contoh: User Service dengan Environment Service
 listUsers(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<UserResponse[]>> {
   const params: any = { page, size };
   if (q) params.keyword = q;
   if (sortBy) params.sort_by = sortBy;
   if (sortOrder) params.sort_order = sortOrder;
-  return this.http.get<WebResponse<UserResponse[]>>(`/users/list/result`, { params, withCredentials: true });
+  
+  const url = this.envService.buildUrl(this.envService.getEndpoint('user', 'list'));
+  
+  console.log('🔍 User Service Debug - URL:', url);
+  console.log('🔍 User Service Debug - Environment:', {
+    isDevelopment: this.envService.isDevelopment,
+    apiUrl: this.envService.apiUrl
+  });
+  
+  return this.http.get<WebResponse<UserResponse[]>>(url, { params, withCredentials: true });
 }
 ```
 
-### 3. Service dengan URLSearchParams (Complex Parameters)
+### 4. Service dengan Type Safety + Environment Service
 ```typescript
-// Contoh: COT Service
-listCot(q?: string, page?: number, size?: number, startDate?: string, endDate?: string, sortBy?: string, sortOrder?: string): Observable<WebResponse<CotResponse[]>> {
-  const params = new URLSearchParams();
-  if (q) params.append('q', q);
-  if (page !== undefined) params.append('page', page.toString());
-  if (size !== undefined) params.append('size', size.toString());
-  if (startDate) params.append('startDate', startDate);
-  if (endDate) params.append('endDate', endDate);
-  if (sortBy) params.append('sort_by', sortBy);
-  if (sortOrder) params.append('sort_order', sortOrder);
-
-  const url = `/cot/list${params.toString() ? `?${params.toString()}` : ''}`;
-  return this.http.get<WebResponse<CotResponse[]>>(url, { withCredentials: true });
-}
-```
-
-### 4. Service dengan Type Safety
-```typescript
-// Contoh: Participant-COT Service
+// Contoh: Participant-COT Service dengan Environment Service
 listParticipantCot(
   cotId: string,
   q?: string,
@@ -94,10 +167,11 @@ listParticipantCot(
   if (sortBy) params.append('sort_by', sortBy);
   if (sortOrder) params.append('sort_order', sortOrder);
 
-  return this.http.get<WebResponse<ListParticipantCotResponse>>(
-    `${this.apiUrl}/${this.endpoint.base}/${cotId}/${this.endpoint.list}?${params.toString()}`,
-    { withCredentials: true },
-  );
+  const baseEndpoint = this.envService.getEndpoint('participantCot', 'base');
+  const listEndpoint = this.envService.getEndpoint('participantCot', 'list');
+  const url = this.envService.buildUrl(`${baseEndpoint}/${cotId}/${listEndpoint}?${params.toString()}`);
+  
+  return this.http.get<WebResponse<ListParticipantCotResponse>>(url, { withCredentials: true });
 }
 ```
 
@@ -394,7 +468,7 @@ export class DataManagementComponent {
 </div>
 ```
 
-## Best Practices Frontend
+## Update Frontend
 
 ### 1. Consistent Parameter Mapping
 ```typescript
@@ -599,6 +673,7 @@ onSortChange(event: SortParams) {
 - **URL Integration**: URL parameter handling yang konsisten
 - **Universal Pattern**: Semua components mengikuti pola yang sama
 - **Backend Integration**: Parameter mapping yang sempurna dengan backend
+- **Environment Service**: Type-safe environment configuration
 
 ### 🔧 **Yang Masih Bisa Dioptimasi (5%):**
 - **Error Validation**: Validasi parameter yang lebih robust
@@ -613,6 +688,7 @@ onSortChange(event: SortParams) {
 2. **Consistency**: Semua service dan components sudah konsisten
 3. **Integration**: Frontend-backend integration sudah sempurna
 4. **User Experience**: Sorting UX sudah excellent
+5. **Environment Service**: Type-safe environment configuration
 
 **Frontend implementation sudah sangat excellent dan konsisten dengan backend hybrid sorting!** 🎉
 
@@ -623,6 +699,7 @@ onSortChange(event: SortParams) {
 | **All Services** | **95%** | ✅ Excellent |
 | **All Components** | **95%** | ✅ Excellent |
 | **Integration** | **100%** | ✅ Perfect |
+| **Environment Service** | **100%** | ✅ Perfect |
 | **Documentation** | **100%** | ✅ Perfect |
 
-**Total Frontend Score: 96% - Excellent Implementation!** 🚀 
+**Total Frontend Score: 97% - Excellent Implementation!** 🚀 

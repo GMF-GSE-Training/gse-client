@@ -240,7 +240,7 @@ try {
 }
 ```
 
-## 🎯 Best Practices
+## 🎯 Update
 
 ### ✅ Do's
 - Gunakan parameter mapping yang konsisten
@@ -269,7 +269,7 @@ try {
 
 - [Backend Hybrid Sorting](../backend/docs/hybrid-sorting.md)
 - [Lazy Loading Guide](./penjelasan-lazy-loading.md)
-- [Angular Best Practices](./angular-best-practices.md)
+- [Angular Update](./angular-updates.md)
 
 ---
 
