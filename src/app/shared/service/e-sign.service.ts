@@ -36,7 +36,11 @@ export class ESignService {
     return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
   }
 
-  listESign(q?: string, page?: number, size?: number): Observable<WebResponse<ESignResponse[]>> {
-    return this.http.get<WebResponse<ESignResponse[]>>(`${this.apiUrl}/${this.endpoint.list}?q=${q}&page=${page}&size=${size}`, { withCredentials: true });
+  listESign(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<ESignResponse[]>> {
+    const params: any = { page, size };
+    if (q) params.q = q;
+    if (sortBy) params.sort_by = sortBy;
+    if (sortOrder) params.sort_order = sortOrder;
+    return this.http.get<WebResponse<ESignResponse[]>>(`/e-sign/list/result`, { params, withCredentials: true });
   }
 }

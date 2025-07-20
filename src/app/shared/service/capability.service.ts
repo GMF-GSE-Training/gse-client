@@ -40,7 +40,19 @@ export class CapabilityService {
     return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}/${id}`, { withCredentials: true });
   }
 
-  listCapability(q?: string, page?: number, size?: number): Observable<WebResponse<CapabilityResponse[]>> {
-    return this.http.get<WebResponse<CapabilityResponse[]>>(`${this.apiUrl}/${this.endpoint.list}?q=${q}&page=${page}&size=${size}`, { withCredentials: true });
+  /**
+   * Mendapatkan list capability dengan dukungan sorting universal.
+   * @param q Query pencarian
+   * @param page Halaman
+   * @param size Jumlah per halaman
+   * @param sortBy Kolom untuk sorting (default: ratingCode)
+   * @param sortOrder Urutan sorting (asc/desc, default: asc)
+   */
+  listCapability(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<CapabilityResponse[]>> {
+    const params: any = { page, size };
+    if (q) params.keyword = q;
+    params.sort_by = sortBy || 'ratingCode';
+    params.sort_order = sortOrder || 'asc';
+    return this.http.get<WebResponse<CapabilityResponse[]>>(`/capability/list/result`, { params, withCredentials: true });
   }
 }

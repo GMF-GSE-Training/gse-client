@@ -38,6 +38,8 @@ export class CotService {
     size?: number,
     startDate?: string,
     endDate?: string,
+    sortBy?: string,
+    sortOrder?: string,
     options?: { headers?: HttpHeaders }
   ): Observable<WebResponse<CotResponse[]>> {
     
@@ -47,8 +49,10 @@ export class CotService {
     if (size !== undefined) params.append('size', size.toString());
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
+    if (sortBy) params.append('sort_by', sortBy);
+    if (sortOrder) params.append('sort_order', sortOrder);
 
-    const url = `${this.apiUrl}/${this.endpoint.list}${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `/cot/list${params.toString() ? `?${params.toString()}` : ''}`;
     return this.http.get<WebResponse<CotResponse[]>>(url, {
       withCredentials: true,
       ...options

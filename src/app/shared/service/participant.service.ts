@@ -30,8 +30,12 @@ export class ParticipantService {
     return this.http.delete<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, { withCredentials: true });
   }
 
-  listParticipants(q?: string, page?: number, size?: number): Observable<WebResponse<ParticipantResponse>> {
-    return this.http.get<WebResponse<ParticipantResponse>>(`${this.apiUrl}/${this.endpoints.list}?q=${q}&page=${page}&size=${size}`, { withCredentials: true });
+  listParticipants(query: string, page: number, size: number, sortBy: string, sortOrder: string) {
+    const params: any = { page, size };
+    if (query) params.keyword = query;
+    if (sortBy) params.sort_by = sortBy;
+    if (sortOrder) params.sort_order = sortOrder;
+    return this.http.get<{data:any[],paging:any,actions?:any}>(`/participants/list/result`, { params });
   }
 
   getFile({ id }: { id: string; }, fileName: string): Observable<Blob> {

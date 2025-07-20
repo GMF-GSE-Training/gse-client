@@ -57,9 +57,18 @@ export class ParticipantCotService {
     q?: string,
     page?: number,
     size?: number,
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc',
   ): Observable<WebResponse<ListParticipantCotResponse>> {
+    const params = new URLSearchParams();
+    if (q) params.append('q', q);
+    if (page) params.append('page', page.toString());
+    if (size) params.append('size', size.toString());
+    if (sortBy) params.append('sort_by', sortBy);
+    if (sortOrder) params.append('sort_order', sortOrder);
+
     return this.http.get<WebResponse<ListParticipantCotResponse>>(
-      `${this.apiUrl}/${this.endpoint.base}/${cotId}/${this.endpoint.list}?q=${q}&page=${page}&size=${size}`,
+      `${this.apiUrl}/${this.endpoint.base}/${cotId}/${this.endpoint.list}?${params.toString()}`,
       { withCredentials: true },
     );
   }

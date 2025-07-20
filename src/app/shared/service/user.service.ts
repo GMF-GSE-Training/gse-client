@@ -29,8 +29,12 @@ export class UserService {
     return this.http.patch<WebResponse<string>>(`${this.apiUrl}/${this.endpoints.base}/${id}`, request, { withCredentials: true });
   }
 
-  listUsers(q?: string, page?: number, size?: number): Observable<WebResponse<UserResponse[]>> {
-    return this.http.get<WebResponse<UserResponse[]>>(`${this.apiUrl}/${this.endpoints.list}?q=${q}&page=${page}&size=${size}`, { withCredentials: true });
+  listUsers(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<UserResponse[]>> {
+    const params: any = { page, size };
+    if (q) params.keyword = q;
+    if (sortBy) params.sort_by = sortBy;
+    if (sortOrder) params.sort_order = sortOrder;
+    return this.http.get<WebResponse<UserResponse[]>>(`/users/list/result`, { params, withCredentials: true });
   }
 
   deleteUser(id: string): Observable<WebResponse<string>> {
