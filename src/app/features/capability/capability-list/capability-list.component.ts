@@ -22,8 +22,8 @@ export class CapabilityListComponent implements OnInit {
     { header: 'Kode Rating', field: 'ratingCode' },
     { header: 'Kode Training', field: 'trainingCode' },
     { header: 'Nama Training', field: 'trainingName' },
-    { header: 'Durasi Materi Regulasi GSE', field: 'durasiMateriRegulasGSE' },
-    { header: 'Durasi Materi Kompetensi', field: 'durasiMateriRating' },
+    { header: 'Durasi Materi Regulasi GSE', field: 'durasiMateriRegulasiGSE' },
+    { header: 'Durasi Materi Kompetensi', field: 'durasiMateriKompetensi' },
     { header: 'Total Durasi', field: 'totalDuration' },
     { header: 'Kurikulum & Silabus', field: 'kurikulumSilabus' },
     { header: 'Action', field: 'action' }
@@ -41,6 +41,10 @@ export class CapabilityListComponent implements OnInit {
   // Komponen Search
   placeHolder: string = 'Cari Capability';
 
+  // State sorting universal
+  sortBy: string = 'ratingCode';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   constructor(
     private capabilityService: CapabilityService,
     private router: Router,
@@ -52,13 +56,15 @@ export class CapabilityListComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['keyword'] || '';
       this.currentPage =+ params['page'] || 1;
-      this.getListCapability(this.searchQuery, this.currentPage, this.itemsPerPage);
+      this.sortBy = params['sort_by'] || 'ratingCode';
+      this.sortOrder = params['sort_order'] || 'asc';
+      this.getListCapability(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
     });
   }
 
-  getListCapability(query: string, page: number, size: number): void {
+  getListCapability(query: string, page: number, size: number, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
-    this.capabilityService.listCapability(query, page, size).subscribe({
+    this.capabilityService.listCapability(query, page, size, sortBy, sortOrder).subscribe({
       next: ({ data, actions, paging }) => {
         this.capability = data.map((capability: any) => {
           return {
@@ -66,9 +72,9 @@ export class CapabilityListComponent implements OnInit {
             ratingCode: capability.ratingCode,
             trainingCode: capability.trainingCode,
             trainingName: capability.trainingName,
-            durasiMateriRegulasGSE: capability.totalMaterialDurationRegGse ?? "-",
-            durasiMateriRating: capability.totalMaterialDurationCompetency,
-            totalDuration: capability.totalDuration ?? "-",
+            durasiMateriRegulasiGSE: capability.totalMaterialDurationRegGse ?? "-",
+            durasiMateriKompetensi: capability.totalMaterialDurationCompetency ?? "-",
+            totalDuration: ((capability.totalMaterialDurationRegGse || 0) + (capability.totalMaterialDurationCompetency || 0)) || "-",
             kurikulumSilabus: `/capability/${capability.id}/curriculum-syllabus`,
             editLink: actions?.canEdit ? `/capability/${capability.id}/edit` : null,
             deleteMethod: actions?.canDelete ? () => this.deleteCapability(capability) : null,
@@ -99,7 +105,7 @@ export class CapabilityListComponent implements OnInit {
             this.currentPage -= 1;
           }
 
-          this.getListCapability(this.searchQuery, this.currentPage, this.itemsPerPage);
+          this.getListCapability(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
 
           // Cek apakah halaman saat ini lebih besar dari total halaman
           if (this.currentPage > this.totalPages) {
@@ -152,5 +158,22 @@ export class CapabilityListComponent implements OnInit {
       queryParamsHandling: 'merge',
     });
     this.searchQuery = '';
+  }
+
+  toggleSort(col: string) {
+    if (this.sortBy === col) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = col;
+      this.sortOrder = 'asc';
+    }
+    this.router.navigate([], {
+      queryParams: { sort_by: this.sortBy, sort_order: this.sortOrder, page: 1 },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
+    this.toggleSort(event.sortBy);
   }
 }
