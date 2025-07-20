@@ -2,93 +2,65 @@
 
 ## Overview
 
-Dokumen ini menjelaskan implementasi environment configuration modern untuk Angular 2025 menggunakan Environment Service pattern dengan runtime configuration dan type safety.
+Dokumen ini menjelaskan implementasi environment configuration modern untuk Angular 2025 menggunakan Environment Service pattern dengan runtime configuration, type safety, dan dukungan penuh untuk berbagai skenario development maupun production (termasuk domain, IP address, dan port).
 
 ## Architecture
 
 ### 1. Environment Service Pattern
-- **Centralized Configuration**: Semua environment variables dikelola melalui `EnvironmentService`
-- **Runtime Detection**: Environment detection berdasarkan hostname dan port
-- **Type Safety**: Interface definitions untuk semua environment variables
-- **Debug Logging**: Comprehensive logging untuk troubleshooting
+- **Centralized Configuration**: Semua environment variables dikelola melalui `EnvironmentService`.
+- **Runtime Detection**: Environment detection berdasarkan hostname, port, dan IP (termasuk IP internal/LAN).
+- **Type Safety**: Interface definitions untuk semua environment variables.
+- **Debug Logging**: Comprehensive logging untuk troubleshooting.
+- **Flexible Fallback**: Mendukung domain, IP address, dan custom port.
 
 ### 2. Runtime Configuration
-- **env.js**: File konfigurasi runtime yang di-load sebelum aplikasi
-- **Fallback Strategy**: Fallback ke build-time environment jika runtime tidak tersedia
-- **Dynamic Loading**: Environment variables dapat diubah tanpa rebuild
+- **env.js**: File konfigurasi runtime yang di-load sebelum aplikasi.
+- **Fallback Strategy**: Fallback ke build-time environment jika runtime tidak tersedia.
+- **Dynamic Loading**: Environment variables dapat diubah tanpa rebuild.
+- **Runtime Update**: Mendukung update konfigurasi saat aplikasi sudah jalan (tanpa rebuild) via `window.updateDevConfig` dan `window.updateProductionDomain`.
 
 ## Implementation
 
 ### Environment Service (`src/app/shared/service/environment.service.ts`)
 
-```typescript
-import { Injectable } from '@angular/core';
+- Mendukung deteksi otomatis development/production berdasarkan:
+  - Hostname: `localhost`, `127.0.0.1`, `0.0.0.0`, dan IP LAN (misal `192.168.x.x`, `10.x.x.x`, `172.16.x.x`)
+  - Port: `4200`, `3000`, `8080`, `8000`, `9000`, `4000`, `5000` (dan bisa ditambah)
+  - Protocol: `http:` (untuk dev), `https:` (untuk production)
+- Mendukung custom API URL dan port via env.js
+- Mendukung fallback ke default jika tidak ada config
+- Mendukung runtime update config
 
-// Type definitions untuk window environment variables
-declare global {
-  interface Window {
-    __env?: {
-      API_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-    };
-    _env?: {
-      BASE_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-    };
-  }
-}
+### env.js (Runtime Configuration)
 
-export interface Environment {
-  apiUrl: string;
-  hcaptchaSiteKey: string;
-  production: boolean;
-  isDevelopment: boolean;
-}
+- Bisa diatur untuk development (localhost, IP LAN, custom port) maupun production (domain atau IP internal)
+- Mendukung runtime update dengan fungsi:
+  - `window.updateDevConfig(devApiUrl, devPort)`
+  - `window.updateProductionDomain(newDomain)`
 
-@Injectable({
-  providedIn: 'root'
-})
-export class EnvironmentService {
-  // Implementation details...
-}
+## Cara Setting untuk Developer
+
+### 1. Development dengan Localhost/127.0.0.1/0.0.0.0
+
+```javascript
+// src/assets/env.js
+window.__env = {
+  DEV_API_URL: 'http://localhost:3000', // atau http://127.0.0.1:3000
+  DEV_PORT: '4200' // atau custom port
+};
 ```
 
-### Key Features
+### 2. Development dengan IP LAN (misal untuk sharing ke device lain di jaringan)
 
-1. **Type Safety**: Global type definitions untuk `window.__env` dan `window._env`
-2. **Environment Detection**: Otomatis mendeteksi development vs production
-3. **Endpoint Management**: Centralized endpoint configuration
-4. **Debug Logging**: Comprehensive logging untuk troubleshooting
-5. **URL Building**: Helper methods untuk membangun URL
-
-## Migration Guide
-
-### Before (Legacy Approach)
-```typescript
-import { environment } from '../../environments/environment';
-
-@Injectable()
-export class UserService {
-  private apiUrl = environment.apiUrl;
-}
+```javascript
+window.__env = {
+  DEV_API_URL: 'http://192.168.1.100:3000', // IP backend
+  DEV_PORT: '8080' // port frontend
+};
 ```
 
-### After (Environment Service Pattern)
-```typescript
-@Injectable()
-export class UserService {
-  constructor(private environmentService: EnvironmentService) {}
+### 3. Production dengan Domain
 
-  getUsers() {
-    const url = this.environmentService.buildUrl('users');
-    // Implementation...
-  }
-}
-```
-
-## Configuration Files
-
-### 1. env.js (Runtime Configuration)
 ```javascript
 window.__env = {
   API_URL: 'https://api.production.com',
@@ -96,194 +68,87 @@ window.__env = {
 };
 ```
 
-### 2. angular.json (Build Configuration)
-```json
-{
-  "configurations": {
-    "production": {
-      "optimization": true,
-      "outputHashing": "all",
-      "sourceMap": false,
-      "namedChunks": false,
-      "extractLicenses": true,
-      "budgets": [...],
-      "baseHref": "/"
-    },
-    "development": {
-      "optimization": false,
-      "extractLicenses": false,
-      "sourceMap": false
-    }
-  }
+### 4. Production dengan IP Internal (server perusahaan)
+
+```javascript
+window.__env = {
+  API_URL: 'http://10.10.10.10:3000', // IP internal backend
+  HCAPTCHA_SITEKEY: 'your-hcaptcha-key'
+};
+```
+
+### 5. Runtime Update (Tanpa Rebuild)
+
+```javascript
+// Ganti API URL development saat aplikasi sudah jalan
+devApiUrl = 'http://192.168.1.101:3000';
+window.updateDevConfig(devApiUrl, '8080');
+
+// Ganti API URL production saat aplikasi sudah jalan
+window.updateProductionDomain('http://10.10.10.20:3000');
+```
+
+## Tabel Ringkasan Skenario & Setting
+
+| Skenario                | env.js Setting Example                                 | Keterangan |
+|-------------------------|-------------------------------------------------------|------------|
+| Dev - localhost:4200    | DEV_API_URL: 'http://localhost:3000', DEV_PORT: '4200'| Default Angular |
+| Dev - 127.0.0.1:8080    | DEV_API_URL: 'http://127.0.0.1:3000', DEV_PORT: '8080'| Custom port |
+| Dev - IP LAN            | DEV_API_URL: 'http://192.168.1.100:3000', DEV_PORT: '8080'| Untuk sharing ke device lain |
+| Prod - domain           | API_URL: 'https://api.production.com'                 | Domain publik |
+| Prod - IP internal      | API_URL: 'http://10.10.10.10:3000'                    | Server internal perusahaan |
+
+## Bagaimana Sistem Memilih API URL?
+
+1. **Priority Chain** (di EnvironmentService):
+   - `window.__env.API_URL` (runtime, production)
+   - `window._env.BASE_URL` (runtime, alternatif)
+   - `window.__env.BACKEND_URL` (runtime, backup)
+   - **Development**: `window.__env.DEV_API_URL` atau default (`http://localhost:3000`)
+   - **Fallback**: Hardcoded default (untuk production)
+2. **Development Detection**: Otomatis berdasarkan hostname, port, dan IP (termasuk IP LAN)
+3. **Runtime Update**: Bisa diubah saat aplikasi sudah jalan tanpa rebuild
+
+## Keamanan Penggunaan IP Internal di Production
+
+- **Pastikan** IP internal hanya diakses dari jaringan internal perusahaan (gunakan firewall/VPN)
+- **Jangan expose** IP internal ke internet publik
+- **Gunakan HTTPS** jika memungkinkan, walaupun di internal
+- **Audit** akses dan log API untuk keamanan
+
+## Contoh Debug Logging
+
+Saat aplikasi jalan, akan muncul log seperti:
+```text
+🔍 Environment Service Debug: {
+  hostname: '192.168.1.100',
+  port: '8080',
+  isDevelopment: true,
+  apiUrl: 'http://192.168.1.100:3000',
+  devApiUrl: 'http://192.168.1.100:3000',
+  devPort: '8080',
+  production: false,
+  ...
 }
 ```
 
 ## Troubleshooting
 
-### Common Errors and Solutions
+- **API tidak bisa diakses?**
+  - Cek log debug di browser console
+  - Pastikan env.js sudah di-load sebelum main.js
+  - Pastikan IP/port backend benar dan bisa diakses dari frontend
+- **Ganti domain/IP/port?**
+  - Update env.js lalu refresh, atau gunakan runtime update
 
-#### 1. TypeScript Error: Property '__env' does not exist on type 'Window'
-**Error:**
-```
-TS2339: Property '__env' does not exist on type 'Window & typeof globalThis'
-```
+## Summary
 
-**Solution:**
-Tambahkan type definitions di Environment Service:
-```typescript
-declare global {
-  interface Window {
-    __env?: {
-      API_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-    };
-    _env?: {
-      BASE_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-    };
-  }
-}
-```
+- **EnvironmentService** dan **env.js** sekarang mendukung semua skenario modern: domain, IP address (termasuk IP internal/LAN), custom port, dan runtime update.
+- Developer cukup atur env.js sesuai kebutuhan, tanpa perlu rebuild.
+- Semua logic pemilihan environment sudah otomatis dan fleksibel.
+- Aman untuk digunakan di production, termasuk untuk server internal perusahaan.
 
-#### 2. Angular Build Error: Environment file not found
-**Error:**
-```
-The /path/to/environment.development.ts path in file replacements does not exist
-```
-
-**Solution:**
-Hapus `fileReplacements` dari `angular.json`:
-```json
-{
-  "configurations": {
-    "production": {
-      // Remove fileReplacements section
-    },
-    "development": {
-      // Remove fileReplacements section
-    }
-  }
-}
-```
-
-#### 3. Missing Start Script Error
-**Error:**
-```
-ERR_PNPM_NO_SCRIPT_OR_SERVER Missing script start or file server.js
-```
-
-**Solution:**
-Pastikan berada di direktori yang benar:
-```bash
-cd /path/to/frontend
-pnpm start
-```
-
-#### 4. Workspace Config Error
-**Error:**
-```
-Workspace config file cannot be loaded: /path/to/angular.json
-Unknown format - version specifier not found
-```
-
-**Solution:**
-Pastikan `angular.json` memiliki format yang benar dan berada di direktori frontend.
-
-## Update
-
-### 1. Environment Detection
-```typescript
-private isDevelopmentEnvironment(): boolean {
-  return window.location.hostname === 'localhost' || 
-         window.location.hostname === '127.0.0.1' || 
-         window.location.port === '4200';
-}
-```
-
-### 2. Debug Logging
-```typescript
-private logEnvironment(): void {
-  console.log('🔍 Environment Service Debug:', {
-    hostname: window.location.hostname,
-    port: window.location.port,
-    isDevelopment: this.env.isDevelopment,
-    apiUrl: this.env.apiUrl,
-    production: this.env.production,
-    hcaptchaSiteKey: this.env.hcaptchaSiteKey ? '***' : 'not set'
-  });
-}
-```
-
-### 3. URL Building
-```typescript
-buildUrl(endpoint: string): string {
-  return this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/${endpoint}`;
-}
-```
-
-### 4. Service Integration
-```typescript
-@Injectable()
-export class UserService {
-  constructor(private environmentService: EnvironmentService) {}
-
-  getUsers() {
-    const url = this.environmentService.buildUrl(
-      this.environmentService.getEndpoint('user', 'list')
-    );
-    console.log('🔍 UserService: Fetching users from:', url);
-    return this.http.get(url);
-  }
-}
-```
-
-## Deployment
-
-### Development
-```bash
-cd frontend
-pnpm start
-```
-
-### Production
-```bash
-cd frontend
-pnpm build
-```
-
-### Docker
-```dockerfile
-# Copy env.js for runtime configuration
-COPY src/assets/env.js /usr/share/nginx/html/assets/
-```
-
-## Security Considerations
-
-1. **Environment Variables**: Jangan hardcode sensitive data
-2. **API Keys**: Gunakan environment variables untuk API keys
-3. **Debug Logging**: Nonaktifkan debug logging di production
-4. **HTTPS**: Gunakan HTTPS di production
-
-## Monitoring and Debugging
-
-### Debug Logs
-Semua service memiliki debug logging untuk memudahkan troubleshooting:
-```typescript
-console.log('🔍 ServiceName: Action description', { data });
-```
-
-### Environment Detection
-Environment Service secara otomatis mendeteksi environment dan menampilkan informasi debug.
-
-### Error Handling
-Implement proper error handling untuk environment loading failures.
-
-## Future Improvements
-
-1. **Environment Validation**: Validasi environment variables saat startup
-2. **Feature Flags**: Implementasi feature flags berdasarkan environment
-3. **Configuration Hot Reload**: Hot reload untuk environment changes
-4. **Environment Templates**: Template untuk berbagai environment configurations
+---
 
 ## References
 
