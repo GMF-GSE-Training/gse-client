@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { HttpClient, HttpHeaders, HttpErrorResponse } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { CotResponse, CreateCot, UpdateCot } from "../model/cot.model";
 import { WebResponse } from "../model/web.model";
 
@@ -52,10 +53,24 @@ export class CotService {
     if (sortBy) params.append('sort_by', sortBy);
     if (sortOrder) params.append('sort_order', sortOrder);
 
-    const url = `/cot/list${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${this.apiUrl}/${this.endpoint.list}${params.toString() ? `?${params.toString()}` : ''}`;
+    
+    console.log('🔍 COT Service Debug - URL:', url);
+    console.log('🔍 COT Service Debug - API URL:', this.apiUrl);
+    console.log('🔍 COT Service Debug - Endpoint:', this.endpoint.list);
+    
     return this.http.get<WebResponse<CotResponse[]>>(url, {
       withCredentials: true,
       ...options
-    });
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('🔍 COT Service Error:', error);
+        if (error.status === 200 && error.error && typeof error.error === 'string' && error.error.includes('<!doctype')) {
+          console.error('🔍 Server returned HTML instead of JSON. Possible authentication or routing issue.');
+          return throwError(() => new Error('Server returned HTML instead of JSON. Please check authentication or try refreshing the page.'));
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }
