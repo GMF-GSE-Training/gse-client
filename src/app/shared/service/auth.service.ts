@@ -92,12 +92,21 @@ export class AuthService {
     return this.http.post<WebResponse<AuthResponse>>(url, { refreshToken }, { withCredentials: true })
         .pipe(
             tap(response => {
-                console.log('🔍 AuthService: Refresh Token success:', response);
-                if (response.data) {
-                    this.setUserProfile(response.data);
+                // Validasi response
+                if (!response || typeof response.data !== 'object' || !response.data.accessToken || typeof response.data.accessToken !== 'string') {
+                  console.error('🔍 AuthService: Invalid refresh token response', response);
+                  // Tambahkan kode error khusus
+                  throw { code: 'REFRESH_INVALID_RESPONSE', message: 'Refresh token response invalid', response };
                 }
+                console.log('🔍 AuthService: Refresh Token success:', response);
+                this.setUserProfile(response.data);
             }),
             catchError(error => {
+                if (error?.code === 'REFRESH_INVALID_RESPONSE') {
+                  // Jangan update localStorage, langsung throw error
+                  console.error('🔍 AuthService: REFRESH_INVALID_RESPONSE', error);
+                  return throwError(() => error);
+                }
                 console.error('🔍 AuthService: Refresh Token error:', error);
                 this.setUserProfile(null);
                 return throwError(() => error);

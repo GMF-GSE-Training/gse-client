@@ -99,7 +99,6 @@ const handle401Error = (
           hasNewToken: !!response.data?.accessToken,
           tokenLength: response.data?.accessToken?.length
         });
-        
         isRefreshing = false;
         refreshTokenSubject.next(response.data?.accessToken || null);
 
@@ -109,13 +108,20 @@ const handle401Error = (
             Authorization: `Bearer ${response.data?.accessToken}`,
           },
         });
-        
         console.log('🔍 AuthInterceptor: Retrying original request with new token');
         return next(clonedReq);
       }),
       catchError((err) => {
-        console.error('🔍 AuthInterceptor: Token refresh failed:', err);
         isRefreshing = false;
+        // Tangani error khusus dari AuthService
+        if (err?.code === 'REFRESH_INVALID_RESPONSE') {
+          console.error('🔍 AuthInterceptor: REFRESH_INVALID_RESPONSE', err);
+          sweetalertService.alert('Sesi Berakhir', 'Sesi Anda berakhir, silakan login ulang. (Kode: REFRESH_INVALID_RESPONSE)', 'warning');
+          clearLocalStorageAndLogout(router, authService);
+          router.navigate(['/login']);
+          return throwError(() => err);
+        }
+        console.error('🔍 AuthInterceptor: Token refresh failed:', err);
         clearLocalStorageAndLogout(router, authService);
         sweetalertService.alert('Sesi Berakhir', 'Sesi Anda telah berakhir. Silakan login kembali.', 'warning');
         router.navigate(['/login']);
