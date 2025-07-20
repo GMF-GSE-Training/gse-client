@@ -5,11 +5,22 @@ declare global {
   interface Window {
     __env?: {
       API_URL?: string;
+      BACKEND_URL?: string;
       HCAPTCHA_SITEKEY?: string;
+      DEV_API_URL?: string;
+      DEV_PORT?: string;
+      DEFAULT_DEV_API_URL?: string;
+      DEFAULT_DEV_PORT?: string;
+      PRODUCTION_API_URL?: string;
+      DEFAULT_HCAPTCHA_SITEKEY?: string;
+      [key: string]: string | undefined; // <-- tambahkan index signature
     };
     _env?: {
       BASE_URL?: string;
       HCAPTCHA_SITEKEY?: string;
+      DEV_API_URL?: string;
+      DEV_PORT?: string;
+      [key: string]: string | undefined;
     };
   }
 }
@@ -19,6 +30,9 @@ export interface Environment {
   hcaptchaSiteKey: string;
   production: boolean;
   isDevelopment: boolean;
+  isSecure: boolean;
+  devApiUrl?: string;
+  devPort?: string;
 }
 
 export interface EnvironmentEndpoints {
@@ -87,20 +101,72 @@ export class EnvironmentService {
   constructor() {
     this.env = this.loadEnvironment();
     this.endpointsConfig = this.loadEndpoints();
-    
-    // Debug logging
     this.logEnvironment();
+  }
+
+  private getEnvVar(key: string, fallback: string = ''): string {
+    return window.__env?.[key] ?? fallback;
   }
 
   private loadEnvironment(): Environment {
     const isDevelopment = this.isDevelopmentEnvironment();
-    
+    const isSecure = this.isSecureConnection();
+    const apiUrl = this.resolveApiUrl(isDevelopment);
+    const devApiUrl = this.resolveDevApiUrl();
+    const devPort = this.resolveDevPort();
     return {
       production: !isDevelopment,
       isDevelopment,
-      apiUrl: isDevelopment ? '' : (window.__env?.API_URL || window._env?.BASE_URL || ''),
-      hcaptchaSiteKey: window.__env?.HCAPTCHA_SITEKEY || window._env?.HCAPTCHA_SITEKEY || '',
+      isSecure,
+      apiUrl,
+      devApiUrl,
+      devPort,
+      hcaptchaSiteKey: this.resolveHcaptchaSiteKey(),
     };
+  }
+
+  private resolveApiUrl(isDevelopment: boolean): string {
+    const candidates = [
+      window.__env?.API_URL,
+      window._env?.BASE_URL,
+      window.__env?.BACKEND_URL,
+      window.__env?.PRODUCTION_API_URL
+    ];
+    for (const candidate of candidates) {
+      if (candidate && candidate.trim()) {
+        console.log(`🔍 Environment: Using API URL: ${candidate}`);
+        return candidate.trim();
+      }
+    }
+    if (isDevelopment) {
+      const devApiUrl = this.resolveDevApiUrl();
+      if (devApiUrl) {
+        console.log('🔍 Environment: Development mode - using dev API URL:', devApiUrl);
+        return devApiUrl;
+      }
+      console.log('🔍 Environment: Development mode - using proxy');
+      return '';
+    }
+    console.log('🔍 Environment: Production mode - using default API');
+    return this.getEnvVar('PRODUCTION_API_URL', '');
+  }
+
+  private resolveDevApiUrl(): string {
+    return window.__env?.DEV_API_URL ||
+           window.__env?.DEFAULT_DEV_API_URL ||
+           '';
+  }
+
+  private resolveDevPort(): string {
+    return window.__env?.DEV_PORT ||
+           window.__env?.DEFAULT_DEV_PORT ||
+           '';
+  }
+
+  private resolveHcaptchaSiteKey(): string {
+    return window.__env?.HCAPTCHA_SITEKEY ||
+           window.__env?.DEFAULT_HCAPTCHA_SITEKEY ||
+           '';
   }
 
   private loadEndpoints(): EnvironmentEndpoints {
@@ -162,19 +228,73 @@ export class EnvironmentService {
   }
 
   private isDevelopmentEnvironment(): boolean {
-    return window.location.hostname === 'localhost' || 
-           window.location.hostname === '127.0.0.1' || 
-           window.location.port === '4200';
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const protocol = window.location.protocol;
+    const DEVELOPMENT_HOSTNAMES = ['localhost', '127.0.0.1', '0.0.0.0'];
+    const DEVELOPMENT_PORTS = ['4200', '3000', '8080', '8000', '9000', '4000', '5000'];
+    const PRODUCTION_DOMAINS = ['gmf-aeroasia.publicvm.com', 'gmf-aeroasia.com'];
+    const isLocalhost = DEVELOPMENT_HOSTNAMES.includes(hostname);
+    const isDevPort = DEVELOPMENT_PORTS.includes(port);
+    const isHttp = protocol === 'http:';
+    const isLocalNetwork = this.isLocalNetworkAddress(hostname);
+    const isProductionDomain = PRODUCTION_DOMAINS.some(domain => hostname.includes(domain));
+    const isHttps = protocol === 'https:';
+    const isDevelopment = isLocalhost || isDevPort || isLocalNetwork || (isHttp && !isProductionDomain);
+    console.log('🔍 Environment Detection:', {
+      hostname,
+      port,
+      protocol,
+      isLocalhost,
+      isDevPort,
+      isHttp,
+      isLocalNetwork,
+      isProductionDomain,
+      isHttps,
+      isDevelopment,
+      developmentHostnames: DEVELOPMENT_HOSTNAMES,
+      developmentPorts: DEVELOPMENT_PORTS,
+      productionDomains: PRODUCTION_DOMAINS
+    });
+    return isDevelopment;
+  }
+
+  private isLocalNetworkAddress(hostname: string): boolean {
+    const localNetworkPatterns = [
+      /^192\.168\./,
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./
+    ];
+    return localNetworkPatterns.some(pattern => pattern.test(hostname));
+  }
+
+  private isSecureConnection(): boolean {
+    const DEVELOPMENT_HOSTNAMES = ['localhost', '127.0.0.1', '0.0.0.0'];
+    return window.location.protocol === 'https:' ||
+           DEVELOPMENT_HOSTNAMES.includes(window.location.hostname) ||
+           this.isLocalNetworkAddress(window.location.hostname);
   }
 
   private logEnvironment(): void {
     console.log('🔍 Environment Service Debug:', {
       hostname: window.location.hostname,
       port: window.location.port,
+      protocol: window.location.protocol,
       isDevelopment: this.env.isDevelopment,
+      isSecure: this.env.isSecure,
       apiUrl: this.env.apiUrl,
+      devApiUrl: this.env.devApiUrl,
+      devPort: this.env.devPort,
       production: this.env.production,
-      hcaptchaSiteKey: this.env.hcaptchaSiteKey ? '***' : 'not set'
+      hcaptchaSiteKey: this.env.hcaptchaSiteKey ? '***' : 'not set',
+      productionApiUrl: window.__env?.PRODUCTION_API_URL,
+      defaultDevApiUrl: window.__env?.DEFAULT_DEV_API_URL,
+      defaultDevPort: window.__env?.DEFAULT_DEV_PORT,
+      defaultHcaptchaSiteKey: window.__env?.DEFAULT_HCAPTCHA_SITEKEY,
+      windowEnv: {
+        __env: window.__env,
+        _env: window._env
+      }
     });
   }
 
@@ -195,19 +315,113 @@ export class EnvironmentService {
     return this.env.isDevelopment;
   }
 
+  get isSecure(): boolean {
+    return this.env.isSecure;
+  }
+
+  get devApiUrl(): string {
+    return this.env.devApiUrl || '';
+  }
+
+  get devPort(): string {
+    return this.env.devPort || '';
+  }
+
+  // Update 2025: Getter untuk production API URL
+  get productionApiUrl(): string {
+    return window.__env?.PRODUCTION_API_URL || '';
+  }
+
+  get defaultDevApiUrl(): string {
+    return window.__env?.DEFAULT_DEV_API_URL || '';
+  }
+
+  get defaultDevPort(): string {
+    return window.__env?.DEFAULT_DEV_PORT || '';
+  }
+
+  get defaultHcaptchaSiteKey(): string {
+    return window.__env?.DEFAULT_HCAPTCHA_SITEKEY || '';
+  }
+
   // Getters untuk endpoints
   get endpoints(): EnvironmentEndpoints {
     return this.endpointsConfig;
   }
 
-  // Helper method untuk membangun URL
+  // Helper method untuk membangun URL dengan validation
   buildUrl(endpoint: string): string {
-    return this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/${endpoint}`;
+    if (!endpoint) {
+      console.warn('🔍 Environment: Empty endpoint provided');
+      return '';
+    }
+    
+    const url = this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/${endpoint}`;
+    console.log(`🔍 Environment: Building URL: ${url}`);
+    return url;
   }
 
-  // Helper method untuk mendapatkan endpoint
+  // Helper method untuk mendapatkan endpoint dengan validation
   getEndpoint(category: keyof EnvironmentEndpoints, key: string): string {
     const categoryEndpoints = this.endpointsConfig[category] as any;
-    return categoryEndpoints?.[key] || '';
+    const endpoint = categoryEndpoints?.[key];
+    
+    if (!endpoint) {
+      console.warn(`🔍 Environment: Endpoint not found for ${category}.${key}`);
+      return '';
+    }
+    
+    return endpoint;
+  }
+
+  // Update 2025: Method untuk validasi environment
+  validateEnvironment(): { isValid: boolean; issues: string[] } {
+    const issues: string[] = [];
+    
+    if (!this.env.apiUrl && !this.env.isDevelopment) {
+      issues.push('API URL tidak ditemukan untuk production environment');
+    }
+    
+    if (!this.env.hcaptchaSiteKey) {
+      issues.push('HCAPTCHA_SITEKEY tidak ditemukan');
+    }
+    
+    if (!this.env.isSecure && this.env.production) {
+      issues.push('Production environment tidak menggunakan HTTPS');
+    }
+    
+    const isValid = issues.length === 0;
+    
+    if (!isValid) {
+      console.warn('🔍 Environment Validation Issues:', issues);
+    }
+    
+    return { isValid, issues };
+  }
+
+  // Update 2025: Method untuk update production domain
+  updateProductionDomain(newDomain: string): void {
+    window.__env?.PRODUCTION_API_URL && (window.__env.PRODUCTION_API_URL = newDomain);
+    window.__env?.API_URL && (window.__env.API_URL = newDomain);
+    window.__env?.BACKEND_URL && (window.__env.BACKEND_URL = newDomain);
+    this.env.apiUrl = this.resolveApiUrl(this.env.isDevelopment);
+    console.log('🔍 Environment: Production domain updated successfully');
+  }
+
+  // Update 2025: Method untuk update development configuration
+  updateDevConfig(devApiUrl?: string, devPort?: string): void {
+    if (devApiUrl) {
+      window.__env && (window.__env.DEV_API_URL = devApiUrl);
+      window.__env && (window.__env.DEFAULT_DEV_API_URL = devApiUrl);
+      window.__env && (window.__env.BACKEND_URL = devApiUrl);
+    }
+    if (devPort) {
+      window.__env && (window.__env.DEV_PORT = devPort);
+      window.__env && (window.__env.DEFAULT_DEV_PORT = devPort);
+    }
+    this.env.devApiUrl = this.resolveDevApiUrl();
+    this.env.devPort = this.resolveDevPort();
+    this.env.apiUrl = this.resolveApiUrl(this.env.isDevelopment);
+    console.log('🔍 Environment: Development configuration updated successfully');
   }
 } 
