@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SweetalertService } from './sweetaler.service';
+import { SweetalertService } from './sweetalert.service';
 
 @Injectable({
   providedIn: 'root',

@@ -2,23 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, tap, throwError } from 'rxjs';
 import { AuthResponse, LoginUserRequest, RegisterUserRequest, UpdatePassword } from '../model/auth.model';
-import { environment } from '../../../environments/environment';
 import { WebResponse } from '../model/web.model';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  private apiUrl = environment.apiUrl;
-  private endpoint = environment.endpoints.auth;
-
   constructor(
     private readonly http: HttpClient,
+    private readonly envService: EnvironmentService,
   ) { }
 
   register(request: RegisterUserRequest): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.register}`, request)
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'register'));
+    return this.http.post<WebResponse<string>>(url, request)
       .pipe(
         catchError(error => {
           // Jika error SMTP (email gagal terkirim), tetap anggap sukses
@@ -39,7 +38,8 @@ export class AuthService {
   }
 
   login(request: LoginUserRequest): Observable<WebResponse<AuthResponse>> {
-    return this.http.post<WebResponse<AuthResponse>>(`${this.apiUrl}/${this.endpoint.login}`, request, { withCredentials: true }).pipe(
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'login'));
+    return this.http.post<WebResponse<AuthResponse>>(url, request, { withCredentials: true }).pipe(
       tap(response => {
         if (response.data) {
           this.setUserProfile(response.data);
@@ -49,7 +49,8 @@ export class AuthService {
   }
 
   me(): Observable<WebResponse<AuthResponse>> {
-    return this.http.get<WebResponse<AuthResponse>>(`${this.apiUrl}/${this.endpoint.base}`, { withCredentials: true }).pipe(
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'base'));
+    return this.http.get<WebResponse<AuthResponse>>(url, { withCredentials: true }).pipe(
       tap((response) => {
         this.setUserProfile(response.data);
       })
@@ -66,7 +67,8 @@ export class AuthService {
       return throwError(() => new Error('Refresh token not found. Please log in again.'));
     }
 
-    return this.http.post<WebResponse<AuthResponse>>(`${this.apiUrl}/${this.endpoint.refreshToken}`, { refreshToken }, { withCredentials: true })
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'refreshToken'));
+    return this.http.post<WebResponse<AuthResponse>>(url, { refreshToken }, { withCredentials: true })
         .pipe(
             tap(response => {
                 if (response.data) {
@@ -82,15 +84,18 @@ export class AuthService {
   }
 
   forgotPassword(request: { email: string; hcaptchaToken: string }): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.resetPasswordRequest}`, request);
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'resetPasswordRequest'));
+    return this.http.post<WebResponse<string>>(url, request);
   }
 
   resetPassword(request: UpdatePassword): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.resetPassword}`, request);
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'resetPassword'));
+    return this.http.post<WebResponse<string>>(url, request);
   }
 
   resendVerification(email: string): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/${this.endpoint.accountVerificationRequest}`, { email }).pipe(
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'accountVerificationRequest'));
+    return this.http.post<string>(url, { email }).pipe(
       catchError(error => {
         // Jika error terkait SMTP, anggap sebagai sukses
         if (error.error?.message?.includes('ETIMEDOUT') || 
@@ -105,19 +110,23 @@ export class AuthService {
   }
 
   verifyAccount(token: string): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.verify}`, { token });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'verify'));
+    return this.http.post<WebResponse<string>>(url, { token });
   }
 
   updateEmailRequest(request: { email: string }): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.updateEmailRequest}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'updateEmailRequest'));
+    return this.http.post<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   updatePassword(request: UpdatePassword): Observable<WebResponse<string>> {
-    return this.http.post<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.updatePassword}`, request, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'updatePassword'));
+    return this.http.post<WebResponse<string>>(url, request, { withCredentials: true });
   }
 
   logout(): Observable<WebResponse<string>> {
-    return this.http.delete<WebResponse<string>>(`${this.apiUrl}/${this.endpoint.base}`, { withCredentials: true });
+    const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'base'));
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
   }
 
   userProfile$ = new BehaviorSubject<AuthResponse | null | undefined>(undefined);
