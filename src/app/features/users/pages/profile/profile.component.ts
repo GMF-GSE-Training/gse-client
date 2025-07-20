@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { User } from '../../../../shared/model/user.model';
 import { AuthService } from '../../../../shared/service/auth.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { UpdatePassword } from '../../../../shared/model/auth.model';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
 import { HeaderComponent } from "../../../../components/header/header.component";

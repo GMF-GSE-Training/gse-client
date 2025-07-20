@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ParticipantService } from '../../../shared/service/participant.service';
 import { CreateParticipant, Participant } from '../../../shared/model/participant.model';
 import { FormsModule } from '@angular/forms';
-import { SweetalertService } from '../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { CompanyInputComponent } from '../../../components/input/company-input/company-input.component';
 import { ParticipantFormComponent } from '../components/participant-form/participant-form.component';
 import { ErrorHandlerService } from '../../../shared/service/error-handler.service';

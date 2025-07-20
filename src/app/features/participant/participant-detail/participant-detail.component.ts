@@ -10,7 +10,7 @@ import { from } from 'rxjs';
 import { RoleBasedAccessDirective } from '../../../shared/directive/role-based-access.directive';
 import { CommonModule } from '@angular/common';
 import { WhiteButtonComponent } from "../../../components/button/white-button/white-button.component";
-import { SweetalertService } from '../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
 import saveAs from 'file-saver';
 import { EmailFormCardComponent } from "../../../components/card/email-form-card/email-form-card.component";

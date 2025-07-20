@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UpdateParticipant } from '../../../shared/model/participant.model';
 import { ParticipantService } from '../../../shared/service/participant.service';
-import { SweetalertService } from '../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { CompanyInputComponent } from '../../../components/input/company-input/company-input.component';
 import { ParticipantFormComponent } from '../components/participant-form/participant-form.component';
 import { ErrorHandlerService } from '../../../shared/service/error-handler.service';

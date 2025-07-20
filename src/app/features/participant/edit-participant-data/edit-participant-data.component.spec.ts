@@ -8,7 +8,7 @@ import { BehaviorSubject, of } from 'rxjs'; // 'of' ditambahkan
 
 import { EditParticipantDataComponent } from './edit-participant-data.component';
 import { ParticipantService } from '../../../shared/service/participant.service';
-import { SweetalertService } from '../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { Component, Input } from '@angular/core'; // Added for mock component
 
 // Mock ParticipantFormComponent

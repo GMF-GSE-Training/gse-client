@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateUserRequest } from '../../../../shared/model/user.model';
 import { UserService } from '../../../../shared/service/user.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { UserFormComponent } from "../../components/user-form/user-form.component";
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
 
