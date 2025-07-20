@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataManagementComponent } from "../../../../shared/components/data-management/data-management.component";
 import { ESign } from '../../../../shared/model/e-sign.model';
 import { ESignService } from '../../../../shared/service/e-sign.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { HeaderComponent } from "../../../../components/header/header.component";
 
 @Component({

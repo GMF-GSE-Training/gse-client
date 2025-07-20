@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CapabilityService } from '../../../../shared/service/capability.service';
 import { CurriculumSyllabusService } from '../../../../shared/service/curriculum-syllabus.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { CurriculumSyllabusFormComponent } from "../../components/curriculum-syllabus-form/curriculum-syllabus-form.component";
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CapabilityService } from '../../../shared/service/capability.service';
-import { SweetalertService } from '../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { CapabilityFormComponent } from "../components/capability-form/capability-form.component";
 import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
 

@@ -4,7 +4,7 @@ import { CotFormComponent } from "../../components/cot-form/cot-form.component";
 import { CreateCot } from '../../../../shared/model/cot.model';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
 import { CotService } from '../../../../shared/service/cot.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 
 @Component({
   selector: 'app-add-cot',

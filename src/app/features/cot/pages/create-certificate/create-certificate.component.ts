@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CertificateFormComponent } from "../../components/certificate-form/certificate-form.component";
 import { CertificateService } from '../../../../shared/service/certificate.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { CreateCertificate } from '../../../../shared/model/certificate.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';

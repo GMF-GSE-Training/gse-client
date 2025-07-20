@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CotFormComponent } from "../../components/cot-form/cot-form.component";
 import { CotService } from '../../../../shared/service/cot.service';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { UpdateCot } from '../../../../shared/model/cot.model';
 
 @Component({

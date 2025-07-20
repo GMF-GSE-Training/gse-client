@@ -4,7 +4,7 @@ import { ESignFormComponent } from "../../components/e-sign-form/e-sign-form.com
 import { CreateESign, SignatureType } from '../../../../shared/model/e-sign.model';
 import { ESignService } from '../../../../shared/service/e-sign.service';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 
 @Component({
   selector: 'app-add-sign',
