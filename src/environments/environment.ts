@@ -1,7 +1,7 @@
 declare const window: any;
 export const environment = {
   production: false,
-  apiUrl: window._env?.BASE_URL || window.__env?.BASE_URL || `http://${window.location.hostname}:3000`,
+  apiUrl: '', // gunakan path relatif agar lewat proxy saat development
   hcaptchaSiteKey: window._env?.HCAPTCHA_SITEKEY || window.__env?.HCAPTCHA_SITEKEY || '',
   endpoints: {
     auth: {
