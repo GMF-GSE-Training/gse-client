@@ -14,7 +14,7 @@
                   'active': sortBy === column.field,
                   'desc': sortBy === column.field && sortOrder === 'desc'
                 }"
-                title="{{ sortBy === column.field ? (sortOrder === 'asc' ? 'Urutkan naik' : 'Urutkan turun') : 'Urutkan' }}"
+                [attr.title]="sortBy === column.field ? (sortOrder === 'asc' ? 'Urutkan naik' : 'Urutkan turun') : 'Urutkan'"
                 width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
