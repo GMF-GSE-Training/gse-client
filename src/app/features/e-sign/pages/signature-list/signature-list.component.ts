@@ -43,21 +43,27 @@ export class SignatureListComponent {
   searchQuery: string = '';
   isLoadingPagination: boolean = false;
 
+  // State sorting universal
+  sortBy: string = 'idNumber';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   eSignId = this.route.snapshot.paramMap.get('id');
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['keyword'] || '';
       this.currentPage =+ params['page'] || 1;
-      this.getListESign(this.searchQuery, this.currentPage, this.itemsPerPage);
+      this.sortBy = params['sort_by'] || 'idNumber';
+      this.sortOrder = params['sort_order'] || 'asc';
+      this.getListESign(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
     });
   }
 
-  getListESign(query: string, page: number, size: number): void {
+  getListESign(query: string, page: number, size: number, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
     this.isLoadingPagination = true;
-    this.eSignService.listESign(query, page, size).subscribe({
-      next: ({ data, actions }) => {
+    this.eSignService.listESign(query, page, size, sortBy, sortOrder).subscribe({
+      next: ({ data, actions, paging }) => {
         this.eSign = data.map((eSign: any) => ({
           ...eSign,
           signatureType: eSign.signatureType
@@ -68,6 +74,7 @@ export class SignatureListComponent {
           editLink: actions?.canEdit ? `/e-sign/${eSign.id}/edit` : null,
           deleteMethod: actions?.canDelete ? () => this.delteSignature(eSign) : null,
         }));
+        this.totalPages = paging?.totalPage || 1;
       },
       error: (error) => {
         console.log(error);
@@ -92,7 +99,7 @@ export class SignatureListComponent {
             this.currentPage -= 1;
           }
 
-          this.getListESign(this.searchQuery, this.currentPage, this.itemsPerPage);
+          this.getListESign(this.searchQuery, this.currentPage, this.itemsPerPage, this.sortBy, this.sortOrder);
 
           // Cek apakah halaman saat ini lebih besar dari total halaman
           if (this.currentPage > this.totalPages) {
@@ -135,6 +142,15 @@ export class SignatureListComponent {
   onPageChanged(page: number): void {
     this.router.navigate([], {
       queryParams: { page },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
+    this.sortBy = event.sortBy;
+    this.sortOrder = event.sortOrder;
+    this.router.navigate([], {
+      queryParams: { sort_by: this.sortBy, sort_order: this.sortOrder, page: 1 },
       queryParamsHandling: 'merge',
     });
   }

@@ -12,5 +12,8 @@
   (searchChange)="onSearchChanged($event)"
   (viewAllChange)="viewAll()"
   [blueButtonRoute]="'/e-sign/add'"
-  [roleBassedAccess]="['super admin']">
+  [roleBassedAccess]="['super admin']"
+  [sortBy]="sortBy"
+  [sortOrder]="sortOrder"
+  (sortChange)="onSortChange($event)">
 </app-data-management>
