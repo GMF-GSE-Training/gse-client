@@ -47,6 +47,10 @@ export class CotListComponent {
     year: 'numeric' // Pastikan nilai-nilai ini sesuai dengan spesifikasi Intl.DateTimeFormatOptions
   };
 
+  // State sorting universal
+  sortBy: string = 'startDate';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   constructor(
     private readonly cotService: CotService,
     private readonly router: Router,
@@ -60,13 +64,15 @@ export class CotListComponent {
       this.currentPage =+ params['page'] || 1;
       this.startDate = params['startDate'] || '';
       this.endDate = params['endDate'] || '';
-      this.getListCot(this.searchQuery, this.currentPage, this.itemsPerPage, this.startDate, this.endDate);
+      this.sortBy = params['sort_by'] || 'startDate';
+      this.sortOrder = params['sort_order'] || 'asc';
+      this.getListCot(this.searchQuery, this.currentPage, this.itemsPerPage, this.startDate, this.endDate, this.sortBy, this.sortOrder);
     });
   }
 
-  getListCot(searchQuery: string, page: number, size: number, startDate: string, endDate: string): void {
+  getListCot(searchQuery: string, page: number, size: number, startDate: string, endDate: string, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
-    this.cotService.listCot(searchQuery, page, size, startDate, endDate).subscribe({
+    this.cotService.listCot(searchQuery, page, size, startDate, endDate, sortBy, sortOrder).subscribe({
       next: ({ data, actions, paging }) => {
         this.cot = data.map((cot) => ({
           startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -77,7 +83,6 @@ export class CotListComponent {
           detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
           deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
         }));
-
         this.totalPages = paging?.totalPage ?? 1;
       },
       error: (error) => {
@@ -104,7 +109,7 @@ export class CotListComponent {
             this.currentPage -= 1;
           }
 
-          this.getListCot(this.searchQuery, this.currentPage, this.itemsPerPage, this.startDate, this.endDate);
+          this.getListCot(this.searchQuery, this.currentPage, this.itemsPerPage, this.startDate, this.endDate, this.sortBy, this.sortOrder);
 
           // Cek apakah halaman saat ini lebih besar dari total halaman
           if (this.currentPage > this.totalPages) {
@@ -158,5 +163,22 @@ export class CotListComponent {
       queryParams: { page },
       queryParamsHandling: 'merge',
     });
+  }
+
+  toggleSort(col: string) {
+    if (this.sortBy === col) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = col;
+      this.sortOrder = 'asc';
+    }
+    this.router.navigate([], {
+      queryParams: { sort_by: this.sortBy, sort_order: this.sortOrder, page: 1 },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
+    this.toggleSort(event.sortBy);
   }
 }

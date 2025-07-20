@@ -62,6 +62,10 @@ export class CotDetailComponent implements OnInit {
   state: { data: string } = { data: '' };
   isParticipantCotLoading: boolean = false;
 
+  // Sorting state
+  sortBy: string = 'idNumber';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   modalColumns = [
     { header: 'No Pegawai', field: 'idNumber' },
     { header: 'Nama', field: 'name' },
@@ -105,6 +109,8 @@ export class CotDetailComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['keyword'] || '';
       this.currentPage = +params['page'] || 1;
+      this.sortBy = params['sortBy'] || 'idNumber';
+      this.sortOrder = params['sortOrder'] || 'asc';
       this.getListParticipantCot(this.cotId, this.searchQuery, this.currentPage, this.itemsPerPage);
     });
   }
@@ -137,7 +143,7 @@ export class CotDetailComponent implements OnInit {
 
   getListParticipantCot(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): void {
     this.isParticipantCotLoading = true;
-    this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage).subscribe({
+    this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage, this.sortBy, this.sortOrder).subscribe({
       next: ({ data }) => {
         const cot = data.cot;
         const participantCot = cot.participants;
@@ -194,7 +200,12 @@ export class CotDetailComponent implements OnInit {
 
   onSearchChanged(query: string): void {
     this.router.navigate([], {
-      queryParams: { keyword: query.trim() || null, page: query.trim() ? 1 : null },
+      queryParams: { 
+        keyword: query.trim() || null, 
+        page: query.trim() ? 1 : null,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder
+      },
       queryParamsHandling: 'merge',
     });
   }
@@ -215,7 +226,12 @@ export class CotDetailComponent implements OnInit {
 
         this.router.navigate([], {
           relativeTo: this.route,
-          queryParams: this.searchQuery ? { keyword: this.searchQuery, page: this.currentPage } : { page: this.currentPage },
+          queryParams: {
+            ...(this.searchQuery && { keyword: this.searchQuery }),
+            page: this.currentPage,
+            sortBy: this.sortBy,
+            sortOrder: this.sortOrder
+          },
           queryParamsHandling: 'merge',
         });
       },
@@ -227,12 +243,28 @@ export class CotDetailComponent implements OnInit {
   }
 
   onPageChanged(page: number): void {
-    this.router.navigate([], { queryParams: { page }, queryParamsHandling: 'merge' });
+    this.router.navigate([], { 
+      queryParams: { 
+        page,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder
+      }, 
+      queryParamsHandling: 'merge' 
+    });
   }
 
   viewAll(): void {
     this.searchQuery = '';
-    this.router.navigate([], { relativeTo: this.route, queryParams: { keyword: null, page: null }, queryParamsHandling: 'merge' });
+    this.router.navigate([], { 
+      relativeTo: this.route, 
+      queryParams: { 
+        keyword: null, 
+        page: null,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder
+      }, 
+      queryParamsHandling: 'merge' 
+    });
   }
 
   openModal(): void {
@@ -257,6 +289,26 @@ export class CotDetailComponent implements OnInit {
   modalPageChanged(page: number): void {
     this.modalCurrentPage = page;
     this.getUnregisteredParticipants(this.cotId, '', this.modalCurrentPage, this.modalItemsPerPage);
+  }
+
+  // Sorting handlers
+  onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }): void {
+    this.sortBy = event.sortBy;
+    this.sortOrder = event.sortOrder;
+    this.currentPage = 1; // Reset to first page when sorting changes
+    this.getListParticipantCot(this.cotId, this.searchQuery, this.currentPage, this.itemsPerPage);
+    
+    // Update URL with sorting params
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        ...(this.searchQuery && { keyword: this.searchQuery }),
+        page: this.currentPage,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onSelectedIdsChange(ids: Set<number | string>): void {

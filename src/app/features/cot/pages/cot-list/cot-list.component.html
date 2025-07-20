@@ -13,4 +13,7 @@
   (viewAllChange)="viewAll()"
   [blueButtonRoute]="'/cot/add'"
   [roleBassedAccess]="['super admin']"
+  [sortBy]="sortBy"
+  [sortOrder]="sortOrder"
+  (sortChange)="onSortChange($event)"
 ></app-data-management>
