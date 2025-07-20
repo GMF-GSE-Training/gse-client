@@ -87,4 +87,19 @@ export class DataManagementComponent {
   }
 
   @Input() cotStatus: string = '';
+
+  // Tambahan universal sorting
+  @Input() sortBy: string = '';
+  @Input() sortOrder: 'asc' | 'desc' = 'asc';
+  @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
+
+  toggleSort(col: string) {
+    if (this.sortBy === col) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = col;
+      this.sortOrder = 'asc';
+    }
+    this.sortChange.emit({ sortBy: this.sortBy, sortOrder: this.sortOrder });
+  }
 }

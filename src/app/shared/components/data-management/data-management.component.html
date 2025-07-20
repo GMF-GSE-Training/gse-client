@@ -24,7 +24,10 @@
       [data]="data"
       [state]="state"
       [certificateState]="certificateState"
-      [isLoading]="isLoading">
+      [isLoading]="isLoading"
+      [sortBy]="sortBy"
+      [sortOrder]="sortOrder"
+      (sortChange)="toggleSort($event.sortBy)">
     </app-table>
   </div>
 
