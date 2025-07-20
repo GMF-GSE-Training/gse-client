@@ -33,6 +33,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      console.log('🔍 AuthInterceptor Error:', error);
+      
+      // Handle case when server returns HTML instead of JSON (usually authentication issue)
+      if (error.status === 200 && error.error && typeof error.error === 'string' && error.error.includes('<!doctype')) {
+        console.error('🔍 Server returned HTML instead of JSON. Possible authentication issue.');
+        clearLocalStorageAndLogout(router, authService);
+        sweetalertService.alert('Sesi Berakhir', 'Sesi Anda telah berakhir. Silakan login kembali.', 'warning');
+        router.navigate(['/login']);
+        return throwError(() => new Error('Server returned HTML instead of JSON. Please login again.'));
+      }
+      
       if (error.status === 401 && !req.url.includes('/token')) {
         return handle401Error(req, next, authService, router, sweetalertService, isRefreshing, refreshTokenSubject);
       }
@@ -96,6 +107,7 @@ const handle401Error = (
 };
 
 const clearLocalStorageAndLogout = (router: Router, authService: AuthService) => {
-  localStorage.clear(); // Hapus semua data di localStorage
-  router.navigate(['/login']); // Redirect ke halaman login
+  localStorage.clear();
+  sessionStorage.clear();
+  authService.setUserProfile(null);
 };
