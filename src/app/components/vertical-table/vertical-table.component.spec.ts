@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { VerticalTableComponent } from './vertical-table.component';
 
@@ -8,7 +9,8 @@ describe('VerticalTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VerticalTableComponent]
+      imports: [VerticalTableComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

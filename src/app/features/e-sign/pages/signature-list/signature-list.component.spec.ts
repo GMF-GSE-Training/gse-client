@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { SignatureListComponent } from './signature-list.component';
 
@@ -28,7 +29,8 @@ describe('SignatureListComponent', () => {
         provideLocationMocks(),
         provideHttpClient(),
         provideHttpClientTesting()
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

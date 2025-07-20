@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -19,6 +20,7 @@ describe('HeaderComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);

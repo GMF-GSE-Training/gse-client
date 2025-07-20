@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { DataManagementComponent } from './data-management.component';
 import { RoleBasedAccessDirective } from '../../directive/role-based-access.directive';
@@ -15,7 +16,8 @@ describe('DataManagementComponent', () => {
       providers: [
         provideRouter([]),
         provideLocationMocks()
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

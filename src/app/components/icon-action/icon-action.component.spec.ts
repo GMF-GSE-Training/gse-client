@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { IconActionComponent } from './icon-action.component';
 
@@ -8,7 +9,8 @@ describe('IconActionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IconActionComponent]
+      imports: [IconActionComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
     

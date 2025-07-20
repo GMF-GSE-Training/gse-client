@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { RoleBasedAccessDirective } from '../../../../shared/directive/role-based-access.directive';
 
@@ -30,7 +31,8 @@ describe('UserListComponent', () => {
         provideLocationMocks(),
         provideHttpClient(),
         provideHttpClientTesting()
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 

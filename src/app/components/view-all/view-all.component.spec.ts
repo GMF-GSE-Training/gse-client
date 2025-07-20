@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { ViewAllComponent } from './view-all.component';
 
@@ -8,7 +9,8 @@ describe('ViewAllComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewAllComponent]
+      imports: [ViewAllComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
     

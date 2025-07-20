@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { PaginationComponent } from './pagination.component';
 
@@ -8,7 +9,8 @@ describe('PaginationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaginationComponent]
+      imports: [PaginationComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
     

@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { CapabilityListComponent } from './capability-list.component';
 
@@ -28,7 +29,8 @@ describe('CapabilityListComponent', () => {
         provideLocationMocks(),
         provideHttpClient(),
         provideHttpClientTesting()
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 
