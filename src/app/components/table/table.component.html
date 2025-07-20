@@ -2,21 +2,21 @@
   <thead>
     <tr>
       @for (column of columns; track $index) {
-        <th [ngClass]="{ 'hidden': column.field === 'action' && !hasActionColumn(), 'active-sort': sortField === column.field }"
+        <th [ngClass]="{ 'hidden': column.field === 'action' && !hasActionColumn(), 'active-sort': sortBy === column.field }"
             (click)="handleSort(column.field)"
             style="cursor:pointer; user-select:none;">
           <span class="th-content">
             {{ column.header }}
-            <span class="sort-icons">
-              <!-- Heroicons chevron-up (asc) -->
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                [ngClass]="{'active': sortField === column.field && sortDirection === 'asc'}">
+            <span class="sort-icon-wrapper">
+              <svg
+                class="sort-icon"
+                [ngClass]="{
+                  'active': sortBy === column.field,
+                  'desc': sortBy === column.field && sortOrder === 'desc'
+                }"
+                title="{{ sortBy === column.field ? (sortOrder === 'asc' ? 'Urutkan naik' : 'Urutkan turun') : 'Urutkan' }}"
+                width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <!-- Heroicons chevron-down (desc) -->
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                [ngClass]="{'active': sortField === column.field && sortDirection === 'desc'}">
-                <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
           </span>

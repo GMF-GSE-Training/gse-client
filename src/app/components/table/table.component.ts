@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IconActionComponent } from "../icon-action/icon-action.component";
@@ -21,33 +21,25 @@ export class  TableComponent {
   @Input() certificateState: any;
   @Input() placeholderRows: number = 10; // Jumlah baris placeholder
   @Input() isLoading: boolean = false;
+  @Input() sortBy: string = '';
+  @Input() sortOrder: 'asc' | 'desc' = 'asc';
+  @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
 
   // State sorting
   sortField: string | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
   get sortedData(): any[] {
-    if (!this.sortField) return this.data;
-    return [...this.data].sort((a, b) => {
-      const aValue = a[this.sortField!];
-      const bValue = b[this.sortField!];
-      if (aValue == null) return 1;
-      if (bValue == null) return -1;
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-      return this.sortDirection === 'asc'
-        ? String(aValue).localeCompare(String(bValue))
-        : String(bValue).localeCompare(String(aValue));
-    });
+    // Return data as-is since sorting is now handled by backend
+    return this.data;
   }
 
   handleSort(field: string) {
-    if (this.sortField === field) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    if (this.sortBy === field) {
+      const newSortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      this.sortChange.emit({ sortBy: field, sortOrder: newSortOrder });
     } else {
-      this.sortField = field;
-      this.sortDirection = 'asc';
+      this.sortChange.emit({ sortBy: field, sortOrder: 'asc' });
     }
   }
 

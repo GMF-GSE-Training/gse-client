@@ -126,6 +126,35 @@ th:hover {
   background: #28587b;
 }
 
+.sort-icons-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+}
+
+.sort-icon-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.sort-icon {
+  width: 16px;
+  height: 16px;
+  color: #b0b0b0;
+  transition: color 0.2s, transform 0.2s;
+  display: block;
+  transform: rotate(0deg);
+}
+.sort-icon.active {
+  color: #1976d2;
+}
+.sort-icon.desc {
+  transform: rotate(180deg);
+}
+
 @media (max-width: 600px) {
   th, td {
     font-size: 11px;
