@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../shared/service/auth.service';
 import { Subscription } from 'rxjs';
-import { SweetalertService } from '../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../shared/service/sweetalert.service';
 
 @Component({
   selector: 'app-sidebar',
