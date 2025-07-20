@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgHcaptchaModule } from 'ng-hcaptcha';
-import { environment } from '../../../environments/environment';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './pages/login/login.component';
@@ -18,7 +17,9 @@ import { AccountVerificationComponent } from './pages/account-verification/accou
     ReactiveFormsModule,
     AuthRoutingModule,
     NgHcaptchaModule.forRoot({
-      siteKey: environment.hcaptchaSiteKey,
+      // Environment Service akan di-inject secara otomatis
+      // siteKey akan diambil dari Environment Service
+      siteKey: '', // Akan di-override oleh Environment Service
     }),
     // Import standalone components that are used in routes
     LoginComponent,

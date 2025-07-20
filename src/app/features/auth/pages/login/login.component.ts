@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../shared/service/auth.service';
 import { LoginFormComponent } from "../../components/login-form/login-form.component";
-import { SweetalertService } from '../../../../shared/service/sweetaler.service';
+import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 
 @Component({
   selector: 'app-login',
