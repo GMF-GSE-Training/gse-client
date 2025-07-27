@@ -1,7 +1,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 1em;
+  font-size: 18px;
 }
 
 th, td {
@@ -10,12 +10,15 @@ th, td {
   border: 2px solid #dddddd;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  font-size: 13px;
 }
 
 th {
   background-color: #126A9E;
   color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 8px 10px;
 }
 
 tbody tr:nth-child(even) {
@@ -27,20 +30,18 @@ p {
   margin-top: 10px;
 }
 
-span {
+/* Icon styling for table body - not headers */
+tbody span {
   display: flex;
   justify-content: center;
   margin: 0;
-  padding:0;
+  padding: 0;
   gap: 25px;
   font-size: 2em;
 }
 
 a {
   color: #266E99;
-}
-
-a {
   cursor: pointer;
   text-decoration: underline;
 }
@@ -70,105 +71,133 @@ a:hover {
   }
 }
 
-.th-content {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-size: inherit;
-  font-weight: 500;
-}
-
-.sort-icons {
-  display: flex;
-  flex-direction: column;
-  margin-left: 2px;
-  gap: 0;
-  line-height: 1;
-  height: 24px;
-  justify-content: center;
-}
-
-.sort-icons svg {
-  width: 12px;
-  height: 12px;
-  margin: 0;
-  padding: 0;
-  display: block;
-  line-height: 1;
-}
-
-.sort-icons svg.active {
-  color: #1976d2;
-  font-weight: bold;
-  filter: drop-shadow(0 0 1px #1976d2);
-}
-
-th.active-sort {
-  background: #28587b;
-  color: #fff;
-  font-weight: 600;
-  border-bottom: 2px solid #1976d2;
-  transition: background 0.2s;
-}
-
-th {
-  background: #3e799b;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  padding: 8px 10px;
+/* Sorting styles consistent with modal */
+.sortable-header {
+  cursor: pointer;
   user-select: none;
-  transition: background 0.2s;
+  transition: background-color 0.3s ease;
 }
 
-th:hover {
-  background: #28587b;
+.sortable-header:hover {
+  background-color: #0f5a7d !important;
 }
 
-.sort-icons-horizontal {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2px;
-  margin-left: 4px;
-}
-
-.sort-icon-wrapper {
+.header-content {
   display: flex;
   align-items: center;
-  margin-left: 4px;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
 }
 
 .sort-icon {
-  width: 16px;
-  height: 16px;
-  color: #b0b0b0;
-  transition: color 0.2s, transform 0.2s;
-  display: block;
-  transform: rotate(0deg);
-}
-.sort-icon.active {
-  color: #1976d2;
-}
-.sort-icon.desc {
-  transform: rotate(180deg);
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.7;
+  font-size: 12px;
 }
 
-@media (max-width: 600px) {
+.sortable-header:hover .sort-icon {
+  opacity: 1;
+}
+
+.sort-icon i {
+  transition: opacity 0.3s ease;
+}
+
+.sortable-header .sort-icon i.fa-sort-up,
+.sortable-header .sort-icon i.fa-sort-down {
+  opacity: 1;
+  color: #ffffff;
+}
+
+.sortable-header .sort-icon i.fa-sort {
+  opacity: 0.5;
+  color: #ffffff;
+}
+
+/* Active sort state styling */
+.active-sort {
+  background-color: #0f5a7d !important;
+  position: relative;
+}
+
+.active-sort::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+  box-shadow: 0 0 8px rgba(25, 118, 210, 0.5);
+}
+
+/* Enhanced icon visibility for active sort */
+.active-sort .sort-icon {
+  opacity: 1;
+}
+
+.active-sort .sort-icon i {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  table {
+    font-size: 16px;
+  }
+
   th, td {
+    padding: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 3px;
     font-size: 11px;
   }
-  .th-content {
-    font-size: inherit;
-    gap: 1px;
-  }
-  .sort-icons svg {
-    width: 11px;
-    height: 11px;
-  }
-  th {
+  
+  .header-content {
+    gap: 4px;
     font-size: 11px;
-    padding: 6px 6px;
+  }
+  
+  .sort-icon {
+    font-size: 10px;
+  }
+
+  tbody span {
+    gap: 15px;
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    font-size: 12px;
+  }
+  
+  .header-content {
+    gap: 2px;
+    font-size: 10px;
+  }
+  
+  .sort-icon {
+    font-size: 8px;
+  }
+
+  tbody span {
+    gap: 10px;
+    font-size: 1.2em;
   }
 }
