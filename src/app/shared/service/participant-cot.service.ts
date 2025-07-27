@@ -25,8 +25,17 @@ export class ParticipantCotService {
     searchQuery?: string,
     page?: number,
     size?: number,
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc',
   ): Observable<WebResponse<ParticipantResponse[]>> {
-    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participantCot', 'getUnregisteredParticipants')}/${cotId}?q=${searchQuery}&page=${page}&size=${size}`);
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('q', searchQuery);
+    if (page) params.append('page', page.toString());
+    if (size) params.append('size', size.toString());
+    if (sortBy) params.append('sortBy', sortBy);
+    if (sortOrder) params.append('sortOrder', sortOrder);
+
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('participantCot', 'getUnregisteredParticipants')}/${cotId}?${params.toString()}`);
     
     console.log('🔍 Participant COT Service Debug - URL:', url);
     console.log('🔍 Participant COT Service Debug - Environment:', {
