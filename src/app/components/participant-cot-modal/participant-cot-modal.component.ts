@@ -21,14 +21,17 @@ import { WhiteButtonComponent } from "../button/white-button/white-button.compon
   styleUrl: './participant-cot-modal.component.css'
 })
 export class ParticipantCotModalComponent {
-  @Input() columns: { header: string, field: string }[] = [];
+  @Input() columns: { header: string, field: string, sortable?: boolean }[] = [];
   @Input() data: any[] = [];
   @Input() isLoading: boolean = false;
   @Input() placeholderRows: number = 10;
+  @Input() sortBy: string = '';
+  @Input() sortOrder: 'asc' | 'desc' = 'asc';
 
   @Output() selectedIdsChange = new EventEmitter<Set<number | string>>();
   @Output() save = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
+  @Output() sortChange = new EventEmitter<{ sortBy: string; sortOrder: 'asc' | 'desc' }>();
 
   selectedIds: Set<number | string> = new Set();
 
@@ -95,5 +98,28 @@ export class ParticipantCotModalComponent {
 
   onCancel() {
     this.cancel.emit();
+  }
+
+  // Sorting methods
+  onSort(field: string) {
+    const column = this.columns.find(col => col.field === field);
+    if (!column || !column.sortable) return;
+
+    if (this.sortBy === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortOrder = 'asc';
+    }
+    
+    this.sortChange.emit({
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
+    });
+  }
+
+  getSortClass(field: string): string {
+    if (this.sortBy !== field) return 'sort-none';
+    return this.sortOrder === 'asc' ? 'sort-asc' : 'sort-desc';
   }
 }
