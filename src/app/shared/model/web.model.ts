@@ -5,6 +5,7 @@ export interface WebResponse<T> {
   errors?: T;
   actions?: ActionAccessRights;
   paging?: Paging;
+  info?: string; // Pesan info tambahan dari backend (misal: threshold hybrid sort)
 }
 
 export interface ActionAccessRights {
