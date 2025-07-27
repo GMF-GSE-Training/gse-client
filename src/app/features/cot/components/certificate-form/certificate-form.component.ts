@@ -108,6 +108,7 @@ export class CertificateFormComponent implements OnInit {
       delete this.certificate.trainingName;
       this.certificate.theoryScore = Number(this.certificate.theoryScore);
       this.certificate.practiceScore = Number(this.certificate.practiceScore);
+      this.certificate.attendance = Number(this.certificate.attendance);
       this.formSubmit.emit(this.certificate);
     }
   }

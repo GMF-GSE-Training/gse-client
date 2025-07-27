@@ -27,7 +27,8 @@ export class CreateCertificateComponent {
 
   certificate: CreateCertificate = {
     theoryScore: 0,
-    practiceScore: 0
+    practiceScore: 0,
+    attendance: 0
   }
 
   cotId = this.route.snapshot.paramMap.get('cotId');
@@ -37,8 +38,7 @@ export class CreateCertificateComponent {
     if(this.cotId && this.participantId) {
       this.sweetalertService.loading('Mohon tunggu', 'Proses...');
       this.certificateService.createCertificate(this.cotId, this.participantId, certificate).subscribe({
-        next: (response) => {
-          saveAs(response);
+        next: () => {
           this.sweetalertService.alert('Berhasil', 'Sertifikat berhasil dibuat', 'success');
           this.router.navigateByUrl(`/cot/${this.cotId}/detail`);
         },

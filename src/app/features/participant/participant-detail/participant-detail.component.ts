@@ -52,7 +52,7 @@ export class ParticipantDetailComponent implements OnInit {
   qrCodeDownloadName: string = 'QR_Code.png';
   id = this.route.snapshot.paramMap.get('participantId') || JSON.parse(localStorage.getItem('user_profile') || '{}').participant.id;
   idCardLink: string = '';
-  
+
   dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'long',
@@ -247,11 +247,11 @@ export class ParticipantDetailComponent implements OnInit {
       { label: 'SIM A', link: `/participants/${participant.id}/sim-a` },
       { label: 'SIM B', link: `/participants/${participant.id}/sim-b` },
       { label: 'KTP', link: `/participants/${participant.id}/ktp` },
-      { label: 'Exp Surat Sehat & Buta Warna', 
-        value: new Date(new Date(participant.tglKeluarSuratSehatButaWarna).setMonth(new Date(participant.tglKeluarSuratSehatButaWarna).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions), 
+      { label: 'Exp Surat Sehat & Buta Warna',
+        value: new Date(new Date(participant.tglKeluarSuratSehatButaWarna).setMonth(new Date(participant.tglKeluarSuratSehatButaWarna).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
         link: `/participants/${participant.id}/surat-sehat-buta-warna` },
-      { label: 'Exp Surat Bebas Narkoba', 
-        value: new Date(new Date(participant.tglKeluarSuratBebasNarkoba).setMonth(new Date(participant.tglKeluarSuratBebasNarkoba).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions), 
+      { label: 'Exp Surat Bebas Narkoba',
+        value: new Date(new Date(participant.tglKeluarSuratBebasNarkoba).setMonth(new Date(participant.tglKeluarSuratBebasNarkoba).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
         link: `/participants/${participant.id}/surat-bebas-narkoba` },
     ];
   }
