@@ -70,3 +70,13 @@ form input {
   width: 190px;
   height: 45px;
 }
+
+.table-warning {
+  background: #fffbe6;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
