@@ -127,3 +127,97 @@ tbody p {
     gap: 10px;
   }
 }
+
+/* Sorting styles */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.sortable-header:hover {
+  background-color: #0f5a7d !important;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sort-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.sortable-header:hover .sort-icon {
+  opacity: 1;
+}
+
+.sort-icon i {
+  transition: opacity 0.3s ease;
+}
+
+.sortable-header .sort-icon i.fa-sort-up,
+.sortable-header .sort-icon i.fa-sort-down {
+  opacity: 1;
+  color: #ffffff;
+}
+
+.sortable-header .sort-icon i.fa-sort {
+  opacity: 0.5;
+  color: #ffffff;
+}
+
+/* Active sort state styling */
+.active-sort {
+  background-color: #0f5a7d !important;
+  position: relative;
+}
+
+.active-sort::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+  box-shadow: 0 0 8px rgba(25, 118, 210, 0.5);
+}
+
+/* Enhanced icon visibility for active sort */
+.active-sort .sort-icon {
+  opacity: 1;
+}
+
+.active-sort .sort-icon i {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments for sorting */
+@media (max-width: 768px) {
+  .header-content {
+    gap: 4px;
+  }
+  
+  .sort-icon {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    gap: 2px;
+    font-size: 12px;
+  }
+  
+  .sort-icon {
+    font-size: 10px;
+  }
+}
