@@ -67,12 +67,12 @@ export class CotDetailComponent implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   modalColumns = [
-    { header: 'No Pegawai', field: 'idNumber' },
-    { header: 'Nama', field: 'name' },
-    { header: 'Dinas', field: 'dinas' },
-    { header: 'Bidang', field: 'bidang' },
-    { header: 'Perusahaan', field: 'company' },
-    { header: 'Action', field: 'action' },
+    { header: 'No Pegawai', field: 'idNumber', sortable: true },
+    { header: 'Nama', field: 'name', sortable: true },
+    { header: 'Dinas', field: 'dinas', sortable: true },
+    { header: 'Bidang', field: 'bidang', sortable: true },
+    { header: 'Perusahaan', field: 'company', sortable: true },
+    { header: 'Action', field: 'action', sortable: false },
   ];
 
   trainingName: string = '';
@@ -86,6 +86,11 @@ export class CotDetailComponent implements OnInit {
   updatedCount: number = 0;
   addedParticipants: string[] = [];
   cotStatus: string = '';
+
+  // Modal sorting state
+  modalSortBy: string = 'idNumber';
+  modalSortOrder: 'asc' | 'desc' = 'asc';
+  modalSearchQuery: string = '';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -184,7 +189,7 @@ export class CotDetailComponent implements OnInit {
 
   getUnregisteredParticipants(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): void {
     this.isLoadingModal = true;
-    this.participantCotService.getUnregisteredParticipants(cotId, searchQuery, currentPage, itemsPerPage).subscribe({
+    this.participantCotService.getUnregisteredParticipants(cotId, searchQuery, currentPage, itemsPerPage, this.modalSortBy, this.modalSortOrder).subscribe({
       next: ({ paging, data }) => {
         this.modalTotalPages = paging?.totalPage ?? 1;
         this.unregisteredParticipants = data.map((item: any) =>
@@ -278,17 +283,27 @@ export class CotDetailComponent implements OnInit {
   }
 
   modalSearchChanged(searchQuery: string): void {
+    this.modalSearchQuery = searchQuery;
     this.modalCurrentPage = 1;
-    this.getUnregisteredParticipants(this.cotId, searchQuery, this.modalCurrentPage, this.itemsPerPage);
+    this.getUnregisteredParticipants(this.cotId, searchQuery, this.modalCurrentPage, this.modalItemsPerPage);
   }
 
   modalSearchCleared(): void {
-    this.getUnregisteredParticipants(this.cotId, '', this.modalCurrentPage, this.itemsPerPage);
+    this.modalSearchQuery = '';
+    this.getUnregisteredParticipants(this.cotId, '', this.modalCurrentPage, this.modalItemsPerPage);
   }
 
   modalPageChanged(page: number): void {
     this.modalCurrentPage = page;
-    this.getUnregisteredParticipants(this.cotId, '', this.modalCurrentPage, this.modalItemsPerPage);
+    this.getUnregisteredParticipants(this.cotId, this.modalSearchQuery, this.modalCurrentPage, this.modalItemsPerPage);
+  }
+
+  // Modal sorting handler
+  onModalSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }): void {
+    this.modalSortBy = event.sortBy;
+    this.modalSortOrder = event.sortOrder;
+    this.modalCurrentPage = 1; // Reset to first page when sorting changes
+    this.getUnregisteredParticipants(this.cotId, this.modalSearchQuery, this.modalCurrentPage, this.modalItemsPerPage);
   }
 
   // Sorting handlers
