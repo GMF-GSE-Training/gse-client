@@ -12,7 +12,27 @@
       <thead>
         <tr>
           @for (column of columns; track $index) {
-            <th>{{ column.header }}</th>
+            <th [ngClass]="{
+                'sortable-header': column.sortable,
+                'active-sort': sortBy === column.field && column.sortable
+              }" (click)="onSort(column.field)">
+              <div class="header-content">
+                <span>{{ column.header }}</span>
+                @if (column.sortable) {
+                  <span class="sort-icon">
+                    @if (sortBy === column.field) {
+                      @if (sortOrder === 'asc') {
+                        <i class="fas fa-sort-up"></i>
+                      } @else {
+                        <i class="fas fa-sort-down"></i>
+                      }
+                    } @else {
+                      <i class="fas fa-sort"></i>
+                    }
+                  </span>
+                }
+              </div>
+            </th>
           }
         </tr>
       </thead>
