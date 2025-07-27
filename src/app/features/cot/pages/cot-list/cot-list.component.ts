@@ -5,11 +5,13 @@ import { CotService } from '../../../../shared/service/cot.service';
 import { Cot } from '../../../../shared/model/cot.model';
 import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { HeaderComponent } from "../../../../components/header/header.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cot-list',
   standalone: true,
   imports: [
+    CommonModule,
     DataManagementComponent,
     HeaderComponent
 ],
@@ -27,6 +29,7 @@ export class CotListComponent {
 
   cot: any[] = [];
   isLoading: boolean = false;
+  infoMessage: string | null = null;
 
   // Komponen pagination
   currentPage: number = 1;
@@ -73,7 +76,9 @@ export class CotListComponent {
   getListCot(searchQuery: string, page: number, size: number, startDate: string, endDate: string, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
     this.cotService.listCot(searchQuery, page, size, startDate, endDate, sortBy, sortOrder).subscribe({
-      next: ({ data, actions, paging }) => {
+      next: ({ data, actions, paging, info }) => {
+        console.log('🔍 Info from backend:', info);
+        this.infoMessage = info || null;
         this.cot = data.map((cot) => ({
           startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
           endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -84,9 +89,10 @@ export class CotListComponent {
           deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
         }));
         this.totalPages = paging?.totalPage ?? 1;
+        this.isLoading = false;
       },
       error: (error) => {
-        console.log(error);
+        console.error('🔍 Error in getListCot:', error);
         this.isLoading = false;
         this.sweetalertService.alert('Pemberitahuan', 'Server sedang sibuk atau terjadi gangguan. Silakan coba beberapa saat lagi.', 'error');
       },
