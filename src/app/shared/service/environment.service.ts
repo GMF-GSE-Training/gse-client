@@ -356,7 +356,8 @@ export class EnvironmentService {
       return '';
     }
     
-    const url = this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/${endpoint}`;
+    // Use /api prefix for development to distinguish API calls from Angular routes
+    const url = this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/api/${endpoint}`;
     console.log(`🔍 Environment: Building URL: ${url}`);
     return url;
   }
