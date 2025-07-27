@@ -39,9 +39,12 @@
     [isLoading]="isLoadingModal"
     [currentPage]="modalCurrentPage"
     [totalPage]="modalTotalPages"
+    [sortBy]="modalSortBy"
+    [sortOrder]="modalSortOrder"
     (searchChange)="modalSearchChanged($event)"
     (searchCleared)="modalSearchCleared()"
     (pageChange)="modalPageChanged($event)"
+    (sortChange)="onModalSortChange($event)"
     (selectedIdsChange)="onSelectedIdsChange($event)"
     (save)="saveSelectedParticipants()"
     (cancel)="closeModal()">
