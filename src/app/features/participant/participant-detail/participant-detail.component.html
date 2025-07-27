@@ -70,7 +70,14 @@
       </div>
     </div>
     <div class="certificate-table">
-      <app-table [columns]="columns" [data]="data"></app-table>
+      <app-table 
+        [columns]="columns" 
+        [data]="data"
+        [sortBy]="certificateSortBy"
+        [sortOrder]="certificateSortOrder"
+        [isLoading]="isLoadingCertificates"
+        (sortChange)="onCertificateSortChange($event)">
+      </app-table>
     </div>
 
     <div class="button-container">

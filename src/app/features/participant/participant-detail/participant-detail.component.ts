@@ -61,15 +61,15 @@ export class ParticipantDetailComponent implements OnInit {
 
   columns = [
     { header: 'Kompetensi', field: 'trainingName' },
-    { header: 'Exp Sertifikat', field: 'exp' },
+    { header: 'Exp Sertifikat', field: 'expiryDate' },
   ];
 
-  data = [
-    { trainingName: "Forklift", exp: "10 February 2026" },
-    { trainingName: "Regulasi GSE", exp: "10 February 2026" },
-    { trainingName: "Baggage Towing Tractor", exp: "10 February 2026" },
-    { trainingName: "Air Conditioning System Refreshment", exp: "10 February 2026" },
-  ];
+  data: any[] = [];
+  
+  // Certificate table sorting
+  certificateSortBy: string = 'trainingName';
+  certificateSortOrder: 'asc' | 'desc' = 'asc';
+  isLoadingCertificates: boolean = false;
 
   userProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
 
@@ -230,6 +230,7 @@ export class ParticipantDetailComponent implements OnInit {
     if (this.participant) {
       this.getFoto(this.participant.id);
       this.getQrCode(this.participant.id);
+      this.loadCertificates();
     }
   }
 
@@ -259,5 +260,70 @@ export class ParticipantDetailComponent implements OnInit {
   private getMediaType(dataURL: string): string {
     const mime = dataURL.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
     return mime && mime.length > 0 ? mime[1] : '';
+  }
+
+  // Load certificates for the participant
+  private loadCertificates(): void {
+    // For now, use mock data. This should be replaced with actual API call
+    // when the certificate service is fully implemented
+    this.data = [
+      { 
+        trainingName: "Forklift", 
+        expiryDate: "10 February 2026",
+        rawExpiryDate: new Date('2026-02-10')
+      },
+      { 
+        trainingName: "Regulasi GSE", 
+        expiryDate: "10 February 2026",
+        rawExpiryDate: new Date('2026-02-10')
+      },
+      { 
+        trainingName: "Baggage Towing Tractor", 
+        expiryDate: "10 February 2026",
+        rawExpiryDate: new Date('2026-02-10')
+      },
+      { 
+        trainingName: "Air Conditioning System Refreshment", 
+        expiryDate: "10 February 2026",
+        rawExpiryDate: new Date('2026-02-10')
+      },
+    ];
+    
+    // Apply current sorting
+    this.sortCertificates();
+  }
+
+  // Handle certificate table sorting
+  onCertificateSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }): void {
+    this.certificateSortBy = event.sortBy;
+    this.certificateSortOrder = event.sortOrder;
+    this.sortCertificates();
+  }
+
+  // Sort certificates based on current sort criteria
+  private sortCertificates(): void {
+    if (!this.data || this.data.length === 0) return;
+    
+    this.data.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+      
+      if (this.certificateSortBy === 'expiryDate') {
+        aValue = a.rawExpiryDate ? a.rawExpiryDate.getTime() : 0;
+        bValue = b.rawExpiryDate ? b.rawExpiryDate.getTime() : 0;
+      } else {
+        aValue = (a[this.certificateSortBy] || '').toString().toLowerCase();
+        bValue = (b[this.certificateSortBy] || '').toString().toLowerCase();
+      }
+      
+      let comparison = 0;
+      if (aValue < bValue) {
+        comparison = -1;
+      } else if (aValue > bValue) {
+        comparison = 1;
+      }
+      
+      return this.certificateSortOrder === 'desc' ? -comparison : comparison;
+    });
   }
 }
