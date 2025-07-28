@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './year-picker.component.html',
   styleUrl: './year-picker.component.css'
 })
-export class YearPickerComponent implements OnInit {
+export class YearPickerComponent implements OnInit, OnChanges {
   @Input() currentYear: number = new Date().getFullYear();
   @Input() availableYears: number[] = [];
   @Input() disabled: boolean = false;
