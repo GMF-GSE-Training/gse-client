@@ -62,6 +62,10 @@ export class  TableComponent {
   
   // Metode untuk memeriksa apakah kolom bisa diurutkan
   isColumnSortable(column: { header: string, field: string, sortable?: boolean }): boolean {
+    // Action column is never sortable
+    if (column.field === 'action') {
+      return false;
+    }
     // Default sortable is true for backward compatibility
     // Only return false if explicitly set to false
     return column.sortable !== false;
