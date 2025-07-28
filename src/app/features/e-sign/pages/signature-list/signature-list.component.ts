@@ -29,7 +29,7 @@ export class SignatureListComponent {
     { header: 'Nama', field: 'name' },
     { header: 'Tipe Tanda Tangan', field: 'signatureType' },
     { header: 'Status', field: 'status' },
-    { header: 'Tanda Tangan', field: 'eSign' },
+    { header: 'Tanda Tangan', field: 'eSign', sortable: false },
     { header: 'Action', field: 'action' }
   ];
 

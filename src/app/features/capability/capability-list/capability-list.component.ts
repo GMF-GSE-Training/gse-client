@@ -25,7 +25,7 @@ export class CapabilityListComponent implements OnInit {
     { header: 'Durasi Materi Regulasi GSE', field: 'durasiMateriRegulasiGSE' },
     { header: 'Durasi Materi Kompetensi', field: 'durasiMateriKompetensi' },
     { header: 'Total Durasi', field: 'totalDuration' },
-    { header: 'Kurikulum & Silabus', field: 'kurikulumSilabus' },
+    { header: 'Kurikulum & Silabus', field: 'kurikulumSilabus', sortable: false },
     { header: 'Action', field: 'action' }
   ];
 
