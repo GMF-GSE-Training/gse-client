@@ -101,6 +101,19 @@ export class DataManagementComponent {
       return;
     }
     
+    // Check if search is active - if so, show warning that sorting is limited
+    const searchInput = document.querySelector('input[name="q"]') as HTMLInputElement;
+    const isSearchActive = searchInput && searchInput.value.trim().length > 0;
+    
+    if (isSearchActive) {
+      console.log('⚠️ Sorting disabled during search for better performance');
+      // Still allow basic sorting but with simplified logic
+      this.sortBy = 'startDate'; // Reset to default
+      this.sortOrder = 'asc';
+      this.sortChange.emit({ sortBy: this.sortBy, sortOrder: this.sortOrder });
+      return;
+    }
+    
     if (this.sortBy === col) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     } else {
