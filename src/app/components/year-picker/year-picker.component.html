@@ -1,0 +1,15 @@
+<div class="year-picker-container" (document:click)="onClickOutside($event)">
+  <button (click)="toggleDropdown()" [disabled]="disabled">
+    {{ currentYear }}
+    <span [class.rotate-arrow]="isDropdownOpen">▼</span>
+  </button>
+  <div class="year-list" *ngIf="isDropdownOpen">
+    <button (click)="onPreviousYear()" [disabled]="!canGoToPrevious()">&lt;</button>
+    <ul>
+      <li *ngFor="let year of filteredYears" (click)="selectYear(year)">
+        {{ year }}
+      </li>
+    </ul>
+    <button (click)="onNextYear()" [disabled]="!canGoToNext()">&gt;</button>
+  </div>
+</div>

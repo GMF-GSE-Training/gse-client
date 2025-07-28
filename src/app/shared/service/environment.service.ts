@@ -344,6 +344,12 @@ export class EnvironmentService {
     return this.endpointsConfig;
   }
 
+  // Helper method untuk mendapatkan backend URL
+  getBackendUrl(): string {
+    // Use /api prefix for development to distinguish API calls from Angular routes
+    return this.env.apiUrl || '/api';
+  }
+
   // Helper method untuk membangun URL dengan validation
   buildUrl(endpoint: string): string {
     if (!endpoint) {
