@@ -126,6 +126,11 @@ export class EnvironmentService {
   }
 
   private resolveApiUrl(isDevelopment: boolean): string {
+    if (isDevelopment) {
+      console.log('🔍 Environment: Development mode - using proxy');
+      return '';
+    }
+    
     const candidates = [
       window.__env?.API_URL,
       window._env?.BASE_URL,
@@ -138,16 +143,6 @@ export class EnvironmentService {
         return candidate.trim();
       }
     }
-    if (isDevelopment) {
-      const devApiUrl = this.resolveDevApiUrl();
-      if (devApiUrl) {
-        console.log('🔍 Environment: Development mode - using dev API URL:', devApiUrl);
-        return devApiUrl;
-      }
-      console.log('🔍 Environment: Development mode - using proxy');
-      return '';
-    }
-    console.log('🔍 Environment: Production mode - using default API');
     return this.getEnvVar('PRODUCTION_API_URL', '');
   }
 
