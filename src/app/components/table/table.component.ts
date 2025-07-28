@@ -18,7 +18,6 @@ export class  TableComponent {
   @Input() columns: { header: string, field: string }[] = [];
   @Input() data: any[] = [];
   @Input() state: { data: any; } = { data: '' };
-  @Input() certificateState: any;
   @Input() placeholderRows: number = 10; // Jumlah baris placeholder
   @Input() isLoading: boolean = false;
   @Input() sortBy: string = '';

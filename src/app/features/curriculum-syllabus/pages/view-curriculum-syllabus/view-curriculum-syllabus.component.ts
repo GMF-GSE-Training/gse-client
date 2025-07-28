@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CapabilityService } from '../../../../shared/service/capability.service';
 import { CurriculumSyllabusFormComponent } from "../../components/curriculum-syllabus-form/curriculum-syllabus-form.component";
 
@@ -39,11 +39,18 @@ export class ViewCurriculumSyllabusComponent implements OnInit {
   editLink: string = '';
   isLoading: boolean = false;
   id = this.route.snapshot.paramMap.get('capabilityId');
+  backButtonRoute: string = '/capability';
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly capabilityService: CapabilityService,
-  ) { }
+    private readonly router: Router
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state;
+    console.log("STATE: ", state);
+    if (state) this.backButtonRoute = state['data'];
+  }
 
   ngOnInit(): void {
     this.getCapabilityById();
