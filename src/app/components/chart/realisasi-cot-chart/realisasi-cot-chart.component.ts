@@ -1,26 +1,34 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { DashboardStatsResponse } from '../../../shared/model/dashboard.model';
+import { YearPickerComponent } from '../../year-picker/year-picker.component';
 
 @Component({
   selector: 'app-realisasi-cot-chart',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, YearPickerComponent],
   templateUrl: './realisasi-cot-chart.component.html',
-  styleUrl: '../chart.component.css'
+  styleUrl: './realisasi-cot-chart.component.css'
 })
-export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
+export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('realisasiCotChart') private realisasiCotChartRef!: ElementRef<HTMLCanvasElement>;
   @Input() dashboardData: DashboardStatsResponse | null = null;
   @Input() isLoading: boolean = false;
+  @Input() selectedYear: number = new Date().getFullYear();
+  @Input() availableYears: number[] = [];
+  @Output() yearChange = new EventEmitter<number>();
   
   private chart: Chart | undefined;
   private allDatasetsVisible: boolean = true;
   private monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dashboardData'] && this.chart && this.dashboardData) {
+    if (changes['dashboardData'] && this.chart) {
+      this.updateChartData();
+    }
+    if (changes['selectedYear'] && this.chart) {
       this.updateChartData();
     }
   }
@@ -28,19 +36,70 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     Chart.register(...registerables);
     Chart.register(ChartDataLabels);
-    this.initializeChart();
+    
+    // Multiple initialization attempts to ensure chart renders
+    setTimeout(() => {
+      this.initializeChart();
+    }, 50);
+    
+    setTimeout(() => {
+      if (!this.chart) {
+        console.log('🔄 Retry chart initialization...');
+        this.initializeChart();
+      }
+    }, 200);
+    
+    setTimeout(() => {
+      if (!this.chart) {
+        console.log('🔄 Final retry chart initialization...');
+        this.initializeChart();
+      }
+    }, 1000);
   }
 
   private initializeChart(): void {
+    // Destroy existing chart if any
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = undefined;
+    }
+    
     const canvas = this.realisasiCotChartRef.nativeElement;
+    
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
+    }
+    
+    // Ensure canvas is visible and has dimensions
+    const container = canvas.parentElement;
+    if (container) {
+      const containerRect = container.getBoundingClientRect();
+      if (containerRect.width === 0 || containerRect.height === 0) {
+        console.warn('Container has no dimensions, retrying...');
+        setTimeout(() => this.initializeChart(), 200);
+        return;
+      }
+      canvas.width = containerRect.width;
+      canvas.height = containerRect.height;
+    }
+    
     const ctx = canvas.getContext('2d');
-
+    
     if (!ctx) {
       console.error('Failed to get canvas context');
       return;
     }
+    
+    console.log('🎨 Initializing chart with canvas dimensions:', {
+      width: canvas.width,
+      height: canvas.height,
+      clientWidth: canvas.clientWidth,
+      clientHeight: canvas.clientHeight
+    });
 
     const initialData = this.getChartData();
+    console.log('📊 Chart data:', initialData);
     
     this.chart = new Chart(ctx, {
       type: 'bar',
@@ -48,17 +107,29 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10
+          }
+        },
         plugins: {
           legend: {
-            position: 'top',
+            position: 'bottom',
+            align: 'center',
             labels: {
-              boxWidth: 15,
-              boxHeight: 15,
-              color: '#FFFFFF',
+              boxWidth: 12,
+              boxHeight: 12,
+              color: '#000000',
               font: {
                 family: 'Petrona',
-                size: 15
+                size: 12,
+                weight: 'bold'
               },
+              padding: 15,
+              usePointStyle: true,
             },
             onClick: (_e, legendItem) => {
               const index = legendItem.datasetIndex;
@@ -90,13 +161,7 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
             }
           },
           title: {
-            display: true,
-            text: `Realisasi COT ${this.dashboardData?.year || new Date().getFullYear()}`,
-            color: '#FFFFFF',
-            font: {
-              family: 'Petrona',
-              size: 25
-            },
+            display: false
           }
         },
         scales: {
@@ -160,27 +225,30 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
   }
 
   private getChartData(): any {
+    console.log('🔍 Dashboard Data:', this.dashboardData);
+    
     if (!this.dashboardData) {
-      // Return default/empty data when no dashboard data is available
+      console.log('❌ No dashboard data available, showing sample chart');
+      // Return sample data when no dashboard data is available for better visualization
       return {
         labels: this.monthLabels,
         datasets: [
           {
             label: 'Akan Datang',
-            data: new Array(12).fill(0),
+            data: [2, 3, 1, 4, 2, 1, 3, 2, 4, 1, 2, 3],
             backgroundColor: '#3C6735',
             barThickness: 'flex',
           },
           {
             label: 'Sedang Berjalan',
-            data: new Array(12).fill(0),
+            data: [1, 2, 3, 1, 3, 2, 1, 3, 2, 3, 1, 2],
             backgroundColor: '#FFB800',
             barThickness: 'flex',
           },
           {
             label: 'Selesai',
-            data: new Array(12).fill(0),
-            backgroundColor: '#FF6B6B',
+            data: [5, 4, 6, 3, 5, 4, 6, 5, 3, 4, 5, 6],
+            backgroundColor: '#e20f0f',
             barThickness: 'flex',
           }
         ]
@@ -230,12 +298,6 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
     if (!this.chart || !this.dashboardData) return;
 
     const newData = this.getChartData();
-    
-    // Update chart title with year
-    const titlePlugin = this.chart.options.plugins?.title;
-    if (titlePlugin) {
-      titlePlugin.text = `Realisasi COT ${this.dashboardData.year}`;
-    }
 
     // Update datasets
     this.chart.data.datasets.forEach((dataset, index) => {
@@ -247,5 +309,16 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
 
     // Trigger chart update with animation
     this.chart.update('active');
+  }
+
+  ngOnDestroy(): void {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = undefined;
+    }
+  }
+
+  onYearChange(year: number): void {
+    this.yearChange.emit(year);
   }
 }
