@@ -37,11 +37,8 @@ export class  TableComponent {
     // Find the column configuration
     const column = this.columns.find(col => col.field === field);
     
-    // Check if column is sortable (default to true for backward compatibility)
-    const isSortable = column?.sortable !== false;
-    
-    // Don't handle sort if column is not sortable
-    if (!isSortable) {
+    // Don't handle sort if column is not found or not sortable
+    if (!column || !this.isColumnSortable(column)) {
       return;
     }
     

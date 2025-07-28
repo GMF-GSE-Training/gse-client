@@ -35,7 +35,7 @@ export class DataManagementComponent {
   @Input() pageTitle: string = '';
 
   // Komponen tabel
-  @Input() columns: { header: string, field: string }[] = [];
+  @Input() columns: { header: string, field: string, sortable?: boolean }[] = [];
   @Input() data: any[] = [];
   @Input() state: { data: any; } = { data: '' };
   @Input() isLoading: boolean = false;
@@ -93,6 +93,14 @@ export class DataManagementComponent {
   @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
 
   toggleSort(col: string) {
+    // Find the column configuration
+    const column = this.columns.find(c => c.field === col);
+    
+    // Don't sort if column is not sortable (action column or explicitly marked non-sortable)
+    if (col === 'action' || (column && column.sortable === false)) {
+      return;
+    }
+    
     if (this.sortBy === col) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     } else {
