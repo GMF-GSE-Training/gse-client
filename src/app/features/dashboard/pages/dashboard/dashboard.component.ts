@@ -7,7 +7,6 @@ import { RealisasiCotChartComponent } from '../../../../components/chart/realisa
 import { DataPemegangKompetensiGseOperatorComponent } from '../../../../components/chart/data-pemegang-kompetensi-gse-operator/data-pemegang-kompetensi-gse-operator.component';
 import { DataTotalSertifikatAktifComponent } from '../../../../components/chart/data-total-sertifikat-aktif/data-total-sertifikat-aktif.component';
 import { DataJumlahPemegangSertifikatComponent } from '../../../../components/chart/data-jumlah-pemegang-sertifikat/data-jumlah-pemegang-sertifikat.component';
-import { YearPickerComponent } from '../../../../components/year-picker/year-picker.component';
 import { TableComponent } from '../../../../components/table/table.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
@@ -36,7 +35,6 @@ interface DashboardCotItem {
     DataPemegangKompetensiGseOperatorComponent,
     DataTotalSertifikatAktifComponent,
     DataJumlahPemegangSertifikatComponent,
-    YearPickerComponent,
     TableComponent,
     HeaderComponent,
     PaginationComponent,
