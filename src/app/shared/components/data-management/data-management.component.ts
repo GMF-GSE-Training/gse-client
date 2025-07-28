@@ -91,6 +91,9 @@ export class DataManagementComponent {
   @Input() sortBy: string = '';
   @Input() sortOrder: 'asc' | 'desc' = 'asc';
   @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
+  
+  // Info message from backend (for search + sort scenarios)
+  @Input() infoMessage: string | null = null;
 
   toggleSort(col: string) {
     // Find the column configuration
@@ -101,19 +104,19 @@ export class DataManagementComponent {
       return;
     }
     
-    // Check if search is active - if so, show warning that sorting is limited
+    // Check if search is active - provide informative feedback
     const searchInput = document.querySelector('input[name="q"]') as HTMLInputElement;
     const isSearchActive = searchInput && searchInput.value.trim().length > 0;
     
     if (isSearchActive) {
-      console.log('⚠️ Sorting disabled during search for better performance');
-      // Still allow basic sorting but with simplified logic
-      this.sortBy = 'startDate'; // Reset to default
-      this.sortOrder = 'asc';
-      this.sortChange.emit({ sortBy: this.sortBy, sortOrder: this.sortOrder });
-      return;
+      console.log('🔍 Sorting within search results:', {
+        searchQuery: searchInput.value,
+        sortField: col,
+        message: 'Sorting applied to filtered search results for optimal relevance'
+      });
     }
     
+    // Allow normal sorting behavior regardless of search state
     if (this.sortBy === col) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     } else {

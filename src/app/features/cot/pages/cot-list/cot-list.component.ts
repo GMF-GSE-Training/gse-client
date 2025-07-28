@@ -152,21 +152,21 @@ export class CotListComponent {
         queryParams: { 
           keyword: null, 
           page: null,
-          // Keep sort parameters when clearing search
+          // Keep existing sort parameters when clearing search
           sort_by: this.sortBy || 'startDate',
           sort_order: this.sortOrder || 'asc'
         },
         queryParamsHandling: 'merge',
       });
     } else {
-      // When searching, disable sorting to avoid conflicts
+      // When searching, allow sorting but reset to page 1
       this.router.navigate([], {
         queryParams: { 
           keyword: query, 
           page: 1,
-          // Reset sorting when search is active to avoid conflicts
-          sort_by: 'startDate',
-          sort_order: 'asc'
+          // Keep current sorting - no need to reset during search
+          sort_by: this.sortBy || 'startDate',
+          sort_order: this.sortOrder || 'asc'
         },
         queryParamsHandling: 'merge',
       });

@@ -18,6 +18,13 @@
     </div>
   </div>
 
+  <!-- Info message for search + sort feedback -->
+  @if (infoMessage) {
+    <div class="info-message" style="margin: 10px 0; padding: 8px 12px; background-color: #e8f4fd; border-left: 4px solid #0066cc; color: #004080; font-size: 14px; border-radius: 4px;">
+      {{ infoMessage }}
+    </div>
+  }
+
   <div class="table-container">
     <app-table
       [columns]="columns"
