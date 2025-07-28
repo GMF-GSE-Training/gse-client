@@ -4,13 +4,15 @@
       @for (column of columns; track $index) {
         <th [ngClass]="{
               'hidden': column.field === 'action' && !hasActionColumn(),
-              'sortable-header': column.field !== 'action',
-              'active-sort': sortBy === column.field && column.field !== 'action'
+              'sortable-header': column.field !== 'action' && isColumnSortable(column),
+              'non-sortable-header': !isColumnSortable(column) && column.field !== 'action',
+              'active-sort': sortBy === column.field && column.field !== 'action' && isColumnSortable(column)
             }"
+            [style.cursor]="isColumnSortable(column) && column.field !== 'action' ? 'pointer' : 'default'"
             (click)="handleSort(column.field)">
           <div class="header-content">
             <span>{{ column.header }}</span>
-            @if (column.field !== 'action') {
+            @if (column.field !== 'action' && isColumnSortable(column)) {
               <span class="sort-icon">
                 @if (sortBy === column.field) {
                   @if (sortOrder === 'asc') {

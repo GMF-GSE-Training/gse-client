@@ -15,7 +15,7 @@ import { IconActionComponent } from "../icon-action/icon-action.component";
   styleUrl: './table.component.css'
 })
 export class  TableComponent {
-  @Input() columns: { header: string, field: string }[] = [];
+  @Input() columns: { header: string, field: string, sortable?: boolean }[] = [];
   @Input() data: any[] = [];
   @Input() state: { data: any; } = { data: '' };
   @Input() placeholderRows: number = 10; // Jumlah baris placeholder
@@ -34,6 +34,17 @@ export class  TableComponent {
   }
 
   handleSort(field: string) {
+    // Find the column configuration
+    const column = this.columns.find(col => col.field === field);
+    
+    // Check if column is sortable (default to true for backward compatibility)
+    const isSortable = column?.sortable !== false;
+    
+    // Don't handle sort if column is not sortable
+    if (!isSortable) {
+      return;
+    }
+    
     if (this.sortBy === field) {
       const newSortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
       this.sortChange.emit({ sortBy: field, sortOrder: newSortOrder });
@@ -47,5 +58,12 @@ export class  TableComponent {
     return this.data.some(item =>
       item.printLink || item.addLink || item.editLink || item.deleteMethod || item.detailLink || item.select
     );
+  }
+  
+  // Metode untuk memeriksa apakah kolom bisa diurutkan
+  isColumnSortable(column: { header: string, field: string, sortable?: boolean }): boolean {
+    // Default sortable is true for backward compatibility
+    // Only return false if explicitly set to false
+    return column.sortable !== false;
   }
 }

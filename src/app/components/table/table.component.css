@@ -82,6 +82,16 @@ a:hover {
   background-color: #0f5a7d !important;
 }
 
+/* Non-sortable header styling */
+.non-sortable-header {
+  cursor: default;
+  user-select: none;
+}
+
+.non-sortable-header:hover {
+  background-color: #126A9E !important; /* Keep original color */
+}
+
 .header-content {
   display: flex;
   align-items: center;
