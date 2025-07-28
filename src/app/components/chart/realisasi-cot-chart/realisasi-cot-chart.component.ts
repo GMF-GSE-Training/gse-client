@@ -91,7 +91,7 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnChanges {
           },
           title: {
             display: true,
-            text: 'Realisasi COT 2024',
+            text: `Realisasi COT ${this.dashboardData?.year || new Date().getFullYear()}`,
             color: '#FFFFFF',
             font: {
               family: 'Petrona',

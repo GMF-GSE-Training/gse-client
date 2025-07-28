@@ -5,6 +5,44 @@
   width: 100%;
 }
 
+.chart-header {
+  margin-bottom: 20px;
+}
+
+.chart-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3e799b 0%, #2c5d82 100%);
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(62, 121, 155, 0.3);
+}
+
+.chart-title-container h2 {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #ffffff;
+  margin: 0;
+  font-size: 1.8rem;
+  font-family: 'Petrona', Arial, sans-serif;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 768px) {
+  .chart-title-container {
+    padding: 12px 15px;
+  }
+  
+  .chart-title-container h2 {
+    font-size: 1.5rem;
+    gap: 10px;
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 .chart-container {
   width: 100%;
   display: grid;

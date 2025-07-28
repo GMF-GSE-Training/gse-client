@@ -1,8 +1,24 @@
 <app-header></app-header>
 
 <div class="container">
+  <div class="chart-header">
+    <div class="chart-title-container">
+      <h2>Realisasi COT
+        <app-year-picker 
+          [currentYear]="selectedYear" 
+          [availableYears]="availableYears" 
+          [disabled]="isLoadingDashboard"
+          (yearChange)="onYearSelected($event)">
+        </app-year-picker>
+      </h2>
+    </div>
+  </div>
+  
   <div class="chart-container">
-    <app-realisasi-cot-chart></app-realisasi-cot-chart>
+    <app-realisasi-cot-chart 
+      [dashboardData]="dashboardData" 
+      [isLoading]="isLoadingDashboard">
+    </app-realisasi-cot-chart>
     <app-data-pemegang-kompetensi-gse-operator></app-data-pemegang-kompetensi-gse-operator>
     <app-data-total-sertifikat-aktif></app-data-total-sertifikat-aktif>
     <app-data-jumlah-pemegang-sertifikat></app-data-jumlah-pemegang-sertifikat>

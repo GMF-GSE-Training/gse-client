@@ -2,16 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpHeaders } from '@angular/common/http';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { RealisasiCotChartComponent } from '../../../../components/chart/realisasi-cot-chart/realisasi-cot-chart.component';
 import { DataPemegangKompetensiGseOperatorComponent } from '../../../../components/chart/data-pemegang-kompetensi-gse-operator/data-pemegang-kompetensi-gse-operator.component';
 import { DataTotalSertifikatAktifComponent } from '../../../../components/chart/data-total-sertifikat-aktif/data-total-sertifikat-aktif.component';
 import { DataJumlahPemegangSertifikatComponent } from '../../../../components/chart/data-jumlah-pemegang-sertifikat/data-jumlah-pemegang-sertifikat.component';
+import { YearPickerComponent } from '../../../../components/year-picker/year-picker.component';
 import { TableComponent } from '../../../../components/table/table.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import { CotService } from '../../../../shared/service/cot.service';
+import { DashboardService } from '../../../../shared/service/dashboard.service';
 import { CotResponse } from '../../../../shared/model/cot.model';
+import { DashboardStatsResponse } from '../../../../shared/model/dashboard.model';
 import { WebResponse } from '../../../../shared/model/web.model';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
 
@@ -33,6 +36,7 @@ interface DashboardCotItem {
     DataPemegangKompetensiGseOperatorComponent,
     DataTotalSertifikatAktifComponent,
     DataJumlahPemegangSertifikatComponent,
+    YearPickerComponent,
     TableComponent,
     HeaderComponent,
     PaginationComponent,
@@ -43,9 +47,16 @@ interface DashboardCotItem {
 export class DashboardComponent implements OnInit {
   constructor(
     private readonly cotService: CotService,
+    private readonly dashboardService: DashboardService,
     private readonly errorHandler: ErrorHandlerService,
   ) {}
 
+  // Dashboard Statistics Properties
+  dashboardData: DashboardStatsResponse | null = null;
+  selectedYear: number = new Date().getFullYear();
+  availableYears: number[] = [];
+  isLoadingDashboard: boolean = false;
+  
   isLoading: boolean = false;
   dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -73,8 +84,40 @@ export class DashboardComponent implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   ngOnInit(): void {
+    this.initAvailableYears();
     this.refreshSubject.pipe(debounceTime(300)).subscribe(() => this.fetchData());
+    this.fetchDashboardData(); // Fetch dashboard data on init
     this.refreshData();
+  }
+
+  private initAvailableYears(): void {
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 5; year--) {
+      this.availableYears.push(year);
+    }
+  }
+
+  onYearSelected(year: number): void {
+    this.selectedYear = year;
+    this.fetchDashboardData();
+  }
+
+  private async fetchDashboardData(): Promise<void> {
+    try {
+      this.isLoadingDashboard = true;
+      const response = await this.dashboardService.getDashboardStats(this.selectedYear).toPromise();
+      this.dashboardData = response?.data || null;
+      
+      // Update available years if data contains them
+      if (this.dashboardData?.availableYears?.length) {
+        this.availableYears = this.dashboardData.availableYears;
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      this.errorHandler.alertError(error);
+    } finally {
+      this.isLoadingDashboard = false;
+    }
   }
 
   refreshData(): void {
