@@ -1,49 +1,16 @@
-.container {
+.dashboard-container {
   padding: 1em;
   box-sizing: border-box;
   margin: 0 auto;
   width: 100%;
 }
 
-.chart-header {
-  margin-bottom: 20px;
+.dashboard-section {
+  margin-bottom: 30px;
 }
 
-.chart-title-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #3e799b 0%, #2c5d82 100%);
-  padding: 15px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(62, 121, 155, 0.3);
-}
 
-.chart-title-container h2 {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  color: #ffffff;
-  margin: 0;
-  font-size: 1.8rem;
-  font-family: 'Petrona', Arial, sans-serif;
-  font-weight: 600;
-}
-
-@media screen and (max-width: 768px) {
-  .chart-title-container {
-    padding: 12px 15px;
-  }
-  
-  .chart-title-container h2 {
-    font-size: 1.5rem;
-    gap: 10px;
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-.chart-container {
+.charts-grid {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, minmax(310px, 1fr));
@@ -54,14 +21,14 @@
 }
 
 @media screen and (max-width: 1200px) {
-  .chart-container {
+  .charts-grid {
     grid-template-columns: repeat(2, minmax(310px, 1fr));
     overflow-x: hidden;
   }
 }
 
 @media screen and (max-width: 768px) {
-  .chart-container {
+  .charts-grid {
     grid-template-columns: repeat(1, minmax(210px, 1fr));
     overflow-x: hidden;
     padding: 0 0.5em;
@@ -69,21 +36,44 @@
 }
 
 @media screen and (max-width: 425px) {
-  .chart-container {
-    grid-template-columns: repeat (1, minmax(200px, 1fr));
+  .charts-grid {
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
     padding: 0 0.2em;
     overflow-x: auto;
   }
 }
 
-.table-header {
+.cot-section {
+  margin-top: 30px;
+}
+
+.cot-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #3e799b;
-  padding: 10px;
-  border-radius: 5px 5px 0 0;
-  margin-top: 50px;
+  padding: 15px 20px;
+  border-radius: 10px 10px 0 0;
+  margin-top: 20px;
+}
+
+.cot-title {
+  flex: 1;
+  margin: 0;
+  color: #ffffff;
+  text-align: center;
+  font-size: 1.8rem;
+  font-family: 'Petrona', Arial, sans-serif;
+  font-weight: 600;
+}
+
+.cot-content {
+  background: linear-gradient(to bottom, #3e799b, #3e799b00);
+  padding: 1em;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 12px rgba(62, 121, 155, 0.3);
+  overflow-x: auto;
 }
 
 h1 {
@@ -137,13 +127,10 @@ h1 {
   }
 }
 
-.table-container {
-  width: 100%;
-  background: linear-gradient(to bottom, #3e799b, #3e799b00);
-  padding: 1em;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
 }
 
 .loading {
@@ -152,24 +139,42 @@ h1 {
   padding: 20px;
 }
 
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-}
 
 @media screen and (max-width: 768px) {
-  .table-container {
+  .cot-content {
     padding: 0.5em;
   }
-  .table-header {
-    margin-top: 20px;
+  .cot-header {
+    margin-top: 15px;
+    padding: 12px 15px;
   }
-  h1 {
+  .cot-title {
     font-size: 1.5rem;
   }
   .refresh-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     padding: 6px 12px;
     font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .cot-header {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 8px;               /* jarak antara title & button */
+  }
+  .cot-title {
+    font-size: 1.3rem;      /* lebih kecil agar muat */
+  }
+  .refresh-btn {
+    position: static;       /* kembali ke flow vertikal */
+    transform: none;        /* reset translateY */
+    padding: 6px 10px;
+    font-size: 0.85rem;
   }
 }
