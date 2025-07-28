@@ -42,7 +42,7 @@ export class CotFormComponent implements OnInit {
 
   capabilityOptions: any[] = [];
   cachedCapability = localStorage.getItem('capability');
-  capabilityData: any = JSON.parse(localStorage.getItem('capability') || '{}');
+  capabilityData: any;
   selectedCapabily: any = '';
   @Input() initialCapability: string = '';
 
@@ -64,14 +64,7 @@ export class CotFormComponent implements OnInit {
   selectedStatus: any = '';
 
   ngOnInit(): void {
-    if(this.cachedCapability && this.cachedCapability !== '{}') {
-      this.capabilityOptions = this.capabilityData.map((training: any) => ({
-        label: training.ratingCode,
-        value: training.id
-      }));
-    } else {
-      this.getAllCapability();
-    }
+    this.getAllCapability();
   }
 
   onSubmit() {
