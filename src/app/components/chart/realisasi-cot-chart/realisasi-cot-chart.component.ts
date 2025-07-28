@@ -287,7 +287,7 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
         {
           label: 'Selesai',
           data: selesaiData,
-          backgroundColor: '#FF6B6B',
+          backgroundColor: '#e20f0f',
           barThickness: 'flex',
         }
       ]
