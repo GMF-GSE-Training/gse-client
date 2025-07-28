@@ -2,8 +2,8 @@
   <thead>
     <tr>
       @for (column of columns; track $index) {
-        <th [ngClass]="{ 
-              'hidden': column.field === 'action' && !hasActionColumn(), 
+        <th [ngClass]="{
+              'hidden': column.field === 'action' && !hasActionColumn(),
               'sortable-header': column.field !== 'action',
               'active-sort': sortBy === column.field && column.field !== 'action'
             }"
@@ -46,11 +46,13 @@
                     <a [routerLink]="item.expSuratBebasNarkoba.value" [state]="state">{{ item.expSuratBebasNarkoba.label }}</a>
                   } @else if (column.field === 'eSign') {
                     <a [routerLink]="item.eSign">lihat</a>
+                  } @else if (column.field === 'ratingCode') {
+                    <a [routerLink]="item.capabilityLink" [state]="state">{{ item.ratingCode }}</a>
                   } @else {
                     {{ item[column.field] }}
                   }
                 } @else {
-                  <app-icon-action [printLink]="item.printLink"[editLink]="item.editLink" [delete]="item.deleteMethod" [detailLink]="item.detailLink" [select]="item.select" [state]="state" [certificateState]="certificateState"></app-icon-action>
+                  <app-icon-action [printLink]="item.printLink"[editLink]="item.editLink" [delete]="item.deleteMethod" [detailLink]="item.detailLink" [select]="item.select" [state]="state"></app-icon-action>
                 }
               </td>
             }

@@ -60,6 +60,7 @@ export class CurriculumSyllabusFormComponent {
 
   @Output() formSubmit = new EventEmitter<any>();
   @ViewChild('form') form!: NgForm;
+  @Input()backButtonRoute: string = '/capability';
 
   handleSubmit(event: Event) {
     event.preventDefault();

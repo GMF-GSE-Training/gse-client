@@ -30,6 +30,7 @@ export class CotListComponent {
   cot: any[] = [];
   isLoading: boolean = false;
   infoMessage: string | null = null;
+  state: { data: string } = { data: '' };
 
   // Komponen pagination
   currentPage: number = 1;
@@ -84,12 +85,15 @@ export class CotListComponent {
           endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
           ratingCode: cot.capability?.ratingCode,
           trainingName: cot.capability?.trainingName,
+          capabilityLink: `/capability/${cot.capability.id}/curriculum-syllabus`,
           editLink: actions?.canEdit ? `/cot/${cot.id}/edit` : null,
           detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
           deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
         }));
+        this.state.data = `/cot`;
         this.totalPages = paging?.totalPage ?? 1;
         this.isLoading = false;
+
       },
       error: (error) => {
         console.error('🔍 Error in getListCot:', error);

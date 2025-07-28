@@ -150,7 +150,7 @@
       </div>
 
       <div class="buttons-container">
-        <app-white-button type="button" routerLink="/capability" class="button">Kembali</app-white-button>
+        <app-white-button type="button" [routerLink]="backButtonRoute || '/capability'" class="button">Kembali</app-white-button>
         @if(isView) {
           <app-blue-button *appRoleBasedAccess="['super admin']" [routerLink]="blueButtonRoute" type="button" class="button">Edit</app-blue-button>
         } @else {
