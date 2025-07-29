@@ -36,7 +36,7 @@ i {
   padding: 10px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: #fff;
+  background: linear-gradient(to bottom, #3e799b, #3e799b00);
   overflow-x: scroll;
 }
 
@@ -85,7 +85,7 @@ i {
 }
 
 .calendar-content {
-  background: linear-gradient(to bottom, #3e799b, #3e799b00);
+  background: #ffffff;
   padding: 20px;
   border-radius: 0 0 10px 10px;
 }
@@ -105,13 +105,6 @@ i {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.table-container {
-  background: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
-}
 
 /* —————— 1. Satukan month-filter & content —————— */
 .calendar-section > app-month-filter,
@@ -161,25 +154,32 @@ app-month-filter {
   display: block !important;
 }
 
-/* —————— 4. Month Filter Container - Transparent Styling —————— */
-.month-filter-container {
-  margin: 1em 0;
-  border-radius: 10px;
+/* —————— 4. Month Filter Container - Now inside table-container —————— */
+.table-container .month-filter-container {
+  margin: 0 0 1em 0;
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-/* Ensure month filter component is also transparent */
-.month-filter-container app-month-filter {
+/* Ensure month filter component is transparent inside table */
+.table-container .month-filter-container app-month-filter {
   background: transparent !important;
   box-shadow: none !important;
 }
 
-/* Deep selector for month filter - now transparent background is set in source */
-::ng-deep app-month-filter .month-filter-container {
+/* Deep selector for month filter - transparent background */
+::ng-deep .table-container app-month-filter .month-filter-container {
   background: transparent !important;
   box-shadow: none !important;
+}
+
+/* Ensure table has white background inside blue container */
+.table-container app-table {
+  background: #ffffff !important;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
 }
 
 /* —————— 5. Enhanced responsive design —————— */
@@ -197,43 +197,30 @@ app-month-filter {
     margin: 0.75em 0;
   }
   
-  /* 1. Sejajarkan search-container di tablet dan ponsel besar */
-  .calendar-content .search-container {
-    display: flex !important;
-    flex-direction: row !important;      /* pastikan row */
-    justify-content: space-between !important; /* kiri-kanan */
-    align-items: center !important;      /* vertical align */
-    gap: 0.5em;                          /* jarak antar elemen */
-    padding: 0 !important;
+  /* Mobile responsive untuk semua layout - gunakan column layout seperti standard-layout */
+  .calendar-content .search-container,
+  .standard-layout .search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 12px;
   }
   
-  /* 2. Biarkan app-search mengisi sisa ruang */
-  .calendar-content .search-container app-search {
-    flex: 1 1 auto;                     /* mengambil sisa ruang */
-    margin-right: 1em;                  /* jarak dari tombol */
-    min-width: 0;                       /* allow shrinking */
+  /* Filter-container di mobile - align ke kiri untuk konsistensi */
+  .calendar-content .search-container .filter-container,
+  .standard-layout .search-container .filter-container {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;  /* align to left seperti standard-layout */
+    align-items: flex-start;
+    gap: 1em;
   }
   
-  /* 3. Filter-container hanya sesuaikan lebar konten internal */
-  .calendar-content .search-container .filter-container {
-    flex: 0 0 auto;                     /* tidak mengambil ruang extra */
-    width: auto;
-    justify-content: flex-end;          /* tombol di kanan */
-    align-items: center;                /* vertikal center untuk sejajar dengan search */
-    margin: 0;
-  }
-  
-  /* 4. Reset semua child elements ke auto width */
-  .calendar-content .search-container > * {
-    width: auto !important;
-    max-width: none !important;
-  }
-  
-  /* 5. Pastikan view-all button sejajar vertikal dengan search input */
-  .calendar-content .search-container .filter-container app-view-all {
-    align-self: center !important;       /* vertikal center alignment */
-    display: flex !important;
-    align-items: center !important;      /* internal button alignment */
+  /* View-all button alignment konsisten dengan standard-layout */
+  .calendar-content .search-container .filter-container app-view-all,
+  .standard-layout .search-container .filter-container app-view-all {
+    margin-left: 10px;  /* sejajar dengan padding input search */
+    align-self: flex-start;
   }
 
   .filter-container {
@@ -249,58 +236,6 @@ app-month-filter {
     margin-top: 2em;
     padding: 15px;
   }
-
-  /* Fallback for standard layout mobile */
-  .standard-layout .search-container {
-    flex-direction: column;
-    gap: 1em;
-    padding: 12px;
-  }
 }
 
-/* —————— 5. Mobile kecil: Ubah ke column layout —————— */
-@media (max-width: 480px) {
-  .calendar-content .search-container {
-    flex-direction: column !important;  /* ubah ke column */
-    align-items: stretch;               /* full width */
-    gap: 0.75em;                        /* gap yang cukup */
-  }
-  
-  /* Pastikan app-search full-width */
-  .calendar-content .search-container app-search {
-    margin: 0;                          /* reset margin */
-    width: 100%;                        /* full width */
-    min-width: unset;                   /* reset min-width */
-  }
-  
-  /* Filter-container turun di bawah - align ke kiri */
-  .calendar-content .search-container .filter-container {
-    justify-content: flex-start !important;    /* align to left */
-    width: 100% !important;                   /* full width */
-    margin: 0 !important;
-    display: flex !important;
-    align-items: flex-start !important;
-  }
-  
-  /* Tombol view-all align ke kiri sejajar dengan input search */
-  .calendar-content .search-container .filter-container app-view-all {
-    margin: 0 !important;               /* reset margin */
-    margin-left: 10px !important;       /* sejajar dengan padding-left input search */
-    align-self: flex-start !important;  /* stick to left */
-    display: flex !important;
-    justify-content: flex-start !important;
-  }
-  
-  /* Force button inside app-view-all to align left */
-  .calendar-content .search-container .filter-container app-view-all .view-all {
-    margin: 0 !important;
-    justify-content: flex-start !important;
-  }
-  
-  /* Pastikan date-filter tidak mengambil semua ruang */
-  .calendar-content .search-container .filter-container app-date-filter {
-    flex: 0 0 auto !important;
-    margin-right: 0 !important;
-  }
-}
 
