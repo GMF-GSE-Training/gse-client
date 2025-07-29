@@ -113,6 +113,56 @@ i {
   margin-top: 10px;
 }
 
+/* —————— 1. Satukan month-filter & content —————— */
+.calendar-section > app-month-filter,
+.calendar-section > app-month-filter ~ .calendar-content {
+  margin: 0;
+}
+
+app-month-filter {
+  display: block;
+  border-radius: 10px 10px 0 0;
+}
+
+.calendar-content {
+  border-radius: 0 0 10px 10px;
+  margin-top: 0;
+}
+
+.calendar-section {
+  box-shadow: 0 4px 12px rgba(62,121,155,0.15);
+}
+
+.calendar-content {
+  box-shadow: none;
+}
+
+/* —————— 2. Hilangkan kotak putih di belakang filter —————— */
+.calendar-content .search-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 1em;
+}
+
+/* —————— 3. Hide show-filter-button and enhance filter controls —————— */
+.show-filter-button {
+  display: none !important;
+}
+
+/* Additional filter button hiding (safety) */
+.calendar-content .filter-container button[class*="filter"],
+.calendar-content .filter-container [class*="show-filter"] {
+  display: none !important;
+}
+
+/* Ensure view-all button remains visible and styled properly */
+.calendar-content .filter-container app-view-all {
+  display: block !important;
+  margin-left: auto;
+}
+
+/* —————— 4. Enhanced responsive design —————— */
 @media (max-width: 768px) {
   .calendar-wrapper {
     margin-top: 15px;
@@ -122,10 +172,16 @@ i {
     padding: 15px;
   }
   
-  .search-container {
+  .calendar-content .search-container {
     flex-direction: column;
-    gap: 1em;
-    padding: 12px;
+    gap: 0.75em;
+    padding: 0 !important;
+  }
+  
+  .calendar-content .search-container > * {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   .filter-container {
@@ -140,6 +196,13 @@ i {
     width: 100%;
     margin-top: 2em;
     padding: 15px;
+  }
+
+  /* Fallback for standard layout mobile */
+  .standard-layout .search-container {
+    flex-direction: column;
+    gap: 1em;
+    padding: 12px;
   }
 }
 

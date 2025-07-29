@@ -86,8 +86,8 @@
 @media screen and (max-width: 768px) {
   .month-filter-container {
     gap: 15px;
-    margin: 15px 0;
-    padding: 12px;
+    margin: 0;
+    padding: 12px 15px;
   }
 
   .month-nav-btn {
@@ -117,8 +117,8 @@
 @media screen and (max-width: 480px) {
   .month-filter-container {
     gap: 12px;
-    margin: 12px 0;
-    padding: 10px;
+    margin: 0;
+    padding: 10px 12px;
   }
 
   .month-nav-btn {
