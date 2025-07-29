@@ -5,6 +5,7 @@ import { CotService } from '../../../../shared/service/cot.service';
 import { Cot } from '../../../../shared/model/cot.model';
 import { SweetalertService } from '../../../../shared/service/sweetalert.service';
 import { HeaderComponent } from "../../../../components/header/header.component";
+import { MonthInfo } from '../../../../shared/components/month-filter/month-filter.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -55,6 +56,10 @@ export class CotListComponent {
   sortBy: string = 'startDate';
   sortOrder: 'asc' | 'desc' = 'asc';
 
+  // Month filter state
+  selectedMonth: number = new Date().getMonth() + 1;
+  selectedYear: number = new Date().getFullYear();
+
   constructor(
     private readonly cotService: CotService,
     private readonly router: Router,
@@ -87,6 +92,18 @@ export class CotListComponent {
       this.endDate = params['endDate'] || '';
       this.sortBy = params['sort_by'] || 'startDate';
       this.sortOrder = params['sort_order'] || 'asc';
+      
+      // Handle month filter from URL
+      if (params['month'] && params['year']) {
+        this.selectedMonth = parseInt(params['month'], 10);
+        this.selectedYear = parseInt(params['year'], 10);
+      } else {
+        // Default to current month if no month filter in URL
+        const now = new Date();
+        this.selectedMonth = now.getMonth() + 1;
+        this.selectedYear = now.getFullYear();
+      }
+      
       this.getListCot(this.searchQuery, this.currentPage, this.itemsPerPage, this.startDate, this.endDate, this.sortBy, this.sortOrder);
     });
   }
@@ -221,5 +238,33 @@ export class CotListComponent {
 
   onSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }) {
     this.toggleSort(event.sortBy);
+  }
+
+  onMonthChanged(monthInfo: MonthInfo): void {
+    this.selectedMonth = monthInfo.value;
+    this.selectedYear = monthInfo.year;
+    
+    // Calculate start and end dates for the selected month
+    const startDate = new Date(monthInfo.year, monthInfo.value - 1, 1);
+    const endDate = new Date(monthInfo.year, monthInfo.value, 0);
+    
+    // Format dates for API (YYYY-MM-DD)
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    const formattedEndDate = endDate.toISOString().split('T')[0];
+    
+    // Update URL with month filter
+    this.router.navigate([], {
+      queryParams: {
+        month: monthInfo.value,
+        year: monthInfo.year,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        page: 1, // Reset to first page when month changes
+        q: this.searchQuery || null,
+        sort_by: this.sortBy,
+        sort_order: this.sortOrder
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 }

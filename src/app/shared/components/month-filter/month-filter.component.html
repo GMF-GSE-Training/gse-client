@@ -1,0 +1,28 @@
+<div class="month-filter-container">
+  <button 
+    class="month-nav-btn" 
+    (click)="previousMonth()"
+    type="button"
+    aria-label="Bulan sebelumnya"
+    title="Bulan sebelumnya">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15,18 9,12 15,6"></polyline>
+    </svg>
+  </button>
+
+  <div class="month-display" (click)="resetToCurrentMonth()" title="Klik untuk kembali ke bulan ini">
+    <h2 class="month-title">{{ currentMonthInfo.name }}</h2>
+    <span class="month-year">{{ currentMonthInfo.year }}</span>
+  </div>
+
+  <button 
+    class="month-nav-btn" 
+    (click)="nextMonth()"
+    type="button"
+    aria-label="Bulan selanjutnya"
+    title="Bulan selanjutnya">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9,18 15,12 9,6"></polyline>
+    </svg>
+  </button>
+</div>

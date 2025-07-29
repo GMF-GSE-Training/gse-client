@@ -9,6 +9,7 @@ import { PaginationComponent } from "../../../components/pagination/pagination.c
 import { RoleBasedAccessDirective } from '../../directive/role-based-access.directive';
 import { RouterLink } from '@angular/router';
 import { DateFilterComponent } from "../../../components/date-filter/date-filter.component";
+import { MonthFilterComponent, MonthInfo } from "../month-filter/month-filter.component";
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -25,6 +26,7 @@ import { CommonModule } from '@angular/common';
     RoleBasedAccessDirective,
     RouterLink,
     DateFilterComponent,
+    MonthFilterComponent,
     CommonModule,
 ],
   templateUrl: './data-management.component.html',
@@ -41,6 +43,7 @@ export class DataManagementComponent {
   @Input() isLoading: boolean = false;
 
   @Input() isParticipantCot: boolean = false;
+  @Input() showMonthFilter: boolean = false;
 
   // Komponen pagination
   @Input() totalPages: number = 0;
@@ -95,6 +98,11 @@ export class DataManagementComponent {
   // Info message from backend (for search + sort scenarios)
   @Input() infoMessage: string | null = null;
 
+  // Month filter support
+  @Input() selectedMonth: number = new Date().getMonth() + 1;
+  @Input() selectedYear: number = new Date().getFullYear();
+  @Output() monthChange = new EventEmitter<MonthInfo>();
+
   toggleSort(col: string) {
     // Find the column configuration
     const column = this.columns.find(c => c.field === col);
@@ -124,5 +132,9 @@ export class DataManagementComponent {
       this.sortOrder = 'asc';
     }
     this.sortChange.emit({ sortBy: this.sortBy, sortOrder: this.sortOrder });
+  }
+
+  onMonthChanged(monthInfo: MonthInfo): void {
+    this.monthChange.emit(monthInfo);
   }
 }

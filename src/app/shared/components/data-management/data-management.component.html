@@ -1,6 +1,14 @@
 <div class="container">
   <app-title [pageTitle]="pageTitle"></app-title>
 
+  <!-- Month Filter -->
+  <app-month-filter 
+    *ngIf="showMonthFilter"
+    [selectedMonth]="selectedMonth"
+    [selectedYear]="selectedYear"
+    (monthChange)="onMonthChanged($event)">
+  </app-month-filter>
+
   <div class="search-container">
     <app-search
       #searchComponent

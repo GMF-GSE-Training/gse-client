@@ -5,6 +5,10 @@
 <app-data-management
   pageTitle="Calendar Of Training"
   [isParticipantCot]="true"
+  [showMonthFilter]="true"
+  [selectedMonth]="selectedMonth"
+  [selectedYear]="selectedYear"
+  (monthChange)="onMonthChanged($event)"
   placeHolder="Cari COT"
   [columns]="columns"
   [data]="cot"
