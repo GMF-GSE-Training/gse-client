@@ -219,6 +219,7 @@ app-month-filter {
     flex: 0 0 auto;                     /* tidak mengambil ruang extra */
     width: auto;
     justify-content: flex-end;          /* tombol di kanan */
+    align-items: center;                /* vertikal center untuk sejajar dengan search */
     margin: 0;
   }
   
@@ -226,6 +227,13 @@ app-month-filter {
   .calendar-content .search-container > * {
     width: auto !important;
     max-width: none !important;
+  }
+  
+  /* 5. Pastikan view-all button sejajar vertikal dengan search input */
+  .calendar-content .search-container .filter-container app-view-all {
+    align-self: center !important;       /* vertikal center alignment */
+    display: flex !important;
+    align-items: center !important;      /* internal button alignment */
   }
 
   .filter-container {
