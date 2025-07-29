@@ -30,7 +30,13 @@ export class  TableComponent {
 
   get sortedData(): any[] {
     // Return data as-is since sorting is now handled by backend
-    return this.data;
+    console.log('🔄 Table Component - sortedData getter called:', {
+      dataLength: this.data?.length || 0,
+      data: this.data?.slice(0, 2) || [],
+      isLoading: this.isLoading,
+      note: 'Data yang diterima table component'
+    });
+    return this.data || [];
   }
 
   handleSort(field: string) {
