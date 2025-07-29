@@ -3,15 +3,9 @@
 
   <!-- Calendar Section Container -->
   <div class="calendar-section" *ngIf="showMonthFilter">
-    <!-- Month Filter Header -->
-    <app-month-filter 
-      [selectedMonth]="selectedMonth"
-      [selectedYear]="selectedYear"
-      (monthChange)="onMonthChanged($event)">
-    </app-month-filter>
-
     <!-- Calendar Content -->
     <div class="calendar-content">
+      <!-- 1) Search tetap paling atas -->
       <div class="search-container">
         <app-search
           #searchComponent
@@ -27,6 +21,15 @@
             (viewAllChange)="viewAll(searchComponent, dateFilterComponent)">
           </app-view-all>
         </div>
+      </div>
+
+      <!-- 2) Baru filter bulan di bawah search -->
+      <div class="month-filter-container">
+        <app-month-filter 
+          [selectedMonth]="selectedMonth"
+          [selectedYear]="selectedYear"
+          (monthChange)="onMonthChanged($event)">
+        </app-month-filter>
       </div>
 
       <!-- Info message for search + sort feedback -->

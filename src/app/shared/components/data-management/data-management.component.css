@@ -162,7 +162,28 @@ app-month-filter {
   margin-left: auto;
 }
 
-/* —————— 4. Enhanced responsive design —————— */
+/* —————— 4. Month Filter Container - Transparent Styling —————— */
+.month-filter-container {
+  margin: 1em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Ensure month filter component is also transparent */
+.month-filter-container app-month-filter {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Deep selector for month filter - now transparent background is set in source */
+::ng-deep app-month-filter .month-filter-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* —————— 5. Enhanced responsive design —————— */
 @media (max-width: 768px) {
   .calendar-wrapper {
     margin-top: 15px;
@@ -170,6 +191,11 @@ app-month-filter {
   
   .calendar-content {
     padding: 15px;
+  }
+  
+  /* Month filter responsive styling */
+  .month-filter-container {
+    margin: 0.75em 0;
   }
   
   /* 1. Sejajarkan search-container di tablet dan ponsel besar */
