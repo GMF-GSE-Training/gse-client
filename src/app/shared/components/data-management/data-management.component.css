@@ -172,35 +172,35 @@ app-month-filter {
     padding: 15px;
   }
   
-  /* 1. Kembalikan search-container ke row layout */
+  /* 1. Sejajarkan search-container di tablet dan ponsel besar */
   .calendar-content .search-container {
-    display: flex;
+    display: flex !important;
     flex-direction: row !important;      /* pastikan row */
-    justify-content: space-between;      /* kiri-kanan */
-    align-items: center;                 /* vertical align */
+    justify-content: space-between !important; /* kiri-kanan */
+    align-items: center !important;      /* vertical align */
     gap: 0.5em;                          /* jarak antar elemen */
     padding: 0 !important;
   }
   
-  /* 2. Reset lebar anak container agar tidak full-width */
-  .calendar-content .search-container > * {
-    width: auto !important;
-    max-width: none !important;
-    margin: 0 !important;
-  }
-  
-  /* 3. Input search memanjang mengambil sisa ruang */
+  /* 2. Biarkan app-search mengisi sisa ruang */
   .calendar-content .search-container app-search {
     flex: 1 1 auto;                     /* mengambil sisa ruang */
+    margin-right: 1em;                  /* jarak dari tombol */
     min-width: 0;                       /* allow shrinking */
   }
   
-  /* 4. Pastikan filter-container (yang memuat tombol view-all) right-aligned */
+  /* 3. Filter-container hanya sesuaikan lebar konten internal */
   .calendar-content .search-container .filter-container {
     flex: 0 0 auto;                     /* tidak mengambil ruang extra */
-    justify-content: flex-end;
     width: auto;
-    margin-left: auto;                  /* dorong ke kanan */
+    justify-content: flex-end;          /* tombol di kanan */
+    margin: 0;
+  }
+  
+  /* 4. Reset semua child elements ke auto width */
+  .calendar-content .search-container > * {
+    width: auto !important;
+    max-width: none !important;
   }
 
   .filter-container {
@@ -225,21 +225,31 @@ app-month-filter {
   }
 }
 
-/* —————— 5. Extra small screens optimization —————— */
+/* —————— 5. Mobile kecil: Ubah ke column layout —————— */
 @media (max-width: 480px) {
   .calendar-content .search-container {
-    gap: 0.25em;                        /* smaller gap for tiny screens */
+    flex-direction: column !important;  /* ubah ke column */
+    align-items: stretch;               /* full width */
+    gap: 0.75em;                        /* gap yang cukup */
   }
   
-  /* Allow filter container to wrap if needed */
-  .calendar-content .search-container .filter-container {
-    flex: 0 0 auto;
-    min-width: fit-content;
-  }
-  
-  /* Ensure search input doesn't get too narrow */
+  /* Pastikan app-search full-width */
   .calendar-content .search-container app-search {
-    min-width: 120px;                   /* minimum usable width */
+    margin: 0;                          /* reset margin */
+    width: 100%;                        /* full width */
+    min-width: unset;                   /* reset min-width */
+  }
+  
+  /* Filter-container turun di bawah */
+  .calendar-content .search-container .filter-container {
+    justify-content: center;            /* center the button */
+    width: 100%;                        /* full width */
+    margin: 0;
+  }
+  
+  /* Tombol view-all bisa center atau sesuai kebutuhan */
+  .calendar-content .search-container .filter-container app-view-all {
+    margin: 0 auto;                     /* center the button */
   }
 }
 
