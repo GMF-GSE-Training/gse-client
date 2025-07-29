@@ -159,7 +159,6 @@ app-month-filter {
 /* Ensure view-all button remains visible and styled properly */
 .calendar-content .filter-container app-view-all {
   display: block !important;
-  margin-left: auto;
 }
 
 /* —————— 4. Month Filter Container - Transparent Styling —————— */
@@ -268,15 +267,31 @@ app-month-filter {
   
   /* Filter-container turun di bawah - align ke kiri */
   .calendar-content .search-container .filter-container {
-    justify-content: flex-start;        /* align to left */
-    width: 100%;                        /* full width */
-    margin: 0;
+    justify-content: flex-start !important;    /* align to left */
+    width: 100% !important;                   /* full width */
+    margin: 0 !important;
+    display: flex !important;
+    align-items: flex-start !important;
   }
   
   /* Tombol view-all align ke kiri untuk konsistensi */
   .calendar-content .search-container .filter-container app-view-all {
-    margin: 0;                          /* align to start/left */
-    align-self: flex-start;             /* stick to left */
+    margin: 0 !important;               /* align to start/left */
+    align-self: flex-start !important;  /* stick to left */
+    display: flex !important;
+    justify-content: flex-start !important;
+  }
+  
+  /* Force button inside app-view-all to align left */
+  .calendar-content .search-container .filter-container app-view-all .view-all {
+    margin: 0 !important;
+    justify-content: flex-start !important;
+  }
+  
+  /* Pastikan date-filter tidak mengambil semua ruang */
+  .calendar-content .search-container .filter-container app-date-filter {
+    flex: 0 0 auto !important;
+    margin-right: 0 !important;
   }
 }
 
