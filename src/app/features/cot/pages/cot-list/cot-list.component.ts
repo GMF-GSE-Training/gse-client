@@ -64,8 +64,25 @@ export class CotListComponent {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.searchQuery = params['keyword'] || '';
-      this.currentPage =+ params['page'] || 1;
+      // Handle legacy 'keyword' parameter by converting to 'q'
+      if (params['keyword'] && !params['q']) {
+        this.router.navigate([], {
+          queryParams: { 
+            q: params['keyword'],
+            keyword: null,
+            page: params['page'] || 1,
+            startDate: params['startDate'],
+            endDate: params['endDate'],
+            sort_by: params['sort_by'] || 'startDate',
+            sort_order: params['sort_order'] || 'asc'
+          },
+          queryParamsHandling: 'merge',
+        });
+        return;
+      }
+      
+      this.searchQuery = params['q'] || '';
+      this.currentPage = parseInt(params['page'], 10) || 1;
       this.startDate = params['startDate'] || '';
       this.endDate = params['endDate'] || '';
       this.sortBy = params['sort_by'] || 'startDate';
@@ -128,7 +145,7 @@ export class CotListComponent {
 
           // Update query params dengan currentPage yang diperbarui
           const queryParams = this.searchQuery
-            ? { keyword: this.searchQuery, page: this.currentPage }
+            ? { q: this.searchQuery, page: this.currentPage }
             : { page: this.currentPage };
 
           this.router.navigate([], {
@@ -150,7 +167,7 @@ export class CotListComponent {
       // Clear search and reset to original state
       this.router.navigate([], {
         queryParams: { 
-          keyword: null, 
+          q: null, 
           page: null,
           // Keep existing sort parameters when clearing search
           sort_by: this.sortBy || 'startDate',
@@ -162,7 +179,7 @@ export class CotListComponent {
       // When searching, allow sorting but reset to page 1
       this.router.navigate([], {
         queryParams: { 
-          keyword: query, 
+          q: query, 
           page: 1,
           // Keep current sorting - no need to reset during search
           sort_by: this.sortBy || 'startDate',
@@ -176,7 +193,7 @@ export class CotListComponent {
   viewAll(): void {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { keyword: undefined, startDate: undefined, endDate: undefined, page: undefined },
+      queryParams: { q: undefined, startDate: undefined, endDate: undefined, page: undefined },
       queryParamsHandling: 'merge',
     });
     this.searchQuery = '';

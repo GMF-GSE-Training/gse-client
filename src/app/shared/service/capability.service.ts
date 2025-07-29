@@ -55,7 +55,7 @@ export class CapabilityService {
    */
   listCapability(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<CapabilityResponse[]>> {
     const params: any = { page, size };
-    if (q) params.keyword = q;
+    if (q) params.q = q;
     params.sort_by = sortBy || 'ratingCode';
     params.sort_order = sortOrder || 'asc';
     

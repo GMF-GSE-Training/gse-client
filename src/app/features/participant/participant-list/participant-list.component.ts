@@ -58,7 +58,7 @@ export class ParticipantListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.searchQuery = params['keyword'] || '';
+      this.searchQuery = params['q'] || '';
       this.currentPage =+ params['page'] || 1;
       this.sortBy = params['sort_by'] || 'idNumber';
       this.sortOrder = params['sort_order'] || 'asc';
@@ -106,7 +106,7 @@ export class ParticipantListComponent implements OnInit {
 
           // Update query params dengan currentPage yang diperbarui
           const queryParams = this.searchQuery
-            ? { keyword: this.searchQuery, page: this.currentPage }
+            ? { q: this.searchQuery, page: this.currentPage }
             : { page: this.currentPage };
 
           this.router.navigate([], {
@@ -126,12 +126,12 @@ export class ParticipantListComponent implements OnInit {
   onSearchChanged(query: string): void {
     if (query.trim() === '') {
       this.router.navigate([], {
-        queryParams: { keyword: null, page: null },
+        queryParams: { q: null, page: null },
         queryParamsHandling: 'merge',
       });
     } else {
       this.router.navigate([], {
-        queryParams: { keyword: query, page: 1 },
+        queryParams: { q: query, page: 1 },
         queryParamsHandling: 'merge',
       });
     }
@@ -150,7 +150,7 @@ export class ParticipantListComponent implements OnInit {
     }
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { keyword: undefined, page: undefined },
+      queryParams: { q: undefined, page: undefined },
       queryParamsHandling: 'merge',
     });
     this.searchQuery = '';

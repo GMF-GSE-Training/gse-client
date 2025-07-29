@@ -112,7 +112,7 @@ export class CotDetailComponent implements OnInit {
   ngOnInit(): void {
     this.getCot();
     this.route.queryParams.subscribe(params => {
-      this.searchQuery = params['keyword'] || '';
+      this.searchQuery = params['q'] || '';
       this.currentPage = +params['page'] || 1;
       this.sortBy = params['sortBy'] || 'idNumber';
       this.sortOrder = params['sortOrder'] || 'asc';
@@ -206,7 +206,7 @@ export class CotDetailComponent implements OnInit {
   onSearchChanged(query: string): void {
     this.router.navigate([], {
       queryParams: { 
-        keyword: query.trim() || null, 
+        q: query.trim() || null,
         page: query.trim() ? 1 : null,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder
@@ -232,7 +232,7 @@ export class CotDetailComponent implements OnInit {
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {
-            ...(this.searchQuery && { keyword: this.searchQuery }),
+            ...(this.searchQuery && { q: this.searchQuery }),
             page: this.currentPage,
             sortBy: this.sortBy,
             sortOrder: this.sortOrder
@@ -263,7 +263,7 @@ export class CotDetailComponent implements OnInit {
     this.router.navigate([], { 
       relativeTo: this.route, 
       queryParams: { 
-        keyword: null, 
+        q: null,
         page: null,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder
@@ -317,7 +317,7 @@ export class CotDetailComponent implements OnInit {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        ...(this.searchQuery && { keyword: this.searchQuery }),
+        ...(this.searchQuery && { q: this.searchQuery }),
         page: this.currentPage,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder

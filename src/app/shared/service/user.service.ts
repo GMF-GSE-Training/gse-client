@@ -32,7 +32,7 @@ export class UserService {
 
   listUsers(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<UserResponse[]>> {
     const params: any = { page, size };
-    if (q) params.keyword = q;
+    if (q) params.q = q;
     if (sortBy) params.sort_by = sortBy;
     if (sortOrder) params.sort_order = sortOrder;
     

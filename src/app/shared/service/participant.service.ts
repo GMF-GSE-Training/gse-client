@@ -37,7 +37,7 @@ export class ParticipantService {
 
   listParticipants(query: string, page: number, size: number, sortBy: string, sortOrder: string) {
     const params: any = { page, size };
-    if (query) params.keyword = query;
+    if (query) params.q = query;
     if (sortBy) params.sort_by = sortBy;
     if (sortOrder) params.sort_order = sortOrder;
     
