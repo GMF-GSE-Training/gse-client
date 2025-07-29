@@ -274,9 +274,10 @@ app-month-filter {
     align-items: flex-start !important;
   }
   
-  /* Tombol view-all align ke kiri untuk konsistensi */
+  /* Tombol view-all align ke kiri sejajar dengan input search */
   .calendar-content .search-container .filter-container app-view-all {
-    margin: 0 !important;               /* align to start/left */
+    margin: 0 !important;               /* reset margin */
+    margin-left: 10px !important;       /* sejajar dengan padding-left input search */
     align-self: flex-start !important;  /* stick to left */
     display: flex !important;
     justify-content: flex-start !important;
