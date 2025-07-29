@@ -38,4 +38,60 @@
       </a>
     </li>
   </ul>
+  
+  <!-- Go to Page Section -->
+  <div class="go-to-page-container" *ngIf="shouldShowGoToPage">
+    <div class="go-to-page-content">
+      <label for="goToPageInput" class="go-to-page-label">
+        Go To Page:
+      </label>
+      <div class="go-to-page-input-group">
+        <input
+          id="goToPageInput"
+          type="text"
+          class="go-to-page-input"
+          [(ngModel)]="goToPageInput"
+          [placeholder]="goToPagePlaceholder"
+          [disabled]="isLoading"
+          (keydown)="onGoToPageKeyPress($event)"
+          maxlength="6"
+          autocomplete="off"
+        />
+        <button
+          type="button"
+          class="go-to-page-button"
+          [disabled]="isLoading || !goToPageInput.trim()"
+          (click)="onGoToPageSubmit()"
+          title="Tekan Enter atau klik untuk pergi ke halaman"
+        >
+          Pergi
+        </button>
+      </div>
+      
+      <!-- Success Message -->
+      <div 
+        class="go-to-page-success" 
+        *ngIf="showGoToPageSuccess"
+        role="status"
+        aria-live="polite"
+      >
+        {{ goToPageSuccessMessage }}
+      </div>
+      
+      <!-- Error Message -->
+      <div 
+        class="go-to-page-error" 
+        *ngIf="showGoToPageError"
+        role="alert"
+        aria-live="polite"
+      >
+        {{ goToPageErrorMessage }}
+      </div>
+      
+      <!-- Helper Text -->
+      <div class="go-to-page-helper" *ngIf="!showGoToPageError && !showGoToPageSuccess">
+        {{ goToPageHelperText }}
+      </div>
+    </div>
+  </div>
 </div>
