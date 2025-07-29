@@ -1,20 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BaseInputComponent } from "../input/base-input/base-input.component";
 import { CommonModule } from '@angular/common';
-import { BlueButtonComponent } from "../button/blue-button/blue-button.component";
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WhiteButtonComponent } from "../button/white-button/white-button.component";
 
 @Component({
   selector: 'app-date-filter',
   standalone: true,
   imports: [
-    BaseInputComponent,
-    CommonModule,
-    BlueButtonComponent,
-    FormsModule,
-    WhiteButtonComponent
+    CommonModule
 ],
   templateUrl: './date-filter.component.html',
   styleUrl: './date-filter.component.css'

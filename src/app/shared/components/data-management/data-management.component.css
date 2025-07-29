@@ -172,16 +172,35 @@ app-month-filter {
     padding: 15px;
   }
   
+  /* 1. Kembalikan search-container ke row layout */
   .calendar-content .search-container {
-    flex-direction: column;
-    gap: 0.75em;
+    display: flex;
+    flex-direction: row !important;      /* pastikan row */
+    justify-content: space-between;      /* kiri-kanan */
+    align-items: center;                 /* vertical align */
+    gap: 0.5em;                          /* jarak antar elemen */
     padding: 0 !important;
   }
   
+  /* 2. Reset lebar anak container agar tidak full-width */
   .calendar-content .search-container > * {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  /* 3. Input search memanjang mengambil sisa ruang */
+  .calendar-content .search-container app-search {
+    flex: 1 1 auto;                     /* mengambil sisa ruang */
+    min-width: 0;                       /* allow shrinking */
+  }
+  
+  /* 4. Pastikan filter-container (yang memuat tombol view-all) right-aligned */
+  .calendar-content .search-container .filter-container {
+    flex: 0 0 auto;                     /* tidak mengambil ruang extra */
+    justify-content: flex-end;
+    width: auto;
+    margin-left: auto;                  /* dorong ke kanan */
   }
 
   .filter-container {
@@ -203,6 +222,24 @@ app-month-filter {
     flex-direction: column;
     gap: 1em;
     padding: 12px;
+  }
+}
+
+/* —————— 5. Extra small screens optimization —————— */
+@media (max-width: 480px) {
+  .calendar-content .search-container {
+    gap: 0.25em;                        /* smaller gap for tiny screens */
+  }
+  
+  /* Allow filter container to wrap if needed */
+  .calendar-content .search-container .filter-container {
+    flex: 0 0 auto;
+    min-width: fit-content;
+  }
+  
+  /* Ensure search input doesn't get too narrow */
+  .calendar-content .search-container app-search {
+    min-width: 120px;                   /* minimum usable width */
   }
 }
 
