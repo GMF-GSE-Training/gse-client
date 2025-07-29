@@ -3,12 +3,13 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin: 20px 0;
-  padding: 15px;
-  background: linear-gradient(135deg, #3e799b 0%, #4a8bb8 100%);
-  border-radius: 12px;
+  margin: 0;
+  padding: 15px 20px;
+  background: #3e799b;
+  border-radius: 10px 10px 0 0;
   box-shadow: 0 4px 12px rgba(62, 121, 155, 0.3);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .month-nav-btn {

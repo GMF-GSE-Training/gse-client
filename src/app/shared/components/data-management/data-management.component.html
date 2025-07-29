@@ -1,48 +1,92 @@
-<div class="container">
+<div class="container calendar-wrapper">
   <app-title [pageTitle]="pageTitle"></app-title>
 
-  <!-- Month Filter -->
-  <app-month-filter 
-    *ngIf="showMonthFilter"
-    [selectedMonth]="selectedMonth"
-    [selectedYear]="selectedYear"
-    (monthChange)="onMonthChanged($event)">
-  </app-month-filter>
+  <!-- Calendar Section Container -->
+  <div class="calendar-section" *ngIf="showMonthFilter">
+    <!-- Month Filter Header -->
+    <app-month-filter 
+      [selectedMonth]="selectedMonth"
+      [selectedYear]="selectedYear"
+      (monthChange)="onMonthChanged($event)">
+    </app-month-filter>
 
-  <div class="search-container">
-    <app-search
-      #searchComponent
-      [placeHolder]="placeHolder"
-      (searchChange)="onSearchChanged($event)">
-    </app-search>
-    <div [class.filter-container]="isParticipantCot">
-      <app-date-filter
-        *ngIf="isParticipantCot"
-        #dateFilterComponent>
-      </app-date-filter>
-      <app-view-all
-        (viewAllChange)="viewAll(searchComponent, dateFilterComponent)">
-      </app-view-all>
+    <!-- Calendar Content -->
+    <div class="calendar-content">
+      <div class="search-container">
+        <app-search
+          #searchComponent
+          [placeHolder]="placeHolder"
+          (searchChange)="onSearchChanged($event)">
+        </app-search>
+        <div [class.filter-container]="isParticipantCot">
+          <app-date-filter
+            *ngIf="isParticipantCot"
+            #dateFilterComponent>
+          </app-date-filter>
+          <app-view-all
+            (viewAllChange)="viewAll(searchComponent, dateFilterComponent)">
+          </app-view-all>
+        </div>
+      </div>
+
+      <!-- Info message for search + sort feedback -->
+      @if (infoMessage) {
+        <div class="info-message" style="margin: 10px 0; padding: 8px 12px; background-color: #e8f4fd; border-left: 4px solid #0066cc; color: #004080; font-size: 14px; border-radius: 4px;">
+          {{ infoMessage }}
+        </div>
+      }
+
+      <div class="table-container">
+        <app-table
+          [columns]="columns"
+          [data]="data"
+          [state]="state"
+          [isLoading]="isLoading"
+          [sortBy]="sortBy"
+          [sortOrder]="sortOrder"
+          (sortChange)="toggleSort($event.sortBy)">
+        </app-table>
+      </div>
     </div>
   </div>
 
-  <!-- Info message for search + sort feedback -->
-  @if (infoMessage) {
-    <div class="info-message" style="margin: 10px 0; padding: 8px 12px; background-color: #e8f4fd; border-left: 4px solid #0066cc; color: #004080; font-size: 14px; border-radius: 4px;">
-      {{ infoMessage }}
+  <!-- Fallback for non-month filter pages -->
+  <div class="standard-layout" *ngIf="!showMonthFilter">
+    <div class="search-container">
+      <app-search
+        #searchComponent
+        [placeHolder]="placeHolder"
+        (searchChange)="onSearchChanged($event)">
+      </app-search>
+      <div [class.filter-container]="isParticipantCot">
+        <app-date-filter
+          *ngIf="isParticipantCot"
+          #dateFilterComponent>
+        </app-date-filter>
+        <app-view-all
+          (viewAllChange)="viewAll(searchComponent, dateFilterComponent)">
+        </app-view-all>
+      </div>
     </div>
-  }
 
-  <div class="table-container">
-    <app-table
-      [columns]="columns"
-      [data]="data"
-      [state]="state"
-      [isLoading]="isLoading"
-      [sortBy]="sortBy"
-      [sortOrder]="sortOrder"
-      (sortChange)="toggleSort($event.sortBy)">
-    </app-table>
+    <!-- Info message for search + sort feedback -->
+    @if (infoMessage) {
+      <div class="info-message" style="margin: 10px 0; padding: 8px 12px; background-color: #e8f4fd; border-left: 4px solid #0066cc; color: #004080; font-size: 14px; border-radius: 4px;">
+        {{ infoMessage }}
+      </div>
+    }
+
+    <div class="table-container">
+      <app-table
+        [columns]="columns"
+        [data]="data"
+        [state]="state"
+        [isLoading]="isLoading"
+        [sortBy]="sortBy"
+        [sortOrder]="sortOrder"
+        (sortChange)="toggleSort($event.sortBy)">
+      </app-table>
+    </div>
   </div>
 
   <app-pagination
