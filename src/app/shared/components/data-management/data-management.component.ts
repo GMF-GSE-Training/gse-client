@@ -38,7 +38,19 @@ export class DataManagementComponent {
 
   // Komponen tabel
   @Input() columns: { header: string, field: string, sortable?: boolean }[] = [];
-  @Input() data: any[] = [];
+  @Input() set data(value: any[]) {
+    console.log('📥 Data Management - Data input received:', {
+      length: value?.length || 0,
+      data: value?.slice(0, 2) || [],
+      note: 'Data received by data-management component'
+    });
+    this._data = value || [];
+  }
+  get data(): any[] {
+    return this._data;
+  }
+  private _data: any[] = [];
+  
   @Input() state: { data: any; } = { data: '' };
   @Input() isLoading: boolean = false;
 

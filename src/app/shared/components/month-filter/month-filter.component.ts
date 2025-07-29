@@ -42,6 +42,13 @@ export class MonthFilterComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
+    console.log('🗓️ Month Filter - ngOnChanges triggered:', {
+      selectedMonth: this.selectedMonth,
+      selectedYear: this.selectedYear,
+      inputs: { month: this.selectedMonth, year: this.selectedYear },
+      previousDisplay: this.currentMonthInfo,
+      note: 'Input properties changed, updating display'
+    });
     this.updateCurrentMonthInfo();
   }
 
