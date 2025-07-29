@@ -266,16 +266,17 @@ app-month-filter {
     min-width: unset;                   /* reset min-width */
   }
   
-  /* Filter-container turun di bawah */
+  /* Filter-container turun di bawah - align ke kiri */
   .calendar-content .search-container .filter-container {
-    justify-content: center;            /* center the button */
+    justify-content: flex-start;        /* align to left */
     width: 100%;                        /* full width */
     margin: 0;
   }
   
-  /* Tombol view-all bisa center atau sesuai kebutuhan */
+  /* Tombol view-all align ke kiri untuk konsistensi */
   .calendar-content .search-container .filter-container app-view-all {
-    margin: 0 auto;                     /* center the button */
+    margin: 0;                          /* align to start/left */
+    align-self: flex-start;             /* stick to left */
   }
 }
 
