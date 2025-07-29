@@ -18,8 +18,8 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: rgba(62, 121, 155, 0.1);
-  border: 2px solid rgba(62, 121, 155, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -27,21 +27,21 @@
 }
 
 .month-nav-btn:hover {
-  background: rgba(62, 121, 155, 0.2);
-  border-color: rgba(62, 121, 155, 0.5);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .month-nav-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nav-icon {
   width: 20px;
   height: 20px;
-  color: #3e799b;
+  color: #ffffff;
   stroke-width: 2.5;
 }
 
@@ -57,29 +57,29 @@
 }
 
 .month-display:hover {
-  background: rgba(62, 121, 155, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-1px);
 }
 
 .month-title {
   margin: 0;
-  color: #2c3e50;
+  color: #ffffff;
   font-size: 1.8rem;
   font-family: 'Petrona', Arial, sans-serif;
   font-weight: 600;
   text-align: center;
   line-height: 1.2;
   letter-spacing: 0.5px;
-  text-shadow: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .month-year {
-  color: #5a6c7d;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.9rem;
   font-family: 'Petrona', Arial, sans-serif;
   font-weight: 400;
   margin-top: 2px;
-  text-shadow: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive Design */
@@ -163,11 +163,11 @@
 
 /* Focus states for accessibility */
 .month-nav-btn:focus {
-  outline: 2px solid rgba(62, 121, 155, 0.7);
+  outline: 2px solid rgba(255, 255, 255, 0.7);
   outline-offset: 2px;
 }
 
 .month-display:focus {
-  outline: 2px solid rgba(62, 121, 155, 0.7);
+  outline: 2px solid rgba(255, 255, 255, 0.7);
   outline-offset: 2px;
 }
