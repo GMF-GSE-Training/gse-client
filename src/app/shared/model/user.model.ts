@@ -32,6 +32,12 @@ export interface User {
     id: string,
     name: string,
   },
+  // Action properties untuk tabel
+  editLink?: string;
+  deleteMethod?: () => void;
+  detailLink?: string;
+  printLink?: string;
+  roleName?: string; // untuk display di tabel
 }
 
 export interface UserResponse {
