@@ -18,6 +18,14 @@
   padding-right: 1.2em;
   overflow-x: auto;
   margin-bottom: 20px;
+  align-items: stretch; /* Pastikan semua chart memiliki tinggi yang sama */
+}
+
+/* Pastikan semua chart containers memiliki tinggi yang konsisten */
+.charts-grid > * {
+  display: flex;
+  flex-direction: column;
+  height: 400px; /* Tinggi konsisten untuk semua chart */
 }
 
 @media screen and (max-width: 1200px) {
