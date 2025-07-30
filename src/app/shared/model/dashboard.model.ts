@@ -29,3 +29,16 @@ export interface ChartData {
   labels: string[];
   datasets: ChartDataset[];
 }
+
+export interface KompetensiGseOperatorDataset {
+  label: string;
+  data: number[];
+  backgroundColor?: string;
+  stack?: string;
+  barThickness?: string;
+}
+
+export interface KompetensiGseOperatorResponse {
+  labels: string[];
+  datasets: KompetensiGseOperatorDataset[];
+}

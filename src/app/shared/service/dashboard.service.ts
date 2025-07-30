@@ -29,4 +29,16 @@ export class DashboardService {
       { params }
     );
   }
+
+  getKompetensiGseOperatorData(year?: number): Observable<WebResponse<any>> {
+    const params: { [key: string]: string } = {};
+    if (year) {
+      params['year'] = year.toString();
+    }
+    
+    return this.http.get<WebResponse<any>>(
+      `${this.baseUrl}/cot/kompetensi-gse-operator`,
+      { params }
+    );
+  }
 }
