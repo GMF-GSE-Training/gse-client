@@ -115,7 +115,7 @@ export class DataTotalSertifikatAktifComponent implements AfterViewInit {
             },
             grid: {
               color: '#000',
-              lineWidth: 2
+              lineWidth: 1
             }
           }
         }
