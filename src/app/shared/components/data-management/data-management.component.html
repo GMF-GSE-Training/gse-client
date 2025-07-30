@@ -36,7 +36,9 @@
           <app-month-filter 
             [selectedMonth]="selectedMonth"
             [selectedYear]="selectedYear"
-            (monthChange)="onMonthChanged($event)">
+            [autoClearSearchOnMonthChange]="true"
+            (monthChange)="onMonthChanged($event)"
+            (searchCleared)="onSearchClearedByMonthFilter()">
           </app-month-filter>
         </div>
         

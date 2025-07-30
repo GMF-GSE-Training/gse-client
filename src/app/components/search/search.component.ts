@@ -49,4 +49,11 @@ export class SearchComponent implements OnInit {
     this.searchQuery = ''; // Mengosongkan nilai input
     this.searchChange.emit(this.searchQuery);
   }
+
+  // Method untuk clear search dari external trigger (e.g., month filter)
+  clearSearchExternally(): void {
+    console.log('🧹 EXTERNAL CLEAR: Search input cleared by external trigger');
+    this.searchQuery = '';
+    this.searchChange.emit(this.searchQuery);
+  }
 }

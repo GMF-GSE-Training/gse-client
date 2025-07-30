@@ -52,7 +52,10 @@ export class SearchHelper {
    * Parse search query untuk mengekstrak informasi bulan dan tahun
    */
   static parseSearchQuery(query: string): ParsedSearchQuery {
+    console.log(`[SearchHelper] Parsing query: \"${query}\"`);
+    
     if (!query?.trim()) {
+      console.log('[SearchHelper] Query is empty, returning default.');
       return {
         originalQuery: query,
         hasMonthFilter: false,
@@ -63,59 +66,60 @@ export class SearchHelper {
 
     const lowerQuery = query.toLowerCase().trim();
     const words = lowerQuery.split(/\s+/);
+    console.log(`[SearchHelper] Words to parse:`, words);
     
     let foundMonth: number | undefined;
     let foundYear: number | undefined;
     const usedWords = new Set<number>();
 
-    // Parse month
+    // Attempt to parse month and year together first for better accuracy
     for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      if (this.MONTH_MAPPINGS.has(word)) {
-        foundMonth = this.MONTH_MAPPINGS.get(word);
-        usedWords.add(i);
-        break;
-      }
-    }
-
-    // Parse year (1500-3001 range untuk fleksibilitas maksimal)
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      const yearMatch = word.match(/^(1[5-9][0-9][0-9]|2[0-9][0-9][0-9]|300[01])$/);
-      if (yearMatch) {
-        foundYear = parseInt(yearMatch[1], 10);
-        usedWords.add(i);
-        break;
-      }
-    }
-
-    // Parse combined format "juli 2025" or "2025 juli"
-    for (let i = 0; i < words.length - 1; i++) {
       const word1 = words[i];
-      const word2 = words[i + 1];
-      
-      // Check "juli 2025" pattern
-      if (this.MONTH_MAPPINGS.has(word1) && word2.match(/^(1[5-9][0-9][0-9]|2[0-9][0-9][0-9]|300[01])$/)) {
+      const word2 = i + 1 < words.length ? words[i+1] : null;
+
+      // Pattern: juli 2026
+      if (this.MONTH_MAPPINGS.has(word1) && word2 && /^\d{4}$/.test(word2)) {
         foundMonth = this.MONTH_MAPPINGS.get(word1);
         foundYear = parseInt(word2, 10);
         usedWords.add(i);
         usedWords.add(i + 1);
+        console.log(`[SearchHelper] Matched pattern MONTH YEAR: ${word1} ${word2}`);
         break;
       }
-      
-      // Check "2025 juli" pattern
-      if (word1.match(/^(1[5-9][0-9][0-9]|2[0-9][0-9][0-9]|300[01])$/) && this.MONTH_MAPPINGS.has(word2)) {
+
+      // Pattern: 2026 juli
+      if (/^\d{4}$/.test(word1) && word2 && this.MONTH_MAPPINGS.has(word2)) {
         foundYear = parseInt(word1, 10);
         foundMonth = this.MONTH_MAPPINGS.get(word2);
         usedWords.add(i);
         usedWords.add(i + 1);
+        console.log(`[SearchHelper] Matched pattern YEAR MONTH: ${word1} ${word2}`);
         break;
       }
     }
 
-    // Build remaining query (words not used for month/year)
+    // If combined pattern not found, parse separately
+    if (usedWords.size === 0) {
+      console.log('[SearchHelper] Combined pattern not found, parsing words separately.');
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        if (!usedWords.has(i) && this.MONTH_MAPPINGS.has(word)) {
+          foundMonth = this.MONTH_MAPPINGS.get(word);
+          usedWords.add(i);
+          console.log(`[SearchHelper] Found month: ${word}`);
+        }
+        if (!usedWords.has(i) && /^\d{4}$/.test(word)) {
+          foundYear = parseInt(word, 10);
+          usedWords.add(i);
+          console.log(`[SearchHelper] Found year: ${word}`);
+        }
+      }
+    }
+
+    // Build remaining query
     const remainingWords = words.filter((_, index) => !usedWords.has(index));
     const remainingQuery = remainingWords.join(' ').trim();
+    console.log(`[SearchHelper] Remaining query: \"${remainingQuery}\"`);
 
     const result: ParsedSearchQuery = {
       originalQuery: query,
@@ -126,14 +130,7 @@ export class SearchHelper {
       year: foundYear
     };
 
-    // Add suggestion if we have month or year
-    if (foundMonth || foundYear) {
-      result.suggestedMonthYear = {
-        month: foundMonth || new Date().getMonth() + 1,
-        year: foundYear || new Date().getFullYear()
-      };
-    }
-
+    console.log('[SearchHelper] Final parsed result:', result);
     return result;
   }
 

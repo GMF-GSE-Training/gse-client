@@ -80,6 +80,7 @@ export class DataManagementComponent {
   // Komponen view all
   @Output() viewAllChange = new EventEmitter();
   @ViewChild('dateFilterComponent') dateFilterComponent: DateFilterComponent | undefined;
+  @ViewChild('searchComponent') searchComponent: SearchComponent | undefined;
 
   viewAll(searchComponent: SearchComponent, dateFilterComponent?: DateFilterComponent) {
     searchComponent.resetSearch();
@@ -148,5 +149,18 @@ export class DataManagementComponent {
 
   onMonthChanged(monthInfo: MonthInfo): void {
     this.monthChange.emit(monthInfo);
+  }
+
+  // Handle search clearing from month filter
+  onSearchClearedByMonthFilter(): void {
+    console.log('🧹 DATA MANAGEMENT: Search cleared by month filter navigation');
+    
+    // Clear the search input visually
+    if (this.searchComponent) {
+      this.searchComponent.clearSearchExternally();
+    }
+    
+    // Emit empty search to parent component
+    this.searchChange.emit('');
   }
 }

@@ -511,83 +511,58 @@ export class CotListComponent {
   }
 
   onSearchChanged(query: string): void {
-    if (query.trim() === '') {
-      // Clear search but MAINTAIN month filter context
-      const formattedStartDate = this.formatDateString(this.selectedYear, this.selectedMonth, 1);
-      const daysInMonth = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-      const formattedEndDate = this.formatDateString(this.selectedYear, this.selectedMonth, daysInMonth);
-      
+    // Jika query kosong, bersihkan & kembali ke konteks bulan saat ini
+    if (!query?.trim()) {
       this.router.navigate([], {
-        queryParams: { 
-          q: null, 
-          page: null,
-          // MAINTAIN month filter when clearing search
-          month: this.selectedMonth,
-          year: this.selectedYear,
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          // Keep existing sort parameters when clearing search
-          sort_by: this.sortBy || 'startDate',
-          sort_order: this.sortOrder || 'asc'
+        queryParams: {
+          q: null, // Hapus parameter q
+          page: 1, // Kembali ke halaman 1
         },
         queryParamsHandling: 'merge',
       });
-    } else {
-      // ENHANCED SEARCH: Parse query untuk month/year detection
-      const parsedQuery: ParsedSearchQuery = SearchHelper.parseSearchQuery(query);
-      
-      console.log('🔍 Enhanced Search Debug:', {
-        originalQuery: query,
-        parsedQuery,
-        currentContext: { month: this.selectedMonth, year: this.selectedYear }
-      });
-      
-      // Determine target month/year berdasarkan parsed query atau current context
-      let targetMonth: number;
-      let targetYear: number;
-      
-      if (parsedQuery.hasMonthFilter || parsedQuery.hasYearFilter) {
-        // User specified month/year in search - use that
-        targetMonth = parsedQuery.month || this.selectedMonth;
-        targetYear = parsedQuery.year || this.selectedYear;
-        
-        // Update month filter display jika user search dengan month/year
-        if (parsedQuery.month !== this.selectedMonth || parsedQuery.year !== this.selectedYear) {
-          this.selectedMonth = targetMonth;
-          this.selectedYear = targetYear;
-        }
-      } else {
-        // No month/year in search - use current month filter context
-        targetMonth = this.selectedMonth;
-        targetYear = this.selectedYear;
-      }
-      
-      // Calculate date range for the target month/year
-      const formattedStartDate = this.formatDateString(targetYear, targetMonth, 1);
-      const daysInMonth = new Date(targetYear, targetMonth, 0).getDate();
-      const formattedEndDate = this.formatDateString(targetYear, targetMonth, daysInMonth);
-      
-      // Use remainingQuery if month/year were parsed out, otherwise use original
-      const finalSearchQuery = parsedQuery.hasMonthFilter || parsedQuery.hasYearFilter 
-        ? parsedQuery.remainingQuery.trim() || query
-        : query;
-      
-      this.router.navigate([], {
-        queryParams: { 
-          q: finalSearchQuery, 
-          page: 1,
-          // Set month/year context based on search or current state
-          month: targetMonth,
-          year: targetYear,
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          // Keep current sorting
-          sort_by: this.sortBy || 'startDate',
-          sort_order: this.sortOrder || 'asc'
-        },
-        queryParamsHandling: 'merge',
-      });
+      return;
     }
+
+    // 1. Parse search query untuk bulan dan tahun
+    const parsedQuery = SearchHelper.parseSearchQuery(query);
+    console.log('✅ [SEARCH] Parsed Query:', parsedQuery);
+
+    // 2. Tentukan target bulan dan tahun
+    // Jika search query mengandung bulan/tahun, gunakan itu. Jika tidak, gunakan month filter saat ini.
+    const targetMonth = parsedQuery.month || this.selectedMonth;
+    const targetYear = parsedQuery.year || this.selectedYear;
+
+    // 3. Kalkulasi date range yang BENAR berdasarkan target
+    const formattedStartDate = this.formatDateString(targetYear, targetMonth, 1);
+    const daysInMonth = new Date(targetYear, targetMonth, 0).getDate();
+    const formattedEndDate = this.formatDateString(targetYear, targetMonth, daysInMonth);
+
+    // 4. Tentukan search query final (tanpa bulan/tahun)
+    const finalSearchQuery = parsedQuery.remainingQuery.trim() || null;
+
+    // 5. Buat object query parameter yang bersih
+    const newQueryParams: any = {
+      page: 1, // Selalu reset ke halaman 1 saat search baru
+      sort_by: this.sortBy,
+      sort_order: this.sortOrder,
+      q: finalSearchQuery,
+      month: targetMonth,
+      year: targetYear,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+    };
+    
+    // Hapus key yang nilainya null/undefined agar tidak muncul di URL
+    Object.keys(newQueryParams).forEach(key => {
+      if (newQueryParams[key] === null || newQueryParams[key] === undefined) {
+        delete newQueryParams[key];
+      }
+    });
+    
+    console.log('🚀 [SEARCH] Navigating with new params:', newQueryParams);
+
+    // 6. Navigasi dengan parameter yang bersih (tanpa merge)
+    this.router.navigate([], { queryParams: newQueryParams });
   }
 
   viewAll(): void {
