@@ -143,7 +143,7 @@
 }
 
 .go-to-page-button:disabled {
-  background-color: #9ca3af;
+  background-color: #E0E0E0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

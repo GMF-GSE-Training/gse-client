@@ -96,8 +96,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 15px;
+  font-size: 20px;
 }
 
 .sort-icon {
@@ -176,8 +176,8 @@ a:hover {
   }
   
   .header-content {
-    gap: 4px;
-    font-size: 11px;
+    gap: 6px;
+    font-size: 15px;
   }
   
   .sort-icon {
@@ -198,8 +198,8 @@ a:hover {
   }
   
   .header-content {
-    gap: 2px;
-    font-size: 10px;
+    gap: 4px;
+    font-size: 12px;
   }
   
   .sort-icon {

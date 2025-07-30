@@ -1,16 +1,14 @@
 <div class="chart-container">
-  <!-- Chart Header integrated into canvas container -->
   <div class="canvas-container">
     <div class="chart-title-overlay">
-      <h2 class="chart-title">
-        Realisasi COT
-        <app-year-picker 
-          [currentYear]="selectedYear" 
-          [availableYears]="availableYears" 
-          [disabled]="isLoading"
-          (yearChange)="onYearChange($event)">
-        </app-year-picker>
-      </h2>
+      <app-year-navigation 
+        [selectedYear]="selectedYear" 
+        [availableYears]="availableYears" 
+        [disabled]="isLoading"
+        [minYear]="1950"
+        [maxYear]="3001"
+        (yearChange)="onYearChange($event)">
+      </app-year-navigation>
     </div>
     <canvas #realisasiCotChart></canvas>
   </div>

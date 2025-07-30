@@ -1,0 +1,29 @@
+<div class="year-filter-container">
+  <button 
+    class="year-nav-btn" 
+    (click)="previousYear()"
+    [disabled]="!canGoToPrevious()"
+    type="button"
+    aria-label="Tahun sebelumnya"
+    title="Tahun sebelumnya">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15,18 9,12 15,6"></polyline>
+    </svg>
+  </button>
+
+  <div class="year-display" (click)="resetToCurrentYear()" title="Klik untuk kembali ke tahun ini">
+    <h2 class="year-title">Realisasi COT {{ displayYear }}</h2>
+  </div>
+
+  <button 
+    class="year-nav-btn" 
+    (click)="nextYear()"
+    [disabled]="!canGoToNext()"
+    type="button"
+    aria-label="Tahun selanjutnya"
+    title="Tahun selanjutnya">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9,18 15,12 9,6"></polyline>
+    </svg>
+  </button>
+</div>

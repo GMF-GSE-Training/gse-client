@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { DashboardStatsResponse } from '../../../shared/model/dashboard.model';
-import { YearPickerComponent } from '../../year-picker/year-picker.component';
+import { YearNavigationComponent } from '../../year-navigation/year-navigation.component';
 
 @Component({
   selector: 'app-realisasi-cot-chart',
   standalone: true,
-  imports: [CommonModule, YearPickerComponent],
+  imports: [CommonModule, YearNavigationComponent],
   templateUrl: './realisasi-cot-chart.component.html',
   styleUrl: './realisasi-cot-chart.component.css'
 })
@@ -117,19 +117,19 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
         },
         plugins: {
           legend: {
-            position: 'bottom',
+            position: 'top',
             align: 'center',
             labels: {
-              boxWidth: 12,
-              boxHeight: 12,
+              boxWidth: 16,
+              boxHeight: 16,
               color: '#000000',
               font: {
                 family: 'Petrona',
-                size: 12,
+                size: 13,
                 weight: 'bold'
               },
-              padding: 15,
-              usePointStyle: true,
+              padding: 20,
+              usePointStyle: false, // Use square boxes instead of circles
             },
             onClick: (_e, legendItem) => {
               const index = legendItem.datasetIndex;
