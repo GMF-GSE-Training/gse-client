@@ -31,6 +31,7 @@ export class UserListComponent implements OnInit {
 
   users: User[] = [];
   isLoading: boolean = false;
+  actions: any = {}; // Store actions from backend
 
   // Komponen pagination
   currentPage: number = 1;
@@ -67,13 +68,34 @@ export class UserListComponent implements OnInit {
     this.isLoading = true;
     this.userService.listUsers(query, page, size, sortBy, sortOrder).subscribe({
       next: (response) => {
-        this.users = response.data.map((user: User) => ({
-          ...user,
-          idNumber: user.idNumber ?? '-',
-          dinas: user.dinas ?? '-',
-          roleName: user.role?.name ?? '-',
-        }));
+        console.log('🔍 User List - Response received:', response);
+        
+        // Store actions from backend
+        this.actions = response.actions || {};
+        console.log('🎯 User List - Actions received:', this.actions);
+        
+        this.users = response.data.map((user: User) => {
+          const mappedUser = {
+            ...user,
+            idNumber: user.idNumber ?? '-',
+            dinas: user.dinas ?? '-',
+            roleName: user.role?.name ?? '-',
+          };
+          
+          // Add action properties based on backend response
+          if (this.actions.canEdit) {
+            mappedUser.editLink = `/users/${user.id}/edit`;
+          }
+          
+          if (this.actions.canDelete) {
+            mappedUser.deleteMethod = () => this.deleteParticipant(user);
+          }
+          
+          return mappedUser;
+        });
+        
         this.totalPages = response.paging?.totalPage ?? 1;
+        console.log('🎯 User List - Processed users with actions:', this.users.slice(0, 2));
       },
       error: (error) => {
         console.log(error);
