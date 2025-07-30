@@ -35,6 +35,10 @@ export class CotListComponent {
   infoMessage: string | null = null;
   state: { data: string } = { data: '' };
 
+  // 🔧 CRITICAL FIX: Add cache for all collected data
+  private allCollectedData: any[] = [];
+  private currentDataContext: string = '';
+
   // Komponen pagination
   currentPage: number = 1;
   totalPages: number = 1;
@@ -243,14 +247,41 @@ export class CotListComponent {
   getListCot(searchQuery: string, page: number, size: number, startDate: string, endDate: string, sortBy: string, sortOrder: string): void {
     this.isLoading = true;
     
+    // 🔧 CRITICAL FIX: Check if we already have cached data for this context
+    const currentContext = `${searchQuery}-${startDate}-${endDate}-${sortBy}-${sortOrder}`;
+    const hasValidCache = this.allCollectedData.length > 0 && this.currentDataContext === currentContext;
+    
     console.log('🚀 COT List Request:', {
       searchQuery,
       page,
       size,
       dateFilter: { startDate, endDate },
       sorting: { sortBy, sortOrder },
-      monthContext: { month: this.selectedMonth, year: this.selectedYear }
+      monthContext: { month: this.selectedMonth, year: this.selectedYear },
+      cacheStatus: {
+        hasValidCache,
+        cachedDataLength: this.allCollectedData.length,
+        currentContext,
+        previousContext: this.currentDataContext
+      }
     });
+    
+    // 🔧 If we have valid cached data, use it for pagination
+    if (hasValidCache) {
+      console.log('📦 Using cached data for pagination:', {
+        totalCachedData: this.allCollectedData.length,
+        requestedPage: page,
+        itemsPerPage: this.itemsPerPage,
+        note: 'Skipping backend call, using frontend pagination on cached data'
+      });
+      
+      this.paginateFromCache(page);
+      return;
+    }
+    
+    // 🔧 Clear cache and fetch fresh data
+    this.allCollectedData = [];
+    this.currentDataContext = currentContext;
     
     // 🧪 TESTING STRATEGY: Log expected filtering criteria
     console.log('🧪 TESTING - Expected Filtering Logic:', {
@@ -778,15 +809,105 @@ export class CotListComponent {
     fetchNextPage();
   }
   
+  // 🔧 CRITICAL FIX: Method to paginate from cached data
+  private paginateFromCache(page: number): void {
+    console.log('📦 Paginating from cached data:', {
+      totalCachedData: this.allCollectedData.length,
+      requestedPage: page,
+      itemsPerPage: this.itemsPerPage,
+      note: 'Using frontend pagination on cached data'
+    });
+    
+    // Calculate pagination boundaries
+    const startIndex = (page - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    
+    // Slice data for current page
+    const pageData = this.allCollectedData.slice(startIndex, endIndex);
+    
+    console.log('✂️ CACHE PAGINATION SLICE:', {
+      totalCachedData: this.allCollectedData.length,
+      startIndex,
+      endIndex,
+      pageDataLength: pageData.length,
+      currentPage: page,
+      expectedLength: Math.min(this.itemsPerPage, this.allCollectedData.length - startIndex)
+    });
+    
+    // Map the paginated data
+    this.cot = pageData.map((cot) => {
+      return {
+        startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
+        endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
+        ratingCode: cot.capability?.ratingCode,
+        trainingName: cot.capability?.trainingName,
+        capabilityLink: `/capability/${cot.capability.id}/curriculum-syllabus`,
+        editLink: cot.actions?.canEdit ? `/cot/${cot.id}/edit` : null,
+        detailLink: cot.actions?.canView ? `/cot/${cot.id}/detail` : null,
+        deleteMethod: cot.actions?.canDelete ? () => this.deleteCot(cot) : null,
+      };
+    });
+    
+    // Update pagination info
+    this.totalPages = Math.ceil(this.allCollectedData.length / this.itemsPerPage);
+    this.currentPage = page;
+    this.isLoading = false;
+    
+    console.log('🎨 CACHE PAGINATION RESULT:', {
+      displayedItems: this.cot.length,
+      totalPages: this.totalPages,
+      currentPage: this.currentPage,
+      cacheSize: this.allCollectedData.length,
+      note: 'Frontend pagination from cache completed'
+    });
+  }
+  
   private finalizeAdaptiveData(allData: any[], actions: any, paging: any, info: string | null): void {
     console.log('🎯 Finalizing adaptive data result:', {
       totalData: allData.length,
       target: this.itemsPerPage,
+      currentPage: this.currentPage,
       success: allData.length >= this.itemsPerPage || paging.currentPage >= paging.totalPage
     });
     
-    // Map the data
-    this.cot = allData.map((cot) => {
+    // 🔧 CRITICAL FIX: Implement proper frontend pagination
+    // Calculate pagination boundaries for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    
+    console.log('📄 PAGINATION BOUNDARIES:', {
+      currentPage: this.currentPage,
+      itemsPerPage: this.itemsPerPage,
+      startIndex,
+      endIndex,
+      totalAvailableData: allData.length,
+      note: 'Slicing data based on current page'
+    });
+    
+    // Slice data based on current page (CRITICAL FIX)
+    const pageData = allData.slice(startIndex, endIndex);
+    
+    console.log('✂️ PAGINATION SLICE RESULT:', {
+      originalDataLength: allData.length,
+      slicedDataLength: pageData.length,
+      expectedLength: Math.min(this.itemsPerPage, allData.length - startIndex),
+      startIndex,
+      endIndex,
+      currentPage: this.currentPage,
+      demonstration: {
+        allDataItems: allData.slice(0, 3).map(cot => ({
+          id: cot.id,
+          training: cot.capability?.trainingName
+        })),
+        pageDataItems: pageData.slice(0, 3).map(cot => ({
+          id: cot.id,
+          training: cot.capability?.trainingName
+        }))
+      }
+    });
+    
+    // Map ONLY the paginated data (CRITICAL FIX)
+    this.cot = pageData.map((cot) => {
       const mappedCot = {
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -798,7 +919,7 @@ export class CotListComponent {
         deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
       };
       
-      console.log('🎯 Mapped COT item (adaptive):', {
+      console.log('🎯 Mapped COT item (paginated):', {
         original: {
           id: cot.id,
           startDate: cot.startDate,
@@ -813,16 +934,27 @@ export class CotListComponent {
     
     this.infoMessage = info || null;
     this.state.data = `/cot`;
-    // Use backend pagination info
-    this.totalPages = paging?.totalPage || 1;
+    
+    // 🔧 CRITICAL FIX: Cache all collected data for future pagination
+    this.allCollectedData = [...allData];
+    
+    // 🔧 CRITICAL FIX: Calculate total pages based on ALL collected data
+    this.totalPages = Math.ceil(allData.length / this.itemsPerPage);
     this.isLoading = false;
     
-    console.log('🎨 Final adaptive data result:', {
+    console.log('🎨 FIXED - Final paginated result:', {
       displayedItems: this.cot.length,
-      totalAvailable: allData.length,
-      totalPages: this.totalPages,
+      totalDataCollected: allData.length,
+      calculatedTotalPages: this.totalPages,
+      currentPage: this.currentPage,
+      itemsPerPage: this.itemsPerPage,
       isLoading: this.isLoading,
-      note: 'Adaptive data fetching completed'
+      paginationCheck: {
+        expectedMaxItems: this.itemsPerPage,
+        actualDisplayedItems: this.cot.length,
+        isCorrect: this.cot.length <= this.itemsPerPage
+      },
+      note: 'Frontend pagination implemented correctly'
     });
   }
 
