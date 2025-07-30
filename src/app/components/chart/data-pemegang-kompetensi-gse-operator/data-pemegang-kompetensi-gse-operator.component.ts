@@ -69,6 +69,7 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
     const dummyData: KompetensiGseOperatorResponse = {
       labels: ['FLT', 'GPS', 'WSS', 'WMT', 'AWT', 'GSE', 'ACS', 'ATT', 'BTT', 'RDS', 'LSS', 'ASS', 'TBL'],
       datasets: [
+        { label: 'TA', data: [15, 18, 25, 30, 22, 18, 12, 35, 28, 14, 32, 16, 24] },
         { label: 'TB', data: [19, 23, 55, 35, 34, 12, 11, 45, 26, 12, 44, 12, 34] },
         { label: 'TC', data: [20, 32, 23, 23, 45, 56, 23, 21, 45, 23, 21, 34, 42] },
         { label: 'TF', data: [55, 35, 34, 12, 11, 45, 20, 32, 23, 23, 45, 56, 23] },
@@ -77,7 +78,7 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
         { label: 'TM', data: [45, 21, 45, 23, 11, 32, 46, 13, 12, 23, 43, 54, 75] },
         { label: 'TR', data: [46, 13, 12, 23, 43, 54, 75, 11, 45, 20, 32, 44, 32] },
         { label: 'TU', data: [41, 17, 23, 24, 58, 23, 19, 55, 43, 76, 57, 29, 30] },
-        { label: 'TV', data: [20, 10, 19, 42, 32, 23, 10, 29, 72, 12, 38, 39, 44] },
+        { label: 'TV', data: [28, 22, 31, 45, 38, 27, 18, 33, 64, 19, 42, 35, 52] },
         { label: 'TZ', data: [19, 42, 32, 23, 10, 29, 72, 58, 23, 19, 55, 43, 76] },
       ]
     };
@@ -85,6 +86,10 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
   }
 
   private createChart(data: KompetensiGseOperatorResponse): void {
+    console.log('🎯 Creating chart with data:', data);
+    console.log('🎯 Available datasets:', data.datasets.map(d => d.label));
+    console.log('🎯 Dataset count:', data.datasets.length);
+    
     const canvas = this.dataPemegangKompetensiGseOperatorRef.nativeElement;
     const ctx = canvas.getContext('2d');
 
