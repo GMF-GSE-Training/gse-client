@@ -122,7 +122,7 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
             labels: {
               boxWidth: 16,
               boxHeight: 16,
-              color: '#000000',
+              color: '#FFFFFF', // Ubah ke putih untuk visibility yang lebih baik
               font: {
                 family: 'Petrona',
                 size: 13,
@@ -191,7 +191,7 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
             },
             grid: {
               color: '#000',
-              lineWidth: 2
+              lineWidth: 1 // Kurangi ketebalan untuk tampilan yang lebih halus
             }
           }
         }
