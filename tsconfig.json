@@ -23,6 +23,10 @@
       "dom"
     ],
     "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
