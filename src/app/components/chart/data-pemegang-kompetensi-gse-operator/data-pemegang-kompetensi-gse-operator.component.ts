@@ -1,24 +1,90 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { DashboardService } from 'src/app/shared/service/dashboard.service';
+import { KompetensiGseOperatorResponse, KompetensiGseOperatorDataset } from 'src/app/shared/model/dashboard.model';
+import { WebResponse } from 'src/app/shared/model/web.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-data-pemegang-kompetensi-gse-operator',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './data-pemegang-kompetensi-gse-operator.component.html',
   styleUrl: '../chart.component.css',
 })
-export class DataPemegangKompetensiGseOperatorComponent implements AfterViewInit {
+export class DataPemegangKompetensiGseOperatorComponent implements OnInit, AfterViewInit {
   @ViewChild('dataPemegangKompetensiGSEOperator') private dataPemegangKompetensiGseOperatorRef!: ElementRef<HTMLCanvasElement>;
   private chart!: Chart;
   private allDatasetsVisible: boolean = true;
   chartWidht: number = 0;
+  
+  // Pemetaan warna konsisten untuk setiap dinas (sesuai dengan data dummy)
+  private dinasColors: { [key: string]: string } = {
+    'TB': '#000',
+    'TC': '#6EACDA',
+    'TF': '#03346E',
+    'TJ': '#114B5F',
+    'TL': '#A66CC1',
+    'TM': '#C63C51',
+    'TR': 'green',
+    'TU': 'blue',
+    'TV': 'orange',
+    'TZ': 'purple',
+    'TA': '#36A2EB',
+    // Tambahkan warna untuk dinas lainnya jika diperlukan
+  };
+  private defaultColor = '#6C757D'; // Warna abu-abu untuk dinas yang tidak terdefinisi
 
-  ngAfterViewInit(): void {
+  constructor(private dashboardService: DashboardService) {}
+
+  ngOnInit(): void {
     Chart.register(...registerables);
     Chart.register(ChartDataLabels);
+  }
 
+  ngAfterViewInit(): void {
+    this.loadChartData();
+  }
+
+  private loadChartData(): void {
+    this.dashboardService.getKompetensiGseOperatorData().subscribe({
+      next: (response: WebResponse<KompetensiGseOperatorResponse>) => {
+        if (response.data) {
+          console.log('Data loaded from API:', response.data);
+          this.createChart(response.data);
+        } else {
+          console.warn('No data received from API, using dummy data');
+          this.createChartWithDummyData();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading data from API, using dummy data:', error);
+        this.createChartWithDummyData();
+      }
+    });
+  }
+
+  private createChartWithDummyData(): void {
+    const dummyData: KompetensiGseOperatorResponse = {
+      labels: ['FLT', 'GPS', 'WSS', 'WMT', 'AWT', 'GSE', 'ACS', 'ATT', 'BTT', 'RDS', 'LSS', 'ASS', 'TBL'],
+      datasets: [
+        { label: 'TB', data: [19, 23, 55, 35, 34, 12, 11, 45, 26, 12, 44, 12, 34] },
+        { label: 'TC', data: [20, 32, 23, 23, 45, 56, 23, 21, 45, 23, 21, 34, 42] },
+        { label: 'TF', data: [55, 35, 34, 12, 11, 45, 20, 32, 23, 23, 45, 56, 23] },
+        { label: 'TJ', data: [12, 11, 45, 20, 32, 23, 23, 21, 45, 23, 21, 34, 23] },
+        { label: 'TL', data: [32, 23, 23, 20, 32, 23, 23, 21, 45, 21, 45, 23, 11] },
+        { label: 'TM', data: [45, 21, 45, 23, 11, 32, 46, 13, 12, 23, 43, 54, 75] },
+        { label: 'TR', data: [46, 13, 12, 23, 43, 54, 75, 11, 45, 20, 32, 44, 32] },
+        { label: 'TU', data: [41, 17, 23, 24, 58, 23, 19, 55, 43, 76, 57, 29, 30] },
+        { label: 'TV', data: [20, 10, 19, 42, 32, 23, 10, 29, 72, 12, 38, 39, 44] },
+        { label: 'TZ', data: [19, 42, 32, 23, 10, 29, 72, 58, 23, 19, 55, 43, 76] },
+      ]
+    };
+    this.createChart(dummyData);
+  }
+
+  private createChart(data: KompetensiGseOperatorResponse): void {
     const canvas = this.dataPemegangKompetensiGseOperatorRef.nativeElement;
     const ctx = canvas.getContext('2d');
 
@@ -27,22 +93,20 @@ export class DataPemegangKompetensiGseOperatorComponent implements AfterViewInit
       return;
     }
 
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['FLT', 'GPS', 'WSS', 'WMT', 'AWT', 'GSE', 'ACS', 'ATT', 'BTT', 'RDS', 'LSS', 'ASS', 'TBL'],
-        datasets: [
-          { label: 'TB', data: [19, 23, 55, 35, 34, 12, 11, 45, 26, 12, 44, 12, 34], backgroundColor: '#000', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TC', data: [20, 32, 23, 23, 45, 56, 23, 21, 45, 23, 21, 34, 42], backgroundColor: '#6EACDA', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TF', data: [55, 35, 34, 12, 11, 45, 20, 32, 23, 23, 45, 56, 23], backgroundColor: '#03346E', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TJ', data: [12, 11, 45, 20, 32, 23, 23, 21, 45, 23, 21, 34, 23], backgroundColor: '#114B5F', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TL', data: [32, 23, 23, 20, 32, 23, 23, 21, 45, 21, 45, 23, 11], backgroundColor: '#A66CC1', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TM', data: [45, 21, 45, 23, 11, 32, 46, 13, 12, 23, 43, 54, 75], backgroundColor: '#C63C51', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TR', data: [46, 13, 12, 23, 43, 54, 75, 11, 45, 20, 32, 44, 32], backgroundColor: 'green', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TU', data: [41, 17, 23, 24, 58, 23, 19, 55, 43, 76, 57, 29, 30], backgroundColor: 'blue', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TV', data: [20, 10, 19, 42, 32, 23, 10, 29, 72, 12, 38, 39, 44], backgroundColor: 'orange', stack: 'Stack 0', barThickness: 'flex' },
-          { label: 'TZ', data: [19, 42, 32, 23, 10, 29, 72, 58, 23, 19, 55, 43, 76], backgroundColor: 'purple', stack: 'Stack 0', barThickness: 'flex' },
-        ]
+        labels: data.labels,
+        datasets: data.datasets.map((dataset: KompetensiGseOperatorDataset) => ({
+          ...dataset,
+          backgroundColor: this.dinasColors[dataset.label] || this.defaultColor,
+          stack: 'Stack 0',
+          barThickness: 'flex'
+        }))
       },
       options: {
         responsive: true,
@@ -127,7 +191,7 @@ export class DataPemegangKompetensiGseOperatorComponent implements AfterViewInit
             },
             grid: {
               color: '#000',
-              lineWidth: 2
+              lineWidth: 1
             }
           }
         }
