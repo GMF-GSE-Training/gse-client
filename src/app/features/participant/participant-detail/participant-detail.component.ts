@@ -89,6 +89,16 @@ export class ParticipantDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Subscribe to URL changes to set the selected tab
+    this.route.url.subscribe(urlSegments => {
+      const url = urlSegments.map(segment => segment.path).join('/');
+      if (url.endsWith('profile/account')) {
+        this.selectedItem = 1; // Tab Akun
+      } else {
+        this.selectedItem = 0; // Tab Data Pribadi
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
       if (params['error']) {
         this.sweetalertService.alert('Gagal', params['error'], 'error');
@@ -98,11 +108,6 @@ export class ParticipantDetailComponent implements OnInit {
         this.getParticipantById();
         this.router.navigate([], { relativeTo: this.route, queryParams: { success: null }, queryParamsHandling: 'merge' });
       }
-    });
-
-    this.route.url.subscribe(urlSegments => {
-      const url = urlSegments.map(segment => segment.path).join('/');
-      this.selectedItem = url === `participants/${this.id}/profile/personal` ? 0 : url === `participants/${this.id}/profile/account` ? 1 : 0;
     });
 
     if (this.userProfile.role.name === 'user') {
