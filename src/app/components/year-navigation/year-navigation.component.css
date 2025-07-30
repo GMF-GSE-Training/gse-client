@@ -2,46 +2,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 16px; /* Optimized spacing untuk modern layout */
   margin: 0;
-  padding: 15px 20px;
+  padding: 10px 16px; /* Reduced padding untuk better proportion */
   background: transparent;
-  border-radius: 10px;
+  border-radius: 8px; /* Modern border radius */
   box-shadow: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  min-height: 60px; /* Ensure consistent height */
 }
 
 .year-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 40px; /* Slightly smaller untuk better proportion */
+  height: 40px;
+  background: rgba(255, 255, 255, 0.12); /* Refined transparency */
+  border: 1.5px solid rgba(255, 255, 255, 0.25); /* Thinner border */
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Modern easing */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle depth */
 }
 
 .year-nav-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px) scale(1.05); /* Subtle scale effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .year-nav-btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0) scale(1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .year-nav-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4; /* More subtle disabled state */
   cursor: not-allowed;
   transform: none;
+  filter: grayscale(0.3);
 }
 
 .nav-icon {
@@ -55,26 +59,68 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  min-width: 200px;
+  padding: 6px 12px; /* Optimized padding untuk better proportion */
+  border-radius: 6px; /* Slightly smaller radius untuk modern look */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Modern easing curve */
+  min-width: 160px; /* Reduced width untuk better fit */
+  max-width: 220px; /* Prevent excessive growth */
+  pointer-events: auto;
+  backdrop-filter: blur(4px); /* Subtle glass effect */
 }
 
 .year-display:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08); /* Subtle hover state */
+  transform: translateY(-0.5px); /* Refined lift effect */
+  backdrop-filter: blur(6px);
+}
+
+.year-display:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .year-title {
   margin: 0;
   color: #ffffff;
-  font-size: 1.8rem;
+  font-size: 1.1rem; /* Optimal size sesuai best practice 2025 - proporsional dengan container 400px */
   font-family: 'Petrona', Arial, sans-serif;
   font-weight: 600;
   text-align: center;
-  line-height: 1.2;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.3; /* Improved line height untuk readability */
+  letter-spacing: 0.3px; /* Reduced letter spacing untuk cleaner look */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* Subtle shadow untuk depth */
+  cursor: pointer;
+  transition: all 0.2s ease; /* Smooth interaction feedback */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Handle long text gracefully */
+}
+
+.year-title:hover {
+  transform: translateY(-1px); /* Subtle lift effect */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Modern responsive scaling - fluid typography */
+@media screen and (max-width: 1200px) {
+  .year-title {
+    font-size: 1.05rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .year-title {
+    font-size: 1rem;
+    letter-spacing: 0.2px;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .year-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.1px;
+    white-space: normal; /* Allow wrapping on very small screens */
+  }
 }
