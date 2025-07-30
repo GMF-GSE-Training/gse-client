@@ -79,22 +79,30 @@ export class SearchHelper {
 
       // Pattern: juli 2026
       if (this.MONTH_MAPPINGS.has(word1) && word2 && /^\d{4}$/.test(word2)) {
-        foundMonth = this.MONTH_MAPPINGS.get(word1);
-        foundYear = parseInt(word2, 10);
-        usedWords.add(i);
-        usedWords.add(i + 1);
-        console.log(`[SearchHelper] Matched pattern MONTH YEAR: ${word1} ${word2}`);
-        break;
+        const year = parseInt(word2, 10);
+        // Validate year range: 1500-3001 (inclusive)
+        if (year >= 1500 && year <= 3001) {
+          foundMonth = this.MONTH_MAPPINGS.get(word1);
+          foundYear = year;
+          usedWords.add(i);
+          usedWords.add(i + 1);
+          console.log(`[SearchHelper] Matched pattern MONTH YEAR: ${word1} ${word2}`);
+          break;
+        }
       }
 
       // Pattern: 2026 juli
       if (/^\d{4}$/.test(word1) && word2 && this.MONTH_MAPPINGS.has(word2)) {
-        foundYear = parseInt(word1, 10);
-        foundMonth = this.MONTH_MAPPINGS.get(word2);
-        usedWords.add(i);
-        usedWords.add(i + 1);
-        console.log(`[SearchHelper] Matched pattern YEAR MONTH: ${word1} ${word2}`);
-        break;
+        const year = parseInt(word1, 10);
+        // Validate year range: 1500-3001 (inclusive)
+        if (year >= 1500 && year <= 3001) {
+          foundYear = year;
+          foundMonth = this.MONTH_MAPPINGS.get(word2);
+          usedWords.add(i);
+          usedWords.add(i + 1);
+          console.log(`[SearchHelper] Matched pattern YEAR MONTH: ${word1} ${word2}`);
+          break;
+        }
       }
     }
 
@@ -109,9 +117,15 @@ export class SearchHelper {
           console.log(`[SearchHelper] Found month: ${word}`);
         }
         if (!usedWords.has(i) && /^\d{4}$/.test(word)) {
-          foundYear = parseInt(word, 10);
-          usedWords.add(i);
-          console.log(`[SearchHelper] Found year: ${word}`);
+          const year = parseInt(word, 10);
+          // Validate year range: 1500-3001 (inclusive)
+          if (year >= 1500 && year <= 3001) {
+            foundYear = year;
+            usedWords.add(i);
+            console.log(`[SearchHelper] Found year: ${word}`);
+          } else {
+            console.log(`[SearchHelper] Invalid year (outside 1500-3001 range): ${word}`);
+          }
         }
       }
     }

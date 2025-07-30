@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataManagementComponent } from "../../../../shared/components/data-management/data-management.component";
 import { CotService } from '../../../../shared/service/cot.service';
@@ -21,7 +21,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
   templateUrl: './cot-list.component.html',
   styleUrl: './cot-list.component.css',
 })
-export class CotListComponent {
+export class CotListComponent implements OnInit, OnDestroy {
   columns = [
     { header: 'Mulai', field: 'startDate' },
     { header: 'Selesai', field: 'endDate' },
@@ -38,6 +38,9 @@ export class CotListComponent {
   // 🔧 CRITICAL FIX: Add cache for all collected data
   private allCollectedData: any[] = [];
   private currentDataContext: string = '';
+  
+  // 🔧 FIX: Add destroy subject to handle component cleanup
+  private destroy$ = new Subject<void>();
 
   // Komponen pagination
   currentPage: number = 1;
@@ -76,7 +79,9 @@ export class CotListComponent {
   ngOnInit(): void {
     console.log('🚀 COT List Component Initialized');
     
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
       console.log('📡 Query params received:', params);
       
       // Handle legacy 'keyword' parameter by converting to 'q'
@@ -188,9 +193,15 @@ export class CotListComponent {
           this.sortBy = existingSortBy;
           this.sortOrder = existingSortOrder as 'asc' | 'desc';
           
-          setTimeout(() => {
-            this.getListCot(this.searchQuery, existingPage, this.itemsPerPage, formattedStartDate, formattedEndDate, existingSortBy, existingSortOrder);
-          }, 50);
+          // Check if component is still alive before making HTTP request
+          if (!this.destroy$.closed) {
+            setTimeout(() => {
+              // Double check if component is still alive after timeout
+              if (!this.destroy$.closed) {
+                this.getListCot(this.searchQuery, existingPage, this.itemsPerPage, formattedStartDate, formattedEndDate, existingSortBy, existingSortOrder);
+              }
+            }, 50);
+          }
         });
         
         return; // Stop execution karena akan redirect
@@ -298,7 +309,9 @@ export class CotListComponent {
     
     // PERBAIKAN: Kirim startDate dan endDate ke backend untuk filtering yang tepat
     // Backend dan frontend akan menggunakan logika filtering yang sama
-    this.cotService.listCot(searchQuery, page, size, startDate, endDate, sortBy, sortOrder).subscribe({
+    this.cotService.listCot(searchQuery, page, size, startDate, endDate, sortBy, sortOrder).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: ({ data, actions, paging, info }) => {
         console.log('📊 CRITICAL DEBUG - Backend Response:', {
           totalRecords: data.length,
@@ -449,15 +462,20 @@ export class CotListComponent {
         this.totalPages = paging?.totalPage || 1;
         this.isLoading = false;
         
-        // DEBUGGING: Force change detection
+        // DEBUGGING: Force change detection (only if component is still alive)
         console.log('🔄 Forcing change detection after data update');
-        setTimeout(() => {
-          console.log('⏰ After timeout - Final cot array:', {
-            length: this.cot.length,
-            isLoading: this.isLoading,
-            data: this.cot.slice(0, 2)
-          });
-        }, 100);
+        if (!this.destroy$.closed) {
+          setTimeout(() => {
+            // Check again after timeout
+            if (!this.destroy$.closed) {
+              console.log('⏰ After timeout - Final cot array:', {
+                length: this.cot.length,
+                isLoading: this.isLoading,
+                data: this.cot.slice(0, 2)
+              });
+            }
+          }, 100);
+        }
 
       },
       error: (error) => {
@@ -475,7 +493,9 @@ export class CotListComponent {
     const isConfirmed = await this.sweetalertService.confirm('Anda Yakin?', `Apakah anda ingin menghapus COT ${cot.capability.trainingName}?`, 'warning', 'Ya, hapus!');
     if (isConfirmed) {
       this.sweetalertService.loading('Mohon tunggu', 'Proses...');
-      this.cotService.deleteCot(cot.id).subscribe({
+      this.cotService.deleteCot(cot.id).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: () => {
           this.sweetalertService.alert('Dihapus!', 'Data COT berhasil dihapus', 'success');
           this.cot = this.cot.filter(c => c.id !== cot.id);
@@ -705,7 +725,9 @@ export class CotListComponent {
       console.log(`📡 Fetching additional page ${nextPage}...`);
       
       // Fetch the next page
-      this.cotService.listCot(searchQuery, nextPage, size, startDate, endDate, sortBy, sortOrder).subscribe({
+      this.cotService.listCot(searchQuery, nextPage, size, startDate, endDate, sortBy, sortOrder).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: ({ data }) => {
           console.log(`📊 Additional page ${nextPage} response:`, {
             totalRecords: data.length,
@@ -770,8 +792,10 @@ export class CotListComponent {
           allData.push(...newData);
           nextPage++;
           
-          // Continue fetching if needed
-          setTimeout(fetchNextPage, 50);
+          // Continue fetching if needed (but only if component is still alive)
+          if (!this.destroy$.closed) {
+            setTimeout(fetchNextPage, 50);
+          }
         },
         error: (error) => {
           console.error(`❌ Error fetching additional page ${nextPage}:`, error);
@@ -973,5 +997,11 @@ export class CotListComponent {
       },
       queryParamsHandling: 'merge',
     });
+  }
+  
+  ngOnDestroy(): void {
+    console.log('🔄 COT List Component destroyed, cleaning up subscriptions');
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

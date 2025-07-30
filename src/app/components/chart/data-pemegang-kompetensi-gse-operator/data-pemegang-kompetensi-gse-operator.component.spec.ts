@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DataPemegangKompetensiGseOperatorComponent } from './data-pemegang-kompetensi-gse-operator.component';
 
@@ -8,7 +9,7 @@ describe('DataPemegangKompetensiGseOperatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DataPemegangKompetensiGseOperatorComponent]
+      imports: [DataPemegangKompetensiGseOperatorComponent, HttpClientTestingModule]
     })
     .compileComponents();
     
