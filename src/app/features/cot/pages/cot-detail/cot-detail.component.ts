@@ -10,6 +10,7 @@ import { ErrorHandlerService } from '../../../../shared/service/error-handler.se
 import { LoaderComponent } from '../../../../components/loader/loader.component';
 import { CotService } from '../../../../shared/service/cot.service';
 import { HeaderComponent } from '../../../../components/header/header.component';
+import { CotNavigationService } from '../../../../shared/service/cot-navigation.service';
 
 interface TableData {
   label: string;
@@ -99,6 +100,7 @@ export class CotDetailComponent implements OnInit {
     private readonly sweetalertService: SweetalertService,
     private readonly router: Router,
     private readonly errorHandlerService: ErrorHandlerService,
+    private readonly cotNavigationService: CotNavigationService,
   ) {
     const cotIdFromRoute = this.route.snapshot.paramMap.get('cotId');
     if (!cotIdFromRoute) {
@@ -355,5 +357,13 @@ export class CotDetailComponent implements OnInit {
         this.errorHandlerService.alertError(error);
       }
     });
+  }
+
+  /**
+   * Navigate back to COT list with preserved filter state
+   */
+  navigateBackToCotList(): void {
+    console.log('🔙 NAVIGATING BACK from COT detail to COT list with preserved state');
+    this.cotNavigationService.navigateBack();
   }
 }

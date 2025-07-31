@@ -25,7 +25,7 @@
       (pageChange)="onPageChanged($event)"
       (sortChange)="onSortChange($event)"
       (viewAllChange)="viewAll()"
-      whiteButtonRoute="/cot"
+      (whiteButtonClick)="navigateBackToCotList()"
       [cotStatus]="cotStatus"
     ></app-data-management>
   }
