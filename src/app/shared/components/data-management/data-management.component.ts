@@ -91,6 +91,7 @@ export class DataManagementComponent {
   // Komponen button
   @Input() blueButtonRoute: string = '';
   @Input() whiteButtonRoute: string = '/dashboard';
+  @Output() whiteButtonClick = new EventEmitter<void>();
 
   // Role Based Access
   @Input() roleBassedAccess: string[] = [];
@@ -149,6 +150,11 @@ export class DataManagementComponent {
 
   onMonthChanged(monthInfo: MonthInfo): void {
     this.monthChange.emit(monthInfo);
+  }
+
+  // Handle white button click
+  onWhiteButtonClick(): void {
+    this.whiteButtonClick.emit();
   }
 
   // Handle search clearing from month filter
