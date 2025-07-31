@@ -131,9 +131,9 @@ export class CotNavigationService {
     const isNotTooOld = Boolean(filterState.timestamp && 
                                (Date.now() - filterState.timestamp) < maxAge);
     
-    // Check if month/year values are reasonable
+    // Check if month/year values are reasonable - consistent with system-wide range
     const isReasonableDate = Boolean(filterState.month >= 1 && filterState.month <= 12 &&
-                                    filterState.year >= 2020 && filterState.year <= 2030);
+                                    filterState.year >= 1950 && filterState.year <= 3001);
     
     const isValid = hasRequiredProps && isNotTooOld && isReasonableDate;
     

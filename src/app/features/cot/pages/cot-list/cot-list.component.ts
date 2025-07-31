@@ -1103,9 +1103,9 @@ export class CotListComponent implements OnInit, OnDestroy {
     const isNotTooOld = filterState.timestamp && 
                        (Date.now() - filterState.timestamp) < maxAge;
     
-    // Check if month/year values are reasonable
+    // Check if month/year values are reasonable - consistent with system-wide range
     const isReasonableDate = filterState.month >= 1 && filterState.month <= 12 &&
-                            filterState.year >= 2020 && filterState.year <= 2030;
+                            filterState.year >= 1950 && filterState.year <= 3001;
     
     const isValid = Boolean(hasRequiredProps && isNotTooOld && isReasonableDate);
     
