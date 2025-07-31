@@ -9,6 +9,7 @@ import { MonthInfo } from '../../../../shared/components/month-filter/month-filt
 import { CommonModule } from '@angular/common';
 import { SearchHelper, ParsedSearchQuery } from '../../../../shared/utils/search-helper.util';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { CotNavigationService } from '../../../../shared/service/cot-navigation.service';
 
 @Component({
   selector: 'app-cot-list',
@@ -69,11 +70,15 @@ export class CotListComponent implements OnInit, OnDestroy {
   selectedMonth: number = new Date().getMonth() + 1;
   selectedYear: number = new Date().getFullYear();
 
+  // 🔧 SESSION STORAGE KEY for preserving user's last visited month context
+  private readonly COT_LAST_FILTER_KEY = 'cot_last_filter_state';
+
   constructor(
     private readonly cotService: CotService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly sweetalertService: SweetalertService,
+    private readonly cotNavigationService: CotNavigationService,
   ) {}
 
   ngOnInit(): void {
@@ -115,44 +120,70 @@ export class CotListComponent implements OnInit, OnDestroy {
       });
       
       if (!hasMonthFilter) {
-        console.log('🗺️ No month filter detected, applying current month fallback...');
+        console.log('🗺️ No month filter detected, applying smart fallback...');
         
-        const now = new Date();
-        const currentMonth = now.getMonth() + 1;
-        const currentYear = now.getFullYear();
+        // 🔧 SMART FALLBACK: Try to get last visited filter state from navigation service
+        const lastFilterState = this.cotNavigationService.getFilterState();
         
-        // Calculate current month date range - TIMEZONE FIX
-        const formattedStartDate = this.formatDateString(currentYear, currentMonth, 1);
-        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-        const formattedEndDate = this.formatDateString(currentYear, currentMonth, daysInMonth);
+        let targetMonth: number;
+        let targetYear: number;
+        let fallbackReason: string;
         
-        console.log('🗺️ FIXED - Month date calculation:', {
-          currentMonth,
-          currentYear,
+        if (lastFilterState && this.isValidFilterState(lastFilterState)) {
+          // Use last visited month/year from session storage
+          targetMonth = lastFilterState.month;
+          targetYear = lastFilterState.year;
+          fallbackReason = `Restored from last visited: ${targetMonth}/${targetYear}`;
+          
+          console.log('✅ SMART FALLBACK - Using last visited filter state:', {
+            restoredMonth: targetMonth,
+            restoredYear: targetYear,
+            lastFilterState,
+            source: 'sessionStorage',
+            note: 'User returned to page, restoring previous context'
+          });
+        } else {
+          // Fallback to current month only if no valid last state exists
+          const now = new Date();
+          targetMonth = now.getMonth() + 1;
+          targetYear = now.getFullYear();
+          fallbackReason = `No valid last state, using current month: ${targetMonth}/${targetYear}`;
+          
+          console.log('📅 DEFAULT FALLBACK - Using current month (no valid last state):', {
+            currentMonth: targetMonth,
+            currentYear: targetYear,
+            lastFilterState,
+            note: 'First visit or invalid last state'
+          });
+        }
+        
+        // Calculate date range for the target month
+        const formattedStartDate = this.formatDateString(targetYear, targetMonth, 1);
+        const daysInMonth = new Date(targetYear, targetMonth, 0).getDate();
+        const formattedEndDate = this.formatDateString(targetYear, targetMonth, daysInMonth);
+        
+        console.log('🗺️ SMART FALLBACK - Month date calculation:', {
+          targetMonth,
+          targetYear,
           formattedStartDate,
           formattedEndDate,
           daysInMonth,
-          note: 'Using correct month boundaries with timezone fix'
-        });
-        
-        console.log('📅 Fallback date range calculated:', {
-          currentMonth,
-          currentYear,
-          formattedStartDate,
-          formattedEndDate
+          fallbackReason,
+          note: 'Using smart fallback logic with session storage'
         });
         
         // Update component state before redirect
-        this.selectedMonth = currentMonth;
-        this.selectedYear = currentYear;
+        this.selectedMonth = targetMonth;
+        this.selectedYear = targetYear;
         this.startDate = formattedStartDate;
         this.endDate = formattedEndDate;
         
-        console.log('🔄 Auto-redirected to current month:', {
-          month: currentMonth,
-          year: currentYear,
+        console.log('🔄 SMART FALLBACK - Auto-redirect details:', {
+          month: targetMonth,
+          year: targetYear,
           dateRange: { startDate: formattedStartDate, endDate: formattedEndDate },
-          reason: 'Fallback for URL without month filter'
+          reason: fallbackReason,
+          strategy: 'Smart fallback with session storage'
         });
         
         // PERBAIKAN: Parse existing parameters before redirect to preserve page number
@@ -176,9 +207,9 @@ export class CotListComponent implements OnInit, OnDestroy {
             page: existingPage, // Jangan reset ke 1, pertahankan page yang diminta user
             sort_by: existingSortBy,
             sort_order: existingSortOrder,
-            // Tambahkan filter bulan saat ini
-            month: currentMonth,
-            year: currentYear,
+            // Tambahkan filter bulan target (smart fallback)
+            month: targetMonth,
+            year: targetYear,
             startDate: formattedStartDate,
             endDate: formattedEndDate
           },
@@ -218,6 +249,23 @@ export class CotListComponent implements OnInit, OnDestroy {
       // Handle month filter from URL
       this.selectedMonth = parseInt(params['month'], 10);
       this.selectedYear = parseInt(params['year'], 10);
+      
+      // 🔧 SAVE FILTER STATE: Store current valid filter state and back URL
+      const filterState = {
+        month: this.selectedMonth,
+        year: this.selectedYear,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        searchQuery: this.searchQuery,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder,
+        page: this.currentPage
+      };
+      
+      // Save to both legacy session storage and navigation service
+      this.saveFilterState(filterState);
+      this.cotNavigationService.saveFilterState(filterState);
+      this.cotNavigationService.saveBackUrl(this.router.url);
       
       console.log('⚙️ Processing COT list with parameters:', {
         searchQuery: this.searchQuery,
@@ -420,17 +468,19 @@ export class CotListComponent implements OnInit, OnDestroy {
           note: 'Using backend data directly - sufficient data available'
         });
         
-        // PERBAIKAN: Map data langsung dari backend (no additional filtering)
+        // PERBAIKAN: Map data dengan null safety untuk capability
         this.cot = data.map((cot) => {
           const mappedCot = {
             startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
             endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
-            ratingCode: cot.capability?.ratingCode,
-            trainingName: cot.capability?.trainingName,
-            capabilityLink: `/capability/${cot.capability.id}/curriculum-syllabus`,
+            ratingCode: cot.capability?.ratingCode || 'N/A',
+            trainingName: cot.capability?.trainingName || 'Training tidak tersedia',
+            capabilityLink: cot.capability?.id ? `/capability/${cot.capability.id}/curriculum-syllabus` : null,
             editLink: actions?.canEdit ? `/cot/${cot.id}/edit` : null,
             detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
             deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
+            // Store original cot for delete method
+            _originalCot: cot
           };
           
           console.log('🎯 Mapped COT item:', {
@@ -489,11 +539,13 @@ export class CotListComponent implements OnInit, OnDestroy {
     });
   }
 
-  async deleteCot(cot: Cot): Promise<void> {
-    const isConfirmed = await this.sweetalertService.confirm('Anda Yakin?', `Apakah anda ingin menghapus COT ${cot.capability.trainingName}?`, 'warning', 'Ya, hapus!');
+  async deleteCot(cot: any): Promise<void> {
+    const cotData = cot._originalCot || cot;
+    const trainingName = cotData.capability?.trainingName || 'COT ini';
+    const isConfirmed = await this.sweetalertService.confirm('Anda Yakin?', `Apakah anda ingin menghapus ${trainingName}?`, 'warning', 'Ya, hapus!');
     if (isConfirmed) {
       this.sweetalertService.loading('Mohon tunggu', 'Proses...');
-      this.cotService.deleteCot(cot.id).pipe(
+      this.cotService.deleteCot(cotData.id).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         next: () => {
@@ -833,17 +885,19 @@ export class CotListComponent implements OnInit, OnDestroy {
       expectedLength: Math.min(this.itemsPerPage, this.allCollectedData.length - startIndex)
     });
     
-    // Map the paginated data
+    // Map the paginated data dengan null safety
     this.cot = pageData.map((cot) => {
       return {
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
-        ratingCode: cot.capability?.ratingCode,
-        trainingName: cot.capability?.trainingName,
-        capabilityLink: `/capability/${cot.capability.id}/curriculum-syllabus`,
+        ratingCode: cot.capability?.ratingCode || 'N/A',
+        trainingName: cot.capability?.trainingName || 'Training tidak tersedia',
+        capabilityLink: cot.capability?.id ? `/capability/${cot.capability.id}/curriculum-syllabus` : null,
         editLink: cot.actions?.canEdit ? `/cot/${cot.id}/edit` : null,
         detailLink: cot.actions?.canView ? `/cot/${cot.id}/detail` : null,
         deleteMethod: cot.actions?.canDelete ? () => this.deleteCot(cot) : null,
+        // Store original cot for delete method
+        _originalCot: cot
       };
     });
     
@@ -905,17 +959,19 @@ export class CotListComponent implements OnInit, OnDestroy {
       }
     });
     
-    // Map ONLY the paginated data (CRITICAL FIX)
+    // Map ONLY the paginated data (CRITICAL FIX) dengan null safety
     this.cot = pageData.map((cot) => {
       const mappedCot = {
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
-        ratingCode: cot.capability?.ratingCode,
-        trainingName: cot.capability?.trainingName,
-        capabilityLink: `/capability/${cot.capability.id}/curriculum-syllabus`,
+        ratingCode: cot.capability?.ratingCode || 'N/A',
+        trainingName: cot.capability?.trainingName || 'Training tidak tersedia',
+        capabilityLink: cot.capability?.id ? `/capability/${cot.capability.id}/curriculum-syllabus` : null,
         editLink: actions?.canEdit ? `/cot/${cot.id}/edit` : null,
         detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
         deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
+        // Store original cot for delete method
+        _originalCot: cot
       };
       
       console.log('🎯 Mapped COT item (paginated):', {
@@ -999,6 +1055,83 @@ export class CotListComponent implements OnInit, OnDestroy {
     });
   }
   
+  // 🔧 SESSION STORAGE METHODS for smart fallback
+  private saveFilterState(filterState: any): void {
+    try {
+      const stateToSave = {
+        ...filterState,
+        timestamp: Date.now(),
+        url: this.router.url
+      };
+      sessionStorage.setItem(this.COT_LAST_FILTER_KEY, JSON.stringify(stateToSave));
+      
+      console.log('💾 SAVED filter state to session storage:', {
+        savedState: stateToSave,
+        key: this.COT_LAST_FILTER_KEY
+      });
+    } catch (error) {
+      console.warn('⚠️ Failed to save filter state to session storage:', error);
+    }
+  }
+  
+  private getLastFilterState(): any {
+    try {
+      const saved = sessionStorage.getItem(this.COT_LAST_FILTER_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        console.log('📖 RETRIEVED filter state from session storage:', {
+          retrievedState: parsed,
+          key: this.COT_LAST_FILTER_KEY
+        });
+        return parsed;
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to retrieve filter state from session storage:', error);
+    }
+    return null;
+  }
+  
+  private isValidFilterState(filterState: any): boolean {
+    if (!filterState) return false;
+    
+    // Check if required properties exist
+    const hasRequiredProps = filterState.month && filterState.year && 
+                            filterState.startDate && filterState.endDate;
+    
+    // Check if the saved state is not too old (e.g., older than 1 day)
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const isNotTooOld = filterState.timestamp && 
+                       (Date.now() - filterState.timestamp) < maxAge;
+    
+    // Check if month/year values are reasonable
+    const isReasonableDate = filterState.month >= 1 && filterState.month <= 12 &&
+                            filterState.year >= 2020 && filterState.year <= 2030;
+    
+    const isValid = Boolean(hasRequiredProps && isNotTooOld && isReasonableDate);
+    
+    console.log('🔍 VALIDATING filter state:', {
+      filterState,
+      validation: {
+        hasRequiredProps,
+        isNotTooOld,
+        isReasonableDate,
+        isValid
+      },
+      age: filterState.timestamp ? `${((Date.now() - filterState.timestamp) / 1000 / 60).toFixed(1)} minutes` : 'unknown'
+    });
+    
+    return isValid;
+  }
+  
+  private clearFilterState(): void {
+    try {
+      sessionStorage.removeItem(this.COT_LAST_FILTER_KEY);
+      console.log('🗑️ CLEARED filter state from session storage');
+    } catch (error) {
+      console.warn('⚠️ Failed to clear filter state from session storage:', error);
+    }
+  }
+
   ngOnDestroy(): void {
     console.log('🔄 COT List Component destroyed, cleaning up subscriptions');
     this.destroy$.next();
