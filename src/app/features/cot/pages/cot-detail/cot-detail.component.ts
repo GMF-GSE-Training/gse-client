@@ -153,8 +153,13 @@ export class CotDetailComponent implements OnInit {
   async getListParticipantCot(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): Promise<void> {
     this.isParticipantCotLoading = true;
     try {
-      const { data } = await this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage, this.sortBy, this.sortOrder).toPromise();
-      const cot = data.cot;
+      const response = await this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage, this.sortBy, this.sortOrder).toPromise();
+      if (!response || !response.data) {
+        console.error('Invalid response from listParticipantCot');
+        return;
+      }
+      
+      const cot = response.data.cot;
       const participantCot = cot.participants;
 
       // Process participants and check certificate existence
