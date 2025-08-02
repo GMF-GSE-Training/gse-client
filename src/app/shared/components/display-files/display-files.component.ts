@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { LoaderComponent } from "../../../components/loader/loader.component";
 import { WhiteButtonComponent } from "../../../components/button/white-button/white-button.component";
 import { BlueButtonComponent } from "../../../components/button/blue-button/blue-button.component";
+import { RedButtonComponent } from "../../../components/button/red-button/red-button.component";
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -17,8 +18,9 @@ import { CommonModule } from '@angular/common';
     LoaderComponent,
     WhiteButtonComponent,
     BlueButtonComponent,
+    RedButtonComponent,
     CommonModule,
-],
+  ],
   templateUrl: './display-files.component.html',
   styleUrl: './display-files.component.css'
 })
@@ -26,10 +28,16 @@ export class DisplayFilesComponent {
   @Input() pageTitle: string = '';
   @Input() navigationLinks: string = '';
   @Input() isLoading: boolean = false;
+  @Input() showDeleteButton: boolean = false;
 
   @Output() downloadChange = new EventEmitter<void>();
+  @Output() deleteChange = new EventEmitter<void>();
 
   onDownloadChanged() {
     this.downloadChange.emit();
+  }
+
+  onDeleteChanged() {
+    this.deleteChange.emit();
   }
 }

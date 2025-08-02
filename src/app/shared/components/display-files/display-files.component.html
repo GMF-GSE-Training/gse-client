@@ -13,6 +13,9 @@
       <app-white-button class="button" [routerLink]="navigationLinks">
         Kembali
       </app-white-button>
+      <app-red-button *ngIf="showDeleteButton" class="button" (redButtonClick)="onDeleteChanged()">
+        🗑️ Hapus
+      </app-red-button>
       <app-blue-button class="button" (blueButtonClick)="onDownloadChanged()">
         Download
       </app-blue-button>

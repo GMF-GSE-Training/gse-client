@@ -118,6 +118,37 @@ export class ViewCertificateComponent implements OnInit {
   }
 
   /**
+   * Delete certificate with confirmation
+   */
+  async deleteCertificate(): Promise<void> {
+    if (!this.certificateId || !this.certificate) return;
+    
+    const isConfirmed = await this.sweetalertService.confirm(
+      'Anda Yakin?', 
+      'Apakah anda ingin menghapus sertifikat ini? Tindakan ini tidak dapat dibatalkan.', 
+      'warning', 
+      'Ya, hapus!'
+    );
+    
+    if (!isConfirmed) return;
+    
+    this.sweetalertService.loading('Mohon tunggu', 'Menghapus sertifikat...');
+    
+    this.certificateService.deleteCertificate(this.certificateId).subscribe({
+      next: (response) => {
+        this.sweetalertService.alert('Berhasil!', 'Sertifikat berhasil dihapus', 'success').then(() => {
+          // Navigate back to COT detail after successful deletion
+          this.router.navigateByUrl(`/cot/${this.certificate?.cotId}/detail`);
+        });
+      },
+      error: (error) => {
+        console.error('Error deleting certificate:', error);
+        this.errorHandlerService.alertError(error);
+      }
+    });
+  }
+
+  /**
    * Get navigation link for back button
    * Returns COT detail link if certificate is loaded, otherwise COT list
    */

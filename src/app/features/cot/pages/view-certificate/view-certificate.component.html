@@ -2,7 +2,9 @@
   pageTitle="View Certificate"
   [navigationLinks]="getNavigationLink()"
   [isLoading]="isLoading"
-  (downloadChange)="downloadPdf()">
+  [showDeleteButton]="true"
+  (downloadChange)="downloadPdf()"
+  (deleteChange)="deleteCertificate()">
   
   @if(isLoading) {
     <app-loader></app-loader>

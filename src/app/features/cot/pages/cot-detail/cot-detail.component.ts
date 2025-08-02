@@ -11,6 +11,7 @@ import { LoaderComponent } from '../../../../components/loader/loader.component'
 import { CotService } from '../../../../shared/service/cot.service';
 import { HeaderComponent } from '../../../../components/header/header.component';
 import { CotNavigationService } from '../../../../shared/service/cot-navigation.service';
+import { CertificateService } from '../../../../shared/service/certificate.service';
 
 interface TableData {
   label: string;
@@ -101,6 +102,7 @@ export class CotDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly cotNavigationService: CotNavigationService,
+    private readonly certificateService: CertificateService,
   ) {
     const cotIdFromRoute = this.route.snapshot.paramMap.get('cotId');
     if (!cotIdFromRoute) {
@@ -148,45 +150,70 @@ export class CotDetailComponent implements OnInit {
     });
   }
 
-  getListParticipantCot(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): void {
+  async getListParticipantCot(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): Promise<void> {
     this.isParticipantCotLoading = true;
-    this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage, this.sortBy, this.sortOrder).subscribe({
-      next: ({ data }) => {
-        const cot = data.cot;
-        const participantCot = cot.participants;
+    try {
+      const { data } = await this.participantCotService.listParticipantCot(cotId, searchQuery, currentPage, itemsPerPage, this.sortBy, this.sortOrder).toPromise();
+      const cot = data.cot;
+      const participantCot = cot.participants;
 
-        this.participantCots = participantCot.data?.map((participant: any) => {
-          if (!participant) return null;
+      // Process participants and check certificate existence
+      const participantPromises = participantCot.data?.map(async (participant: any) => {
+        if (!participant) return null;
 
-          const baseParticipant = {
-            ...participant,
-            idNumber: participant.idNumber ?? '-',
-            dinas: participant.dinas ?? '-',
-            printLink: participantCot.actions?.canPrint && participant?.id ? `/cot/certificate/${this.cotId}/create/${participant.id}` : null,
-            detailLink: participantCot.actions?.canView && participant?.id ? `/participants/${participant.id}/detail` : null,
-            deleteMethod: participantCot.actions?.canDelete ? () => this.deleteParticipantFromCot(cotId, participant?.id) : null,
-          };
+        let printLink = null;
+        if (participantCot.actions?.canPrint && participant?.id) {
+          try {
+            // Check if certificate exists for this participant
+            const certificateResponse = await this.certificateService.checkCertificateByParticipant(this.cotId, participant.id).toPromise();
+            if (certificateResponse?.data && certificateResponse.data.id) {
+              // Certificate exists, link to view page
+              printLink = `/cot/certificate/${certificateResponse.data.id}/view`;
+            } else {
+              // No certificate, link to create page
+              printLink = `/cot/certificate/${this.cotId}/create/${participant.id}`;
+            }
+          } catch (error) {
+            // If error (like 404), assume no certificate exists
+            console.log(`🔍 No certificate found for participant ${participant.id}:`, error);
+            printLink = `/cot/certificate/${this.cotId}/create/${participant.id}`;
+          }
+        }
 
-          return this.userProfile.role.name === 'user' ? baseParticipant : {
-            ...baseParticipant,
-            sim: participant?.id ? `/participants/${participant.id}/${participant.simB ? 'sim-b' : 'sim-a'}` : null,
-            expSuratSehatButaWarna: participant?.id ? {
-              label: new Date(new Date(participant.tglKeluarSuratSehatButaWarna).setMonth(new Date(participant.tglKeluarSuratSehatButaWarna).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
-              value: `/participants/${participant.id}/surat-sehat-buta-warna`
-            } : null,
-            expSuratBebasNarkoba: participant?.id ? {
-              label: new Date(new Date(participant.tglKeluarSuratBebasNarkoba).setMonth(new Date(participant.tglKeluarSuratBebasNarkoba).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
-              value: `/participants/${participant.id}/surat-bebas-narkoba`
-            } : null,
-          };
-        }).filter(Boolean) ?? [];
+        const baseParticipant = {
+          ...participant,
+          idNumber: participant.idNumber ?? '-',
+          dinas: participant.dinas ?? '-',
+          printLink: printLink,
+          detailLink: participantCot.actions?.canView && participant?.id ? `/participants/${participant.id}/detail` : null,
+          deleteMethod: participantCot.actions?.canDelete ? () => this.deleteParticipantFromCot(cotId, participant?.id) : null,
+        };
 
-        this.state.data = `/cot/${this.cotId}/detail`;
-        this.totalPages = participantCot.paging.totalPage;
-      },
-      error: (error) => this.errorHandlerService.alertError(error),
-      complete: () => this.isParticipantCotLoading = false
-    });
+        return this.userProfile.role.name === 'user' ? baseParticipant : {
+          ...baseParticipant,
+          sim: participant?.id ? `/participants/${participant.id}/${participant.simB ? 'sim-b' : 'sim-a'}` : null,
+          expSuratSehatButaWarna: participant?.id ? {
+            label: new Date(new Date(participant.tglKeluarSuratSehatButaWarna).setMonth(new Date(participant.tglKeluarSuratSehatButaWarna).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
+            value: `/participants/${participant.id}/surat-sehat-buta-warna`
+          } : null,
+          expSuratBebasNarkoba: participant?.id ? {
+            label: new Date(new Date(participant.tglKeluarSuratBebasNarkoba).setMonth(new Date(participant.tglKeluarSuratBebasNarkoba).getMonth() + 6)).toLocaleDateString('id-ID', this.dateOptions),
+            value: `/participants/${participant.id}/surat-bebas-narkoba`
+          } : null,
+        };
+      }) ?? [];
+
+      // Wait for all certificate checks to complete
+      const resolvedParticipants = await Promise.all(participantPromises);
+      this.participantCots = resolvedParticipants.filter(Boolean);
+
+      this.state.data = `/cot/${this.cotId}/detail`;
+      this.totalPages = participantCot.paging.totalPage;
+    } catch (error) {
+      this.errorHandlerService.alertError(error);
+    } finally {
+      this.isParticipantCotLoading = false;
+    }
   }
 
   getUnregisteredParticipants(cotId: string, searchQuery: string, currentPage: number, itemsPerPage: number): void {

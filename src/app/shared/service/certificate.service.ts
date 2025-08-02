@@ -53,4 +53,28 @@ export class CertificateService {
       withCredentials: true
     });
   }
+
+  deleteCertificate(certificateId: string): Observable<WebResponse<string>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${certificateId}`);
+    
+    console.log('🗑️ Certificate Service Debug - Delete URL:', url);
+    console.log('🗑️ Environment info:', {
+      endpoint: this.envService.getEndpoint('certificate', 'base'),
+      apiUrl: this.envService.apiUrl
+    });
+    
+    return this.http.delete<WebResponse<string>>(url, {
+      withCredentials: true
+    });
+  }
+
+  checkCertificateByParticipant(cotId: string, participantId: string): Observable<WebResponse<CertificateResponse | null>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/check/${cotId}/${participantId}`);
+    
+    console.log('🔍 Certificate Service Debug - Check URL:', url);
+    
+    return this.http.get<WebResponse<CertificateResponse | null>>(url, {
+      withCredentials: true
+    });
+  }
 }

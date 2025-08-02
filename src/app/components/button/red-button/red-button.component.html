@@ -1,0 +1,9 @@
+<button
+  class="red-button"
+  [type]="type"
+  [disabled]="disabled"
+  (click)="onRedButtonClick()"
+  [class.disabled-red-button]="disabled"
+>
+  <ng-content></ng-content>
+</button>
