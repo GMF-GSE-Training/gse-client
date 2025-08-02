@@ -136,9 +136,11 @@ export class ViewCertificateComponent implements OnInit {
     
     this.certificateService.deleteCertificate(this.certificateId).subscribe({
       next: (response) => {
-        this.sweetalertService.alert('Berhasil!', 'Sertifikat berhasil dihapus', 'success').then(() => {
-          // Navigate back to COT detail after successful deletion
-          this.router.navigateByUrl(`/cot/${this.certificate?.cotId}/detail`);
+this.sweetalertService.alert('Berhasil!', 'Sertifikat berhasil dihapus', 'success').then(() => {
+          if (this.certificate) {
+            // Redirect to create certificate page with specific COT and participant IDs
+            this.router.navigateByUrl(`/cot/certificate/${this.certificate.cotId}/create/${this.certificate.participantId}`);
+          }
         });
       },
       error: (error) => {
