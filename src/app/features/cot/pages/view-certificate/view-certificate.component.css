@@ -1,0 +1,146 @@
+/* Certificate iframe styles */
+.certificate-iframe {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* No files message - consistent with e-sign style */
+.no-files {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.no-files p {
+  font-size: 18px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* PDF Preview Styles */
+.pdf-loading, .pdf-error {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.pdf-error {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+}
+
+.pdf-error .fa-exclamation-triangle {
+  color: #ffc107;
+}
+
+/* Button styles for retry button */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.pdf-preview {
+  margin-top: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-preview iframe {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-4 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+.text-warning {
+  color: #ffc107;
+}
+
+.fa-2x {
+  font-size: 2em;
+}
+
+.me-1 {
+  margin-right: 0.25rem;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Responsive design for iframe */
+@media (max-width: 768px) {
+  .certificate-iframe {
+    height: 400px;
+  }
+  
+  .pdf-loading, .pdf-error {
+    min-height: 150px;
+  }
+  
+  .no-files {
+    min-height: 300px;
+  }
+}
