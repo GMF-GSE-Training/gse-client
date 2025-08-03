@@ -102,8 +102,21 @@ export class ViewCertificateComponent implements OnInit {
       next: (blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = url;
-        link.download = `Certificate_${this.certificate?.id || this.certificateId}.pdf`;
+        
+        // Create consistent filename format: Certificate_ParticipantName_ParticipantId.pdf
+        let filename = `Certificate_${this.certificateId}.pdf`; // fallback
+        
+        if (this.certificate?.participant) {
+          // Clean participant name (remove spaces and special characters, replace with underscores)
+          const cleanName = this.certificate.participant.name
+            .replace(/[^a-zA-Z0-9]/g, '_')
+            .replace(/_{2,}/g, '_')
+            .replace(/^_|_$/g, '');
+          
+          filename = `Certificate_${cleanName}_${this.certificate.participant.id}.pdf`;
+        }
+        
+        link.download = filename;
         link.click();
         URL.revokeObjectURL(url);
       },

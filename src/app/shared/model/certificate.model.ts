@@ -13,4 +13,9 @@ export interface CertificateResponse {
   attendance: number;
   createdAt: string;
   updatedAt: string;
+  participant?: {
+    id: string;
+    name: string;
+    idNumber: string;
+  };
 }
