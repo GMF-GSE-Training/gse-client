@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, of, tap, throwError } from 'rx
 import { AuthResponse, LoginUserRequest, RegisterUserRequest, UpdatePassword } from '../model/auth.model';
 import { WebResponse } from '../model/web.model';
 import { EnvironmentService } from './environment.service';
+import { Logger } from '../utils/logger.util';
 
 @Injectable({
   providedIn: 'root',
@@ -39,17 +40,17 @@ export class AuthService {
 
   login(request: LoginUserRequest): Observable<WebResponse<AuthResponse>> {
     const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'login'));
-    console.log('🔍 AuthService: Login URL:', url);
+    Logger.debug('Login URL:', url, 'AuthService');
     
     return this.http.post<WebResponse<AuthResponse>>(url, request, { withCredentials: true }).pipe(
       tap(response => {
-        console.log('🔍 AuthService: Login response received:', response);
+        Logger.debug('Login response received:', response, 'AuthService');
         if (response.data) {
           this.setUserProfile(response.data);
         }
       }),
       catchError(error => {
-        console.error('🔍 AuthService: Login error:', error);
+        Logger.error('Login error:', error, 'AuthService');
         throw error;
       })
     );
@@ -57,15 +58,15 @@ export class AuthService {
 
   me(): Observable<WebResponse<AuthResponse>> {
     const url = this.envService.buildUrl(this.envService.getEndpoint('auth', 'base'));
-    console.log('🔍 AuthService: Me URL:', url);
+    Logger.debug('Me URL:', url, 'AuthService');
     
     return this.http.get<WebResponse<AuthResponse>>(url, { withCredentials: true }).pipe(
       tap((response) => {
-        console.log('🔍 AuthService: Me response received:', response);
+        Logger.debug('Me response received:', response, 'AuthService');
         this.setUserProfile(response.data);
       }),
       catchError(error => {
-        console.error('🔍 AuthService: Me error:', error);
+        Logger.error('Me error:', error, 'AuthService');
         throw error;
       })
     );
