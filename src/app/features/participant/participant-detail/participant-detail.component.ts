@@ -88,7 +88,7 @@ export class ParticipantDetailComponent implements OnInit {
     if (state) this.backButtonRoute = state['data'];
   }
 
-  ngOnInit(): void {
+ngOnInit(): void {
     // Subscribe to URL changes to set the selected tab
     this.route.url.subscribe(urlSegments => {
       const url = urlSegments.map(segment => segment.path).join('/');
@@ -98,6 +98,8 @@ export class ParticipantDetailComponent implements OnInit {
         this.selectedItem = 0; // Tab Data Pribadi
       }
     });
+
+    this.loadCertificates();
 
     this.route.queryParams.subscribe(params => {
       if (params['error']) {
@@ -268,34 +270,32 @@ export class ParticipantDetailComponent implements OnInit {
   }
 
   // Load certificates for the participant
-  private loadCertificates(): void {
-    // For now, use mock data. This should be replaced with actual API call
-    // when the certificate service is fully implemented
-    this.data = [
-      { 
-        trainingName: "Forklift", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
+private loadCertificates(): void {
+    this.isLoadingCertificates = true;
+    this.participantService.getCertificates(this.id).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.data = response.data.map(cert => {
+            const rawExpiryDate = new Date(cert.expiryDate);
+            return {
+              ...cert,
+              rawExpiryDate: rawExpiryDate,
+expiryDate: rawExpiryDate.toLocaleDateString('id-ID', this.dateOptions),
+              viewLink: `/cot/certificate/${cert.id}/view`,
+              state: { previousUrl: this.router.url }
+            };
+          });
+          this.sortCertificates();
+        }
       },
-      { 
-        trainingName: "Regulasi GSE", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
+      error: (error) => {
+        console.error('Error loading certificates:', error);
+        this.data = [];
       },
-      { 
-        trainingName: "Baggage Towing Tractor", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-      { 
-        trainingName: "Air Conditioning System Refreshment", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-    ];
-    
-    // Apply current sorting
-    this.sortCertificates();
+      complete: () => {
+        this.isLoadingCertificates = false;
+      }
+    });
   }
 
   // Handle certificate table sorting
