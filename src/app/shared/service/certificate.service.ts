@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { CreateCertificate, CertificateResponse } from "../model/certificate.model";
 import { Observable } from "rxjs";
+import { map, catchError } from "rxjs/operators";
 import { EnvironmentService } from "./environment.service";
 import { WebResponse } from "../model/web.model";
 
@@ -46,12 +47,53 @@ export class CertificateService {
   }
 
   getCertificatePdf(certificateId: string): Observable<Blob> {
-    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${certificateId}/pdf`);
+    const endpoint = this.envService.getEndpoint('certificate', 'base');
+    const url = this.envService.buildUrl(`${endpoint}/${certificateId}/pdf`);
+    
+    console.log('📁 Certificate Service: Getting PDF for certificate:', certificateId);
+    console.log('📁 Certificate Service: Endpoint:', endpoint);
+    console.log('📁 Certificate Service: Full URL:', url);
+    console.log('📁 Certificate Service: Environment:', {
+      isDevelopment: this.envService.isDevelopment,
+      apiUrl: this.envService.apiUrl,
+      backendUrl: this.envService.getBackendUrl()
+    });
     
     return this.http.get(url, {
       responseType: 'blob',
-      withCredentials: true
-    });
+      withCredentials: true,
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        console.log('📁 Certificate Service: HTTP Response received');
+        console.log('📁 Certificate Service: Response status:', response.status);
+        console.log('📁 Certificate Service: Response headers:', response.headers);
+        console.log('📁 Certificate Service: Response body (blob):', response.body);
+        console.log('📁 Certificate Service: Blob size:', response.body?.size);
+        console.log('📁 Certificate Service: Blob type:', response.body?.type);
+        
+        if (!response.body) {
+          throw new Error('No blob received from server');
+        }
+        
+        if (response.body.size === 0) {
+          throw new Error('Empty blob received from server');
+        }
+        
+        return response.body;
+      }),
+      catchError(error => {
+        console.error('❌ Certificate Service: Error getting PDF:', error);
+        console.error('❌ Certificate Service: Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          body: error.error
+        });
+        throw error;
+      })
+    );
   }
 
   deleteCertificate(certificateId: string): Observable<WebResponse<string>> {
