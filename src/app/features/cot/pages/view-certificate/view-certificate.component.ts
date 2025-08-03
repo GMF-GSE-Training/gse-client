@@ -29,6 +29,9 @@ export class ViewCertificateComponent implements OnInit {
   pdfUrl: SafeResourceUrl | null = null;
   isLoadingPdf: boolean = false;
   pdfError: boolean = false;
+  userProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+
+  private previousUrl: string;
 
   constructor(
     private readonly certificateService: CertificateService,
@@ -38,7 +41,10 @@ export class ViewCertificateComponent implements OnInit {
     private readonly router: Router,
     private readonly location: Location,
     private readonly sanitizer: DomSanitizer
-  ) { }
+  ) { 
+    const navigation = this.router.getCurrentNavigation();
+    this.previousUrl = navigation?.extras.state?.['previousUrl'] || '/cot';
+  }
 
   ngOnInit(): void {
     this.certificateId = this.route.snapshot.paramMap.get('certificateId');
@@ -229,14 +235,20 @@ export class ViewCertificateComponent implements OnInit {
   }
 
   /**
+   * Check if current user can delete certificates
+   * Only super admin, supervisor, and lcu can delete certificates
+   */
+  canDeleteCertificate(): boolean {
+    const userRole = this.userProfile?.role?.name?.toLowerCase();
+    return ['super admin', 'supervisor', 'lcu'].includes(userRole);
+  }
+
+  /**
    * Get navigation link for back button
    * Returns COT detail link if certificate is loaded, otherwise COT list
    */
   getNavigationLink(): string {
-    if (this.certificate) {
-      return `/cot/${this.certificate.cotId}/detail`;
-    }
-    return '/cot';
+    return this.previousUrl;
   }
 }
 

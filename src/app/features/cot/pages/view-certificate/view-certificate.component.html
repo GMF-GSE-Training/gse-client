@@ -2,7 +2,7 @@
   pageTitle="View Certificate"
   [navigationLinks]="getNavigationLink()"
   [isLoading]="isLoading"
-  [showDeleteButton]="true"
+  [showDeleteButton]="canDeleteCertificate()"
   (downloadChange)="downloadPdf()"
   (deleteChange)="deleteCertificate()">
   
