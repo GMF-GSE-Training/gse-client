@@ -77,7 +77,7 @@ describe('ViewCertificateComponent', () => {
           }
         }
       })),
-      getCertificatePdf: jasmine.createSpy('getCertificatePdf').and.returnValue(of(null)),
+      getCertificatePdf: jasmine.createSpy('getCertificatePdf').and.returnValue(of(new Blob(['mock PDF'], { type: 'application/pdf' }))),
       deleteCertificate: jasmine.createSpy('deleteCertificate').and.returnValue(of({ message: 'Success' }))
     };
 
@@ -193,7 +193,19 @@ describe('ViewCertificateComponent', () => {
     expect(component.isLoading).toBe(false);
   });
   
-  it('should have proper initial state', () => {
+  it('should have proper initial state', async () => {
+    // Reset component to initial state before the ngOnInit lifecycle
+    component = new ViewCertificateComponent(
+      TestBed.inject(CertificateService),
+      TestBed.inject(SweetalertService),
+      TestBed.inject(ErrorHandlerService),
+      TestBed.inject(ActivatedRoute),
+      TestBed.inject(Router),
+      TestBed.inject(Location),
+      TestBed.inject(DomSanitizer)
+    );
+    
+    // Check initial state before any lifecycle methods are called
     expect(component.pdfUrl).toBeNull();
     expect(component.isLoadingPdf).toBeFalse();
     expect(component.pdfError).toBeFalse();
