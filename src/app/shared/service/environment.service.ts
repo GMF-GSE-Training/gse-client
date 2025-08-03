@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Logger } from '../utils/logger.util';
 
 // Type definitions untuk window environment variables
 declare global {
@@ -127,7 +128,7 @@ export class EnvironmentService {
 
   private resolveApiUrl(isDevelopment: boolean): string {
     if (isDevelopment) {
-      console.log('🔍 Environment: Development mode - using proxy');
+      Logger.envInfo('Development mode - using proxy');
       return '';
     }
     
@@ -139,7 +140,7 @@ export class EnvironmentService {
     ];
     for (const candidate of candidates) {
       if (candidate && candidate.trim()) {
-        console.log(`🔍 Environment: Using API URL: ${candidate}`);
+        Logger.envInfo(`Using API URL: ${candidate}`);
         return candidate.trim();
       }
     }
@@ -236,7 +237,7 @@ export class EnvironmentService {
     const isProductionDomain = PRODUCTION_DOMAINS.some(domain => hostname.includes(domain));
     const isHttps = protocol === 'https:';
     const isDevelopment = isLocalhost || isDevPort || isLocalNetwork || (isHttp && !isProductionDomain);
-    console.log('🔍 Environment Detection:', {
+    Logger.envInfo('Environment Detection:', {
       hostname,
       port,
       protocol,
@@ -271,7 +272,7 @@ export class EnvironmentService {
   }
 
   private logEnvironment(): void {
-    console.log('🔍 Environment Service Debug:', {
+    Logger.envInfo('Environment Service Debug:', {
       hostname: window.location.hostname,
       port: window.location.port,
       protocol: window.location.protocol,
@@ -353,13 +354,13 @@ export class EnvironmentService {
   // Helper method untuk membangun URL dengan validation
   buildUrl(endpoint: string): string {
     if (!endpoint) {
-      console.warn('🔍 Environment: Empty endpoint provided');
+      Logger.warn('Empty endpoint provided', undefined, 'Environment');
       return '';
     }
     
     // Use /api prefix for development to distinguish API calls from Angular routes
     const url = this.env.apiUrl ? `${this.env.apiUrl}/${endpoint}` : `/api/${endpoint}`;
-    console.log(`🔍 Environment: Building URL: ${url}`);
+    Logger.debug(`Building URL: ${url}`, undefined, 'Environment');
     return url;
   }
 
@@ -369,7 +370,7 @@ export class EnvironmentService {
     const endpoint = categoryEndpoints?.[key];
     
     if (!endpoint) {
-      console.warn(`🔍 Environment: Endpoint not found for ${category}.${key}`);
+      Logger.warn(`Endpoint not found for ${category}.${key}`, undefined, 'Environment');
       return '';
     }
     
@@ -395,7 +396,7 @@ export class EnvironmentService {
     const isValid = issues.length === 0;
     
     if (!isValid) {
-      console.warn('🔍 Environment Validation Issues:', issues);
+      Logger.warn('Environment Validation Issues:', issues);
     }
     
     return { isValid, issues };
@@ -407,7 +408,7 @@ export class EnvironmentService {
     window.__env?.API_URL && (window.__env.API_URL = newDomain);
     window.__env?.BACKEND_URL && (window.__env.BACKEND_URL = newDomain);
     this.env.apiUrl = this.resolveApiUrl(this.env.isDevelopment);
-    console.log('🔍 Environment: Production domain updated successfully');
+    Logger.info('Production domain updated successfully', undefined, 'Environment');
   }
 
   // Update 2025: Method untuk update development configuration
@@ -424,6 +425,6 @@ export class EnvironmentService {
     this.env.devApiUrl = this.resolveDevApiUrl();
     this.env.devPort = this.resolveDevPort();
     this.env.apiUrl = this.resolveApiUrl(this.env.isDevelopment);
-    console.log('🔍 Environment: Development configuration updated successfully');
+    Logger.info('Development configuration updated successfully', undefined, 'Environment');
   }
 } 
