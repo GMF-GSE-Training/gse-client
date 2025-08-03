@@ -1,17 +1,42 @@
 <div>
-    <span *ngIf="printLink">
-      <i class="fa-solid fa-print" [routerLink]="[printLink]" [state]="certificateState" title="Buat Sertifikat"></i>
-    </span>
-    <span *ngIf="editLink">
-      <i class="fa-solid fa-pen-to-square" [routerLink]="[editLink]" title="Edit"></i>
-    </span>
-    <span *ngIf="delete">
-      <i class="fa-solid fa-trash-can action-icon" (click)="delete()" title="Hapus"></i>
-    </span>
-    <span *ngIf="detailLink">
-      <i class="fa-solid fa-eye action-icon" [routerLink]="[detailLink]" [state]="state" title="Edit"></i>
-    </span>
-    <span *ngIf="showSelectIcon" id="select-icon" (click)="toggleSelect()" title="Pilih">
-      <i [ngClass]="select ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"></i>
-    </span>
+  <span *ngIf="printLink">
+    <i
+      class="fa-solid fa-print"
+      [routerLink]="[printLink]"
+      [state]="certificateState"
+      title="Buat Sertifikat"
+    ></i>
+  </span>
+  <span *ngIf="editLink">
+    <i
+      class="fa-solid fa-pen-to-square"
+      [routerLink]="[editLink]"
+      title="Edit"
+    ></i>
+  </span>
+  <span *ngIf="delete">
+    <i
+      class="fa-solid fa-trash-can action-icon"
+      (click)="delete()"
+      title="Hapus"
+    ></i>
+  </span>
+  <span *ngIf="detailLink">
+    <i
+      class="fa-solid fa-eye action-icon"
+      [routerLink]="[detailLink]"
+      [state]="state"
+      title="Edit"
+    ></i>
+  </span>
+  <span
+    *ngIf="showSelectIcon"
+    id="select-icon"
+    (click)="toggleSelect()"
+    title="Pilih"
+  >
+    <i
+      [ngClass]="select ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"
+    ></i>
+  </span>
 </div>
