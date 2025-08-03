@@ -76,13 +76,15 @@
     const devPort = w.__env.DEV_PORT || w.__env.DEFAULT_DEV_PORT;
     w.__env.DEV_PORT = devPort;
     w._env.DEV_PORT = devPort;
-    console.log('🔍 Environment: Development mode detected', {
-      hostname: w.location.hostname,
-      port: w.location.port,
-      devApiUrl,
-      devPort,
-      usingProxy: w.__env.API_URL === ''
-    });
+    if (isDevelopment) {
+      console.log('🔍 Environment: Development mode detected', {
+        hostname: w.location.hostname,
+        port: w.location.port,
+        devApiUrl,
+        devPort,
+        usingProxy: w.__env.API_URL === ''
+      });
+    }
   } else {
     w._env.LOCAL_URL = `https://${w.location.hostname}`;
     w._env.BASE_URL = w._env.LOCAL_URL;
@@ -90,43 +92,48 @@
     const prodApiUrl = w.__env.API_URL || w.__env.PRODUCTION_API_URL;
     w.__env.API_URL = prodApiUrl;
     w.__env.BACKEND_URL = prodApiUrl;
-    console.log('🔍 Environment: Production mode detected', {
-      hostname: w.location.hostname,
-      port: w.location.port,
-      apiUrl: w.__env.API_URL
-    });
+    // Only log in development for debugging production setup locally
+    if (isDevelopment) {
+      console.log('🔍 Environment: Production mode detected', {
+        hostname: w.location.hostname,
+        port: w.location.port,
+        apiUrl: w.__env.API_URL
+      });
+    }
   }
 
   // Shared configuration
   w._env.HCAPTCHA_SITEKEY = w.__env.HCAPTCHA_SITEKEY || w.__env.DEFAULT_HCAPTCHA_SITEKEY;
   w.__env.HCAPTCHA_SITEKEY = w._env.HCAPTCHA_SITEKEY;
 
-  // Debug logging
-  console.log('🔍 Environment Configuration 2025:', {
-    hostname: w.location.hostname,
-    port: w.location.port,
-    protocol: w.location.protocol,
-    isDevelopment,
-    isProduction,
-    isSecure,
-    isLocalNetwork: isLocalNetworkAddress(w.location.hostname),
-    LOCAL_URL: w._env.LOCAL_URL,
-    BASE_URL: w._env.BASE_URL,
-    API_URL: w.__env.API_URL,
-    BACKEND_URL: w.__env.BACKEND_URL,
-    DEV_API_URL: w.__env.DEV_API_URL,
-    DEV_PORT: w.__env.DEV_PORT,
-    PRODUCTION_API_URL: w.__env.PRODUCTION_API_URL,
-    DEFAULT_DEV_API_URL: w.__env.DEFAULT_DEV_API_URL,
-    DEFAULT_DEV_PORT: w.__env.DEFAULT_DEV_PORT,
-    DEFAULT_HCAPTCHA_SITEKEY: '***',
-    DEVELOPMENT_HOSTNAMES,
-    DEVELOPMENT_PORTS,
-    PRODUCTION_DOMAINS,
-    HCAPTCHA_SITEKEY: w.__env.HCAPTCHA_SITEKEY ? '***' : 'not set',
-    _env: w._env,
-    __env: w.__env
-  });
+  // Debug logging - only in development
+  if (isDevelopment) {
+    console.log('🔍 Environment Configuration 2025:', {
+      hostname: w.location.hostname,
+      port: w.location.port,
+      protocol: w.location.protocol,
+      isDevelopment,
+      isProduction,
+      isSecure,
+      isLocalNetwork: isLocalNetworkAddress(w.location.hostname),
+      LOCAL_URL: w._env.LOCAL_URL,
+      BASE_URL: w._env.BASE_URL,
+      API_URL: w.__env.API_URL,
+      BACKEND_URL: w.__env.BACKEND_URL,
+      DEV_API_URL: w.__env.DEV_API_URL,
+      DEV_PORT: w.__env.DEV_PORT,
+      PRODUCTION_API_URL: w.__env.PRODUCTION_API_URL,
+      DEFAULT_DEV_API_URL: w.__env.DEFAULT_DEV_API_URL,
+      DEFAULT_DEV_PORT: w.__env.DEFAULT_DEV_PORT,
+      DEFAULT_HCAPTCHA_SITEKEY: '***',
+      DEVELOPMENT_HOSTNAMES,
+      DEVELOPMENT_PORTS,
+      PRODUCTION_DOMAINS,
+      HCAPTCHA_SITEKEY: w.__env.HCAPTCHA_SITEKEY ? '***' : 'not set',
+      _env: w._env,
+      __env: w.__env
+    });
+  }
 
   // Validation
   const validateEnvironment = () => {
@@ -144,8 +151,9 @@
       issues.push('DEV_API_URL/DEFAULT_DEV_API_URL not set for development');
     }
     if (issues.length > 0) {
+      // Always show validation issues, even in production
       console.warn('🔍 Environment Validation Issues:', issues);
-    } else {
+    } else if (isDevelopment) {
       console.log('🔍 Environment validation passed');
     }
     return issues.length === 0;
@@ -181,7 +189,9 @@
     w.GMF_ENV_INFO.apiUrl = newDomain;
     w.GMF_ENV_INFO.backendUrl = newDomain;
     w.GMF_ENV_INFO.timestamp = new Date().toISOString();
-    console.log('🔍 Environment: Production domain updated successfully at runtime');
+    if (isDevelopment) {
+      console.log('🔍 Environment: Production domain updated successfully at runtime');
+    }
   };
   w.updateDevConfig = function(devApiUrl, devPort) {
     if (devApiUrl) {
@@ -198,6 +208,8 @@
       w.GMF_ENV_INFO.defaultDevPort = devPort;
     }
     w.GMF_ENV_INFO.timestamp = new Date().toISOString();
-    console.log('🔍 Environment: Development configuration updated successfully at runtime');
+    if (isDevelopment) {
+      console.log('🔍 Environment: Development configuration updated successfully at runtime');
+    }
   };
 })(this);
