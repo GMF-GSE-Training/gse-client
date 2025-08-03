@@ -112,4 +112,9 @@ export class ParticipantService {
       responseType: 'blob',
     });
   }
+
+  getCertificates(participantId: string): Observable<WebResponse<any[]>> {
+    const url = this.envService.buildUrl(`participants/${participantId}/certificates`);
+    return this.http.get<WebResponse<any[]>>(url, { withCredentials: true });
+  }
 }
