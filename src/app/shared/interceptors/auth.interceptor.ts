@@ -4,10 +4,11 @@ import {
   HttpErrorResponse,
   HttpInterceptorFn,
   HttpHandlerFn,
+  HttpResponse,
 } from '@angular/common/http';
 import { inject, } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SweetalertService } from '../service/sweetalert.service';
 import { AuthService } from '../service/auth.service';
@@ -23,17 +24,71 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const userProfile = authService.getUserProfile();
   const authToken = userProfile?.accessToken;
 
+  // 🔍 Debug HTTP requests
+  console.log('🌐 HTTP Request:', {
+    method: req.method,
+    url: req.url,
+    headers: req.headers.keys().reduce((acc, key) => {
+      acc[key] = req.headers.get(key);
+      return acc;
+    }, {} as {[key: string]: string | null}),
+    body: req.body,
+    responseType: req.responseType,
+    withCredentials: req.withCredentials,
+    hasAuthToken: !!authToken,
+    authTokenLength: authToken?.length || 0
+  });
+
   if (authToken) {
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${authToken}`,
       },
     });
+    console.log('🔐 Added Authorization header to request');
+  } else {
+    console.log('⚠️ No auth token available for request');
   }
 
   return next(req).pipe(
+    tap((event: HttpEvent<any>) => {
+      if (event instanceof HttpResponse) {
+        console.log('✅ HTTP Response:', {
+          status: event.status,
+          statusText: event.statusText,
+          url: event.url,
+          headers: event.headers.keys().reduce((acc, key) => {
+            acc[key] = event.headers.get(key);
+            return acc;
+          }, {} as {[key: string]: string | null}),
+          bodyType: typeof event.body,
+          bodySize: event.body instanceof Blob ? event.body.size : 
+                    typeof event.body === 'string' ? event.body.length :
+                    event.body ? JSON.stringify(event.body).length : 0
+        });
+        
+        // Special logging for blob responses (like PDF downloads)
+        if (event.body instanceof Blob) {
+          console.log('📁 Blob Response Details:', {
+            size: event.body.size,
+            type: event.body.type,
+            url: event.url
+          });
+        }
+      }
+    }),
     catchError((error: HttpErrorResponse) => {
-      console.log('🔍 AuthInterceptor Error:', error);
+      console.error('❌ HTTP Error Response:', {
+        status: error.status,
+        statusText: error.statusText,
+        message: error.message,
+        url: error.url,
+        error: error.error,
+        headers: error.headers?.keys().reduce((acc, key) => {
+          acc[key] = error.headers.get(key);
+          return acc;
+        }, {} as {[key: string]: string | null}) || {}
+      });
       
       // Handle case when server returns HTML instead of JSON (usually authentication issue)
       if (error.status === 200 && error.error && typeof error.error === 'string' && error.error.includes('<!doctype')) {
