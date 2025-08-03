@@ -50,6 +50,8 @@
                     <a [routerLink]="item.eSign">lihat</a>
                   } @else if (column.field === 'ratingCode') {
                     <a [routerLink]="item.capabilityLink" [state]="state">{{ item.ratingCode }}</a>
+                  } @else if (column.field === 'expiryDate' && item.viewLink) {
+                    <a (click)="navigateWithState(item.viewLink, item.state)" style="cursor: pointer; color: #007bff; text-decoration: underline;">{{ item[column.field] }}</a>
                   } @else {
                     {{ item[column.field] }}
                   }

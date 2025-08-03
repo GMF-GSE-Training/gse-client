@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { IconActionComponent } from "../icon-action/icon-action.component";
 
 @Component({
@@ -23,6 +23,8 @@ export class  TableComponent {
   @Input() sortBy: string = '';
   @Input() sortOrder: 'asc' | 'desc' = 'asc';
   @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
+
+  constructor(private router: Router) {}
 
   // State sorting
   sortField: string | null = null;
@@ -72,5 +74,10 @@ export class  TableComponent {
     // Default sortable is true for backward compatibility
     // Only return false if explicitly set to false
     return column.sortable !== false;
+  }
+
+  // Navigate with state for certificate view links
+  navigateWithState(viewLink: string, state: any) {
+    this.router.navigateByUrl(viewLink, { state });
   }
 }
