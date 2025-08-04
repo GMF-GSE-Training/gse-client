@@ -9,6 +9,7 @@
     "watch": "ng build --watch --configuration=development",
     "http-server": "http-server dist/gse-client/browser -s index.html -a 0.0.0.0 -p 4200",
     "test": "ng test",
+    "test:once": "ng test --watch=false --browsers=ChromeHeadless",
     "start:once": "ng serve --host 0.0.0.0 --watch=false",
     "deploy:ghpages": "ng deploy --base-href=/gse-client/"
   },

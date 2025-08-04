@@ -48,7 +48,14 @@ describe('ViewCertificateComponent', () => {
     };
 
     const mockRouter = {
-      navigateByUrl: jasmine.createSpy('navigateByUrl')
+      navigateByUrl: jasmine.createSpy('navigateByUrl'),
+      getCurrentNavigation: jasmine.createSpy('getCurrentNavigation').and.returnValue({
+        extras: {
+          state: {
+            previousUrl: '/cot/test-cot-id/detail'
+          }
+        }
+      })
     };
 
     const mockLocation = {
@@ -168,10 +175,11 @@ describe('ViewCertificateComponent', () => {
     expect(navigationLink).toBe('/cot/test-cot-id/detail');
   });
 
-  it('should return default navigation link when certificate is not loaded', () => {
+  it('should return navigation link from router state when certificate is not loaded', () => {
     component.certificate = null;
     const navigationLink = component.getNavigationLink();
-    expect(navigationLink).toBe('/cot');
+    // Should return the previousUrl from router navigation state
+    expect(navigationLink).toBe('/cot/test-cot-id/detail');
   });
 
   it('should call router.navigateByUrl when deleteCertificate is successful', async () => {
