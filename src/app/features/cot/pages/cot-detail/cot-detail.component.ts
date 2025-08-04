@@ -158,7 +158,7 @@ export class CotDetailComponent implements OnInit {
         console.error('Invalid response from listParticipantCot');
         return;
       }
-      
+
       const cot = response.data.cot;
       const participantCot = cot.participants;
 
@@ -173,7 +173,10 @@ export class CotDetailComponent implements OnInit {
             const certificateResponse = await this.certificateService.checkCertificateByParticipant(this.cotId, participant.id).toPromise();
             if (certificateResponse?.data && certificateResponse.data.id) {
               // Certificate exists, link to view page
-              printLink = `/cot/certificate/${certificateResponse.data.id}/view`;
+              printLink = {
+                path: `/cot/certificate/${certificateResponse.data.id}/view`,
+                state: { previousUrl: `/cot/${this.cotId}/detail` }
+              };
             } else {
               // No certificate, link to create page
               printLink = `/cot/certificate/${this.cotId}/create/${participant.id}`;
@@ -239,7 +242,7 @@ export class CotDetailComponent implements OnInit {
 
   onSearchChanged(query: string): void {
     this.router.navigate([], {
-      queryParams: { 
+      queryParams: {
         q: query.trim() || null,
         page: query.trim() ? 1 : null,
         sortBy: this.sortBy,
@@ -282,27 +285,27 @@ export class CotDetailComponent implements OnInit {
   }
 
   onPageChanged(page: number): void {
-    this.router.navigate([], { 
-      queryParams: { 
+    this.router.navigate([], {
+      queryParams: {
         page,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder
-      }, 
-      queryParamsHandling: 'merge' 
+      },
+      queryParamsHandling: 'merge'
     });
   }
 
   viewAll(): void {
     this.searchQuery = '';
-    this.router.navigate([], { 
-      relativeTo: this.route, 
-      queryParams: { 
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
         q: null,
         page: null,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder
-      }, 
-      queryParamsHandling: 'merge' 
+      },
+      queryParamsHandling: 'merge'
     });
   }
 
@@ -346,7 +349,7 @@ export class CotDetailComponent implements OnInit {
     this.sortOrder = event.sortOrder;
     this.currentPage = 1; // Reset to first page when sorting changes
     this.getListParticipantCot(this.cotId, this.searchQuery, this.currentPage, this.itemsPerPage);
-    
+
     // Update URL with sorting params
     this.router.navigate([], {
       relativeTo: this.route,
