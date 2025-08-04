@@ -48,8 +48,10 @@
                     <a [routerLink]="item.expSuratBebasNarkoba.value" [state]="state">{{ item.expSuratBebasNarkoba.label }}</a>
                   } @else if (column.field === 'eSign') {
                     <a [routerLink]="item.eSign">lihat</a>
-                  } @else if (column.field === 'ratingCode') {
-                    <a [routerLink]="item.capabilityLink" [state]="state">{{ item.ratingCode }}</a>
+                  } @else if (column.field === 'ratingCode' && item.capabilityLink) {
+                    <a [routerLink]="item.capabilityLink" [state]="item.state || state">{{ item.ratingCode }}</a>
+                  } @else if (column.field === 'ratingCode' && !item.capabilityLink) {
+                    {{ item.ratingCode }}
                   } @else if (column.field === 'expiryDate' && item.viewLink) {
                     <a (click)="navigateWithState(item.viewLink, item.state)" style="cursor: pointer; color: #007bff; text-decoration: underline;">{{ item[column.field] }}</a>
                   } @else {
