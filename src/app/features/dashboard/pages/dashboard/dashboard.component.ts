@@ -20,6 +20,8 @@ import { ErrorHandlerService } from '../../../../shared/service/error-handler.se
 interface DashboardCotItem {
   trainingName: string;
   ratingCode: string;
+  capabilityLink: string | null;
+  state: { previousUrl: string };
   startDate: string;
   endDate: string;
   numberOfParticipants: number;
@@ -143,6 +145,8 @@ export class DashboardComponent implements OnInit {
       this.cot = data.map((cot: CotResponse) => ({
         trainingName: cot.capability?.trainingName ?? 'N/A',
         ratingCode: cot.capability?.ratingCode ?? 'N/A',
+        capabilityLink: cot.capability?.id ? `/capability/${cot.capability.id}/curriculum-syllabus` : null,
+        state: { previousUrl: '/dashboard' },
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
         numberOfParticipants: cot.numberOfParticipants ?? 0,
