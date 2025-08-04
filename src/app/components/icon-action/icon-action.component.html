@@ -2,8 +2,8 @@
   <span *ngIf="printLink">
     <i
       class="fa-solid fa-print"
-      [routerLink]="[printLink]"
-      [state]="certificateState"
+      [routerLink]="[getPrintLinkPath()]"
+      [state]="getPrintLinkState()"
       title="Buat/Lihat Sertifikat"
     ></i>
   </span>

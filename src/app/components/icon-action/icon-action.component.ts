@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './icon-action.component.css',
 })
 export class IconActionComponent {
-  @Input() printLink?: string;
+  @Input() printLink?: string | { path: string; state: any };
   @Input() editLink?: string;
   @Input() detailLink?: string;
   @Input() delete?: () => any;
@@ -30,5 +30,21 @@ export class IconActionComponent {
       this.select = !this.select;
       this.selectChange.emit(this.itemId);
     }
+  }
+
+  getPrintLinkPath(): string {
+    if (typeof this.printLink === 'string') {
+      return this.printLink;
+    } else if (this.printLink && typeof this.printLink === 'object') {
+      return this.printLink.path;
+    }
+    return '';
+  }
+
+  getPrintLinkState(): any {
+    if (typeof this.printLink === 'object' && this.printLink?.state) {
+      return this.printLink.state;
+    }
+    return this.certificateState || this.state;
   }
 }
