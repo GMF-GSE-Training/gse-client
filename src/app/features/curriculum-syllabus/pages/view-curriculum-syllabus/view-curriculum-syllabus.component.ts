@@ -39,7 +39,7 @@ export class ViewCurriculumSyllabusComponent implements OnInit {
   editLink: string = '';
   isLoading: boolean = false;
   id = this.route.snapshot.paramMap.get('capabilityId');
-  backButtonRoute: string = '/capability';
+  backButtonRoute: string = '/capability'; // Default route jika tidak ada state
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -49,7 +49,13 @@ export class ViewCurriculumSyllabusComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state;
     console.log("STATE: ", state);
-    if (state) this.backButtonRoute = state['data'];
+    // Check if coming from dashboard
+    if (state?.['previousUrl']) {
+      this.backButtonRoute = state['previousUrl'];
+    } else if (state?.['data']) {
+      // Fallback for old state format
+      this.backButtonRoute = state['data'];
+    }
   }
 
   ngOnInit(): void {
