@@ -44,7 +44,29 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
   }
 
   ngAfterViewInit(): void {
-    this.loadChartData();
+    // Wait for DOM to be fully rendered with dimensions
+    setTimeout(() => {
+      this.waitForContainerAndLoadData();
+    }, 100);
+  }
+
+  private waitForContainerAndLoadData(attempts: number = 0, maxAttempts: number = 20): void {
+    const canvas = this.dataPemegangKompetensiGseOperatorRef?.nativeElement;
+    const container = canvas?.parentElement;
+    
+    if (!canvas || !container) {
+      if (attempts < maxAttempts) {
+        setTimeout(() => this.waitForContainerAndLoadData(attempts + 1, maxAttempts), 100);
+      }
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width > 0 && containerRect.height > 0) {
+      this.loadChartData();
+    } else if (attempts < maxAttempts) {
+      setTimeout(() => this.waitForContainerAndLoadData(attempts + 1, maxAttempts), 100);
+    }
   }
 
   private loadChartData(): void {
@@ -91,10 +113,23 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
     console.log('🎯 Dataset count:', data.datasets.length);
     
     const canvas = this.dataPemegangKompetensiGseOperatorRef.nativeElement;
+    const container = canvas?.parentElement;
+    
+    if (!canvas || !container) {
+      console.error('❌ Canvas or container not found');
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width === 0 || containerRect.height === 0) {
+      console.error('❌ Chart container has no dimensions');
+      return;
+    }
+    
     const ctx = canvas.getContext('2d');
 
     if (!ctx) {
-      console.error('Failed to get canvas context');
+      console.error('❌ Failed to get canvas context');
       return;
     }
 

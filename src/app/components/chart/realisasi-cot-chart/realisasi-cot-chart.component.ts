@@ -37,24 +37,35 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
     Chart.register(...registerables);
     Chart.register(ChartDataLabels);
     
-    // Multiple initialization attempts to ensure chart renders
+    // Wait for DOM to be fully rendered with dimensions
     setTimeout(() => {
+      this.waitForContainerAndInitialize();
+    }, 100);
+  }
+
+  private waitForContainerAndInitialize(attempts: number = 0, maxAttempts: number = 20): void {
+    const canvas = this.realisasiCotChartRef?.nativeElement;
+    const container = canvas?.parentElement;
+    
+    if (!canvas || !container) {
+      if (attempts < maxAttempts) {
+        setTimeout(() => this.waitForContainerAndInitialize(attempts + 1, maxAttempts), 100);
+      } else {
+        console.error('❌ Chart container not found after maximum attempts');
+      }
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width > 0 && containerRect.height > 0) {
+      // Container has valid dimensions, initialize chart
       this.initializeChart();
-    }, 50);
-    
-    setTimeout(() => {
-      if (!this.chart) {
-        console.log('🔄 Retry chart initialization...');
-        this.initializeChart();
-      }
-    }, 200);
-    
-    setTimeout(() => {
-      if (!this.chart) {
-        console.log('🔄 Final retry chart initialization...');
-        this.initializeChart();
-      }
-    }, 1000);
+    } else if (attempts < maxAttempts) {
+      // Container still has no dimensions, retry
+      setTimeout(() => this.waitForContainerAndInitialize(attempts + 1, maxAttempts), 100);
+    } else {
+      console.error('❌ Chart container has no dimensions after maximum attempts');
+    }
   }
 
   private initializeChart(): void {
@@ -67,35 +78,38 @@ export class RealisasiCotChartComponent implements AfterViewInit, OnDestroy, OnC
     const canvas = this.realisasiCotChartRef.nativeElement;
     
     if (!canvas) {
-      console.error('Canvas element not found');
+      console.error('❌ Canvas element not found');
       return;
     }
     
-    // Ensure canvas is visible and has dimensions
     const container = canvas.parentElement;
-    if (container) {
-      const containerRect = container.getBoundingClientRect();
-      if (containerRect.width === 0 || containerRect.height === 0) {
-        console.warn('Container has no dimensions, retrying...');
-        setTimeout(() => this.initializeChart(), 200);
-        return;
-      }
-      canvas.width = containerRect.width;
-      canvas.height = containerRect.height;
+    if (!container) {
+      console.error('❌ Chart container not found');
+      return;
     }
+    
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width === 0 || containerRect.height === 0) {
+      console.error('❌ Chart container has no dimensions:', containerRect);
+      return;
+    }
+    
+    // Set canvas dimensions
+    canvas.width = containerRect.width;
+    canvas.height = containerRect.height;
     
     const ctx = canvas.getContext('2d');
     
     if (!ctx) {
-      console.error('Failed to get canvas context');
+      console.error('❌ Failed to get canvas context');
       return;
     }
     
-    console.log('🎨 Initializing chart with canvas dimensions:', {
+    console.log('✅ Initializing chart with valid dimensions:', {
       width: canvas.width,
       height: canvas.height,
-      clientWidth: canvas.clientWidth,
-      clientHeight: canvas.clientHeight
+      containerWidth: containerRect.width,
+      containerHeight: containerRect.height
     });
 
     const initialData = this.getChartData();

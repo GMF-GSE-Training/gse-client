@@ -16,6 +16,32 @@ export class DataTotalSertifikatAktifComponent implements AfterViewInit {
     Chart.register(...registerables);
     Chart.register(ChartDataLabels);
 
+    // Wait for DOM to be fully rendered with dimensions
+    setTimeout(() => {
+      this.waitForContainerAndInitialize();
+    }, 100);
+  }
+
+  private waitForContainerAndInitialize(attempts: number = 0, maxAttempts: number = 20): void {
+    const canvas = this.totalSertifikatAktifRef?.nativeElement;
+    const container = canvas?.parentElement;
+    
+    if (!canvas || !container) {
+      if (attempts < maxAttempts) {
+        setTimeout(() => this.waitForContainerAndInitialize(attempts + 1, maxAttempts), 100);
+      }
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width > 0 && containerRect.height > 0) {
+      this.initializeChart();
+    } else if (attempts < maxAttempts) {
+      setTimeout(() => this.waitForContainerAndInitialize(attempts + 1, maxAttempts), 100);
+    }
+  }
+
+  private initializeChart(): void {
     const canvas = this.totalSertifikatAktifRef.nativeElement;
     const ctx = canvas.getContext('2d');
 
