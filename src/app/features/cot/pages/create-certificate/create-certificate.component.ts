@@ -17,13 +17,20 @@ import { saveAs } from 'file-saver';
   styleUrl: './create-certificate.component.css'
 })
 export class CreateCertificateComponent {
+  private previousUrl: string;
+
   constructor(
     private readonly certificateService: CertificateService,
     private readonly sweetalertService: SweetalertService,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-  ) { }
+  ) { 
+    // Get the previous URL from navigation state or construct based on cotId
+    const navigation = this.router.getCurrentNavigation();
+    const cotId = this.route.snapshot.paramMap.get('cotId');
+    this.previousUrl = navigation?.extras.state?.['previousUrl'] || `/cot/${cotId}/detail`;
+  }
 
   certificate: CreateCertificate = {
     theoryScore: 0,
@@ -50,7 +57,9 @@ export class CreateCertificateComponent {
             // Check if response.data is an object with id property
             if (response.data && typeof response.data === 'object' && response.data.id) {
               console.log('🎯 Redirecting to view certificate:', response.data.id);
-              this.router.navigateByUrl(`/cot/certificate/${response.data.id}/view`);
+              this.router.navigate([`/cot/certificate/${response.data.id}/view`], {
+                state: { previousUrl: this.previousUrl }
+              });
             } 
             // Check if response.data is a string (certificate ID)
             else if (response.data && typeof response.data === 'string') {
@@ -58,11 +67,13 @@ export class CreateCertificateComponent {
               const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
               if (uuidRegex.test(response.data)) {
                 console.log('🎯 Redirecting to view certificate (UUID):', response.data);
-                this.router.navigateByUrl(`/cot/certificate/${response.data}/view`);
+                this.router.navigate([`/cot/certificate/${response.data}/view`], {
+                  state: { previousUrl: this.previousUrl }
+                });
               } else {
                 console.log('⚠️ Response contains non-UUID string:', response.data);
                 console.log('🔄 Backend might be returning a message instead of ID. Redirecting to COT detail.');
-                this.router.navigateByUrl(`/cot/${this.cotId}/detail`);
+                this.router.navigateByUrl(this.previousUrl);
               }
             } 
             else {
@@ -71,14 +82,14 @@ export class CreateCertificateComponent {
               if (response.data) {
                 console.log('📋 Available data properties:', Object.keys(response.data));
               }
-              this.router.navigateByUrl(`/cot/${this.cotId}/detail`);
+              this.router.navigateByUrl(this.previousUrl);
             }
           });
         },
         error: (error) => {
           console.log(error);
           this.errorHandlerService.alertError(error);
-          this.router.navigateByUrl(`/cot/${this.cotId}/detail`);
+          this.router.navigateByUrl(this.previousUrl);
         }
       });
     }

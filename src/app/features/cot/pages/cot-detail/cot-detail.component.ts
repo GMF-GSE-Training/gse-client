@@ -178,13 +178,19 @@ export class CotDetailComponent implements OnInit {
                 state: { previousUrl: `/cot/${this.cotId}/detail` }
               };
             } else {
-              // No certificate, link to create page
-              printLink = `/cot/certificate/${this.cotId}/create/${participant.id}`;
+              // No certificate, link to create page with navigation state
+              printLink = {
+                path: `/cot/certificate/${this.cotId}/create/${participant.id}`,
+                state: { previousUrl: `/cot/${this.cotId}/detail` }
+              };
             }
           } catch (error) {
             // If error (like 404), assume no certificate exists
             console.log(`🔍 No certificate found for participant ${participant.id}:`, error);
-            printLink = `/cot/certificate/${this.cotId}/create/${participant.id}`;
+            printLink = {
+              path: `/cot/certificate/${this.cotId}/create/${participant.id}`,
+              state: { previousUrl: `/cot/${this.cotId}/detail` }
+            };
           }
         }
 
