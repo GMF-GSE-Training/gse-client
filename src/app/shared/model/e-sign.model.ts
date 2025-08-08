@@ -2,7 +2,7 @@ export interface CreateESign {
   idNumber: string;
   role: string;
   name: string;
-  eSign: Buffer;
+  eSign: ArrayBuffer | File | Blob;
   eSignFileName?: string;
   signatureType?: SignatureType;
   status?: boolean;
