@@ -12,3 +12,37 @@ i:hover {
 .fa-square-check {
   color: #02507E;
 }
+
+/* 🎯 IMPLEMENTASI: Style untuk icon sertifikat yang disabled */
+.disabled-certificate-icon {
+  display: inline-block;
+  position: relative;
+}
+
+.disabled-icon {
+  color: #cccccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+.disabled-icon:hover {
+  color: #cccccc !important;
+  cursor: not-allowed !important;
+}
+
+/* Tooltip styling untuk better UX */
+.disabled-certificate-icon:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  opacity: 0.9;
+}
