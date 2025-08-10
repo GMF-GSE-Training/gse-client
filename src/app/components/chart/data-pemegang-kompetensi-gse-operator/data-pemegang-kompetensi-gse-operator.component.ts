@@ -63,6 +63,9 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
     
     const containerRect = container.getBoundingClientRect();
     if (containerRect.width > 0 && containerRect.height > 0) {
+      // Create chart immediately with dummy data to prevent loading flicker
+      this.createChartWithDummyData();
+      // Then load real data and update chart
       this.loadChartData();
     } else if (attempts < maxAttempts) {
       setTimeout(() => this.waitForContainerAndLoadData(attempts + 1, maxAttempts), 100);
@@ -74,17 +77,33 @@ export class DataPemegangKompetensiGseOperatorComponent implements OnInit, After
       next: (response: WebResponse<KompetensiGseOperatorResponse>) => {
         if (response.data) {
           console.log('Data loaded from API:', response.data);
-          this.createChart(response.data);
+          this.updateChartData(response.data);
         } else {
-          console.warn('No data received from API, using dummy data');
-          this.createChartWithDummyData();
+          console.warn('No data received from API, keeping dummy data');
         }
       },
       error: (error) => {
-        console.error('Error loading data from API, using dummy data:', error);
-        this.createChartWithDummyData();
+        console.error('Error loading data from API, keeping dummy data:', error);
       }
     });
+  }
+  
+  private updateChartData(data: KompetensiGseOperatorResponse): void {
+    if (!this.chart) return;
+    
+    console.log('🔄 Updating chart with real data:', data);
+    
+    // Update chart data
+    this.chart.data.labels = data.labels;
+    this.chart.data.datasets = data.datasets.map((dataset: KompetensiGseOperatorDataset) => ({
+      ...dataset,
+      backgroundColor: this.dinasColors[dataset.label] || this.defaultColor,
+      stack: 'Stack 0',
+      barThickness: 'flex'
+    }));
+    
+    // Update chart with animation
+    this.chart.update('active');
   }
 
   private createChartWithDummyData(): void {
