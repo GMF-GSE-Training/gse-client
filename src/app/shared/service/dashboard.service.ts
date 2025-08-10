@@ -41,4 +41,16 @@ export class DashboardService {
       { params }
     );
   }
+
+  getCertificateStatistics(): Observable<WebResponse<any>> {
+    return this.http.get<WebResponse<any>>(
+      `${this.baseUrl}/cot/certificate-statistics`
+    );
+  }
+
+  getActiveCertificatesByTrainingType(): Observable<WebResponse<any>> {
+    return this.http.get<WebResponse<any>>(
+      `${this.baseUrl}/cot/active-certificates-by-training-type`
+    );
+  }
 }
