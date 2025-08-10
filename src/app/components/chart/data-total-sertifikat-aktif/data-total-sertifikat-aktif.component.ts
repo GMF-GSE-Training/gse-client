@@ -1,6 +1,9 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { DashboardService } from '../../../shared/service/dashboard.service';
+import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-data-total-sertifikat-aktif',
@@ -9,8 +12,18 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
   templateUrl: './data-total-sertifikat-aktif.component.html',
   styleUrl: '../chart.component.css'
 })
-export class DataTotalSertifikatAktifComponent implements AfterViewInit {
+export class DataTotalSertifikatAktifComponent implements AfterViewInit, OnDestroy {
   @ViewChild('totalSertifikatAktif') private totalSertifikatAktifRef!: ElementRef<HTMLCanvasElement>;
+  
+  private subscription?: Subscription;
+  private chart?: Chart;
+  isLoading = true;
+  hasError = false;
+
+  constructor(
+    private readonly dashboardService: DashboardService,
+    private readonly errorHandler: ErrorHandlerService
+  ) {}
 
   ngAfterViewInit(): void {
     Chart.register(...registerables);
@@ -20,6 +33,15 @@ export class DataTotalSertifikatAktifComponent implements AfterViewInit {
     setTimeout(() => {
       this.waitForContainerAndInitialize();
     }, 100);
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.chart) {
+      this.chart.destroy();
+    }
   }
 
   private waitForContainerAndInitialize(attempts: number = 0, maxAttempts: number = 20): void {
@@ -50,20 +72,90 @@ export class DataTotalSertifikatAktifComponent implements AfterViewInit {
       return;
     }
 
+    // Create chart immediately with default data to prevent loading flicker
+    this.createChartWithDefaultData(ctx);
+    
+    // Then load real data and update chart
+    this.loadActiveCertificatesData();
+  }
+  
+  private async loadActiveCertificatesData(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.hasError = false;
+      
+      const response = await this.dashboardService.getActiveCertificatesByTrainingType().toPromise();
+      console.log('🔍 Full API Response:', response);
+      
+      if (response?.data) {
+        const chartData = response.data;
+        console.log('📊 Chart Data:', chartData);
+        console.log('🏷️ Labels:', chartData.labels);
+        console.log('📈 Data Values:', chartData.data);
+        console.log('📊 Total Active:', chartData.totalActive);
+        
+        // Validasi data sebelum update chart
+        if (chartData.labels && chartData.data && chartData.labels.length > 0 && chartData.data.length > 0) {
+          // Filter data yang memiliki nilai > 0 untuk menghindari tampilan kosong
+          const filteredData = chartData.labels.map((label: string, index: number) => ({
+            label,
+            value: chartData.data[index] || 0
+          })).filter((item: any) => item.value > 0);
+          
+          console.log('🧹 Filtered Data (non-zero):', filteredData);
+          
+          const filteredLabels = filteredData.map((item: any) => item.label);
+          const filteredValues = filteredData.map((item: any) => item.value);
+          
+          console.log('📝 Final Labels:', filteredLabels);
+          console.log('📝 Final Values:', filteredValues);
+          
+          // Update existing chart with real data
+          this.updateChartData(filteredLabels, filteredValues, chartData.totalActive);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error loading active certificates data:', error);
+      this.hasError = true;
+      this.errorHandler.alertError(error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  
+  private updateChartData(labels: string[], dataValues: number[], totalActive: number): void {
+    if (!this.chart) return;
+    
+    // Update chart data
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = dataValues;
+    this.chart.data.datasets[0].label = `${totalActive}`;
+    
+    // Update chart with animation
+    this.chart.update('active');
+  }
+  
+  private createChartWithDefaultData(ctx: CanvasRenderingContext2D): void {
+    // Menggunakan rating codes yang konsisten dengan data GSE Operator
     const dataValues = [30, 75, 62, 51, 49, 18, 35, 49, 41, 97, 75, 50, 81];
+    const labels = ['FLT', 'GPS', 'WSS', 'WMT', 'AWT', 'GSE', 'ACS', 'ATT', 'BTT', 'RDS', 'LSS', 'ASS', 'TBL'];
     const totalSertifikatAktif = dataValues.reduce((acc, curr) => acc + curr, 0);
+    this.createChart(ctx, labels, dataValues, totalSertifikatAktif);
+  }
+  
+  private createChart(ctx: CanvasRenderingContext2D, labels: string[], dataValues: number[], totalActive: number): void {
 
-    new Chart(ctx, {
+    this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['FLT', 'GPS', 'WSS', 'WMT', 'AWT', 'GSE', 'ACS', 'ATT', 'BTT', 'RDS', 'LSS', 'ASS', 'TBL'],
+        labels: labels,
         datasets: [
           {
             data: dataValues,
             backgroundColor: '#003D61',
             stack: 'Stack 0',
             barThickness: 'flex',
-            label: `${totalSertifikatAktif}`,
+            label: `${totalActive}`,
           }
         ]
       },
@@ -82,7 +174,7 @@ export class DataTotalSertifikatAktifComponent implements AfterViewInit {
                 size: 20
               },
               usePointStyle: true,
-              pointStyle: 'circle',
+              pointStyle: 'rect',
             },
             onHover: (e) => {
               const target = e.native?.target as HTMLElement;
