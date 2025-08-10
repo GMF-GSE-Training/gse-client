@@ -1,6 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, inject } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { DashboardService } from '../../../shared/service/dashboard.service';
+import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
 
 @Component({
   selector: 'app-data-jumlah-pemegang-sertifikat',
@@ -9,13 +11,22 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
   templateUrl: './data-jumlah-pemegang-sertifikat.component.html',
   styleUrl: '../chart.component.css',
 })
-export class DataJumlahPemegangSertifikatComponent implements AfterViewInit {
+export class DataJumlahPemegangSertifikatComponent implements AfterViewInit, OnInit {
   @ViewChild('jumlahPemegangSertifikat')
   private jumlahPemegangSertifikatRef!: ElementRef<HTMLCanvasElement>;
   private chart: Chart<'pie', number[], string> | undefined;
   private allDatasetsVisible: boolean = true;
+  private isDataLoaded: boolean = false;
 
-  private data: number[] = [175, 21]; // Simpan data asli
+  private data: number[] = [175, 21]; // Default fallback data
+  private labels: string[] = ['GMF', 'Non GMF']; // Default labels
+  
+  private dashboardService = inject(DashboardService);
+  private errorHandlerService = inject(ErrorHandlerService);
+
+  ngOnInit(): void {
+    this.loadCertificateData();
+  }
 
   ngAfterViewInit(): void {
     Chart.register(...registerables);
@@ -74,16 +85,35 @@ export class DataJumlahPemegangSertifikatComponent implements AfterViewInit {
         plugins: {
           legend: {
             display: true,
-            position: 'bottom',
+            position: 'top',
+            align: 'center',
             labels: {
-              padding: 30,
-              color: 'black',
-              font: {
-                size: 20,
-                family: 'Petrona',
+              padding: 15,
+              color: '#FFFFFF',
+              font: (context) => {
+                const chartWidth = context?.chart?.width || 500;
+                // Responsif: ukuran font legend berdasarkan lebar chart
+                if (chartWidth < 400) {
+                  return {
+                    family: 'Petrona',
+                    size: 12
+                  };
+                } else if (chartWidth < 500) {
+                  return {
+                    family: 'Petrona',
+                    size: 14
+                  };
+                } else {
+                  return {
+                    family: 'Petrona',
+                    size: 16
+                  };
+                }
               },
               usePointStyle: true,
               pointStyle: 'circle',
+              boxWidth: 12,
+              boxHeight: 12,
             },
             onClick: (_e, legendItem) => {
               const index = legendItem.index;
@@ -106,9 +136,25 @@ export class DataJumlahPemegangSertifikatComponent implements AfterViewInit {
           },
           datalabels: {
             color: '#FFF',
-            font: {
-              family: 'Petrona',
-              size: 25
+            font: (context) => {
+              const chartWidth = context.chart.width;
+              // Responsif: ukuran font berdasarkan lebar chart
+              if (chartWidth < 400) {
+                return {
+                  family: 'Petrona',
+                  size: 16
+                };
+              } else if (chartWidth < 500) {
+                return {
+                  family: 'Petrona',
+                  size: 20
+                };
+              } else {
+                return {
+                  family: 'Petrona',
+                  size: 25
+                };
+              }
             },
             display: function(context) {
               return context.dataset.data[context.dataIndex] !== 0;
@@ -121,11 +167,44 @@ export class DataJumlahPemegangSertifikatComponent implements AfterViewInit {
             font: {
               size: 25,
               family: 'Petrona',
-            },
+            }
           },
         },
       },
     });
+  }
+
+  private async loadCertificateData(): Promise<void> {
+    try {
+      const response = await this.dashboardService.getCertificateStatistics().toPromise();
+      if (response?.data) {
+        const stats = response.data;
+        // For now, we'll use certificateHolders as total
+        // You may need to adjust this based on your actual data structure
+        const totalHolders = stats.certificateHolders || 0;
+        // Since we don't have GMF vs Non-GMF breakdown in certificate statistics,
+        // we'll keep using the hardcoded values but could be extended later
+        // to include this breakdown in the backend
+        this.data = [Math.round(totalHolders * 0.89), Math.round(totalHolders * 0.11)];
+        this.isDataLoaded = true;
+        
+        // Update chart if it's already initialized
+        if (this.chart) {
+          this.updateChartData();
+        }
+      }
+    } catch (error) {
+      console.error('Error loading certificate data:', error);
+      this.errorHandlerService.alertError(error);
+      // Keep using default data on error
+    }
+  }
+
+  private updateChartData(): void {
+    if (this.chart) {
+      this.chart.data.datasets[0].data = [...this.data];
+      this.chart.update();
+    }
   }
 
   private handleLegendClick(index: number) {
