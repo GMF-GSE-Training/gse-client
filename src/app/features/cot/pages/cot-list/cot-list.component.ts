@@ -470,6 +470,12 @@ export class CotListComponent implements OnInit, OnDestroy {
         
         // PERBAIKAN: Map data dengan null safety untuk capability
         this.cot = data.map((cot) => {
+          // 🎯 IMPLEMENTASI: Menentukan status COT berdasarkan tanggal
+          const cotStatus = this.getCotStatus(cot.startDate, cot.endDate);
+          
+          // 🎯 IMPLEMENTASI: Icon sertifikat hanya tersedia untuk COT dengan status "Selesai"
+          const certificateLink = cotStatus === 'Selesai' ? `/cot/${cot.id}/certificate` : null;
+          
           const mappedCot = {
             startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
             endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -479,18 +485,29 @@ export class CotListComponent implements OnInit, OnDestroy {
             editLink: actions?.canEdit ? `/cot/${cot.id}/edit` : null,
             detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
             deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
-            // Store original cot for delete method
-            _originalCot: cot
+            // 🎯 IMPLEMENTASI: Properti printLink hanya ada jika COT selesai
+            printLink: certificateLink,
+            // Store original cot for delete method dan status untuk debugging
+            _originalCot: cot,
+            _cotStatus: cotStatus
           };
           
-          console.log('🎯 Mapped COT item:', {
+          console.log('🎯 Mapped COT item with certificate logic:', {
             original: {
               id: cot.id,
               startDate: cot.startDate,
               endDate: cot.endDate,
               trainingName: cot.capability?.trainingName
             },
-            mapped: mappedCot
+            status: {
+              calculated: cotStatus,
+              certificateEnabled: certificateLink !== null,
+              logic: 'Icon sertifikat hanya tersedia untuk COT dengan status "Selesai"'
+            },
+            mapped: {
+              ...mappedCot,
+              printLink: mappedCot.printLink || 'DISABLED - COT belum selesai'
+            }
           });
           
           return mappedCot;
@@ -885,8 +902,14 @@ export class CotListComponent implements OnInit, OnDestroy {
       expectedLength: Math.min(this.itemsPerPage, this.allCollectedData.length - startIndex)
     });
     
-    // Map the paginated data dengan null safety
+    // Map the paginated data dengan null safety dan certificate logic
     this.cot = pageData.map((cot) => {
+      // 🎯 IMPLEMENTASI: Menentukan status COT berdasarkan tanggal (cached data)
+      const cotStatus = this.getCotStatus(cot.startDate, cot.endDate);
+      
+      // 🎯 IMPLEMENTASI: Icon sertifikat hanya tersedia untuk COT dengan status "Selesai"
+      const certificateLink = cotStatus === 'Selesai' ? `/cot/${cot.id}/certificate` : null;
+      
       return {
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -896,8 +919,11 @@ export class CotListComponent implements OnInit, OnDestroy {
         editLink: cot.actions?.canEdit ? `/cot/${cot.id}/edit` : null,
         detailLink: cot.actions?.canView ? `/cot/${cot.id}/detail` : null,
         deleteMethod: cot.actions?.canDelete ? () => this.deleteCot(cot) : null,
-        // Store original cot for delete method
-        _originalCot: cot
+        // 🎯 IMPLEMENTASI: Properti printLink hanya ada jika COT selesai (cached data)
+        printLink: certificateLink,
+        // Store original cot for delete method dan status
+        _originalCot: cot,
+        _cotStatus: cotStatus
       };
     });
     
@@ -959,8 +985,14 @@ export class CotListComponent implements OnInit, OnDestroy {
       }
     });
     
-    // Map ONLY the paginated data (CRITICAL FIX) dengan null safety
+    // Map ONLY the paginated data (CRITICAL FIX) dengan null safety dan certificate logic
     this.cot = pageData.map((cot) => {
+      // 🎯 IMPLEMENTASI: Menentukan status COT berdasarkan tanggal (adaptive data)
+      const cotStatus = this.getCotStatus(cot.startDate, cot.endDate);
+      
+      // 🎯 IMPLEMENTASI: Icon sertifikat hanya tersedia untuk COT dengan status "Selesai"
+      const certificateLink = cotStatus === 'Selesai' ? `/cot/${cot.id}/certificate` : null;
+      
       const mappedCot = {
         startDate: new Date(cot.startDate).toLocaleDateString('id-ID', this.dateOptions),
         endDate: new Date(cot.endDate).toLocaleDateString('id-ID', this.dateOptions),
@@ -970,18 +1002,29 @@ export class CotListComponent implements OnInit, OnDestroy {
         editLink: actions?.canEdit ? `/cot/${cot.id}/edit` : null,
         detailLink: actions?.canView ? `/cot/${cot.id}/detail` : null,
         deleteMethod: actions?.canDelete ? () => this.deleteCot(cot) : null,
-        // Store original cot for delete method
-        _originalCot: cot
+        // 🎯 IMPLEMENTASI: Properti printLink hanya ada jika COT selesai (adaptive data)
+        printLink: certificateLink,
+        // Store original cot for delete method dan status
+        _originalCot: cot,
+        _cotStatus: cotStatus
       };
       
-      console.log('🎯 Mapped COT item (paginated):', {
+      console.log('🎯 Mapped COT item (paginated) with certificate logic:', {
         original: {
           id: cot.id,
           startDate: cot.startDate,
           endDate: cot.endDate,
           trainingName: cot.capability?.trainingName
         },
-        mapped: mappedCot
+        status: {
+          calculated: cotStatus,
+          certificateEnabled: certificateLink !== null,
+          logic: 'Icon sertifikat hanya tersedia untuk COT dengan status "Selesai" (adaptive data)'
+        },
+        mapped: {
+          ...mappedCot,
+          printLink: mappedCot.printLink || 'DISABLED - COT belum selesai'
+        }
       });
       
       return mappedCot;
@@ -1129,6 +1172,31 @@ export class CotListComponent implements OnInit, OnDestroy {
       console.log('🗑️ CLEARED filter state from session storage');
     } catch (error) {
       console.warn('⚠️ Failed to clear filter state from session storage:', error);
+    }
+  }
+
+  /**
+   * 🎯 IMPLEMENTASI: Method untuk menentukan status COT berdasarkan tanggal
+   * @param startDate - Tanggal mulai COT
+   * @param endDate - Tanggal selesai COT
+   * @returns Status COT: "Akan datang" | "Sedang berjalan" | "Selesai"
+   */
+  private getCotStatus(startDate: string, endDate: string): string {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+    
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Set to end of day for accurate comparison
+    
+    if (today < start) {
+      return 'Akan datang';
+    } else if (today >= start && today <= end) {
+      return 'Sedang berjalan';
+    } else {
+      return 'Selesai';
     }
   }
 
