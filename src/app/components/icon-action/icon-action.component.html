@@ -1,5 +1,5 @@
 <div>
-  <span *ngIf="printLink">
+  <span *ngIf="printLink && showIconPrint && disableIconPrint">
     <i
       class="fa-solid fa-print"
       [routerLink]="[getPrintLinkPath()]"
@@ -9,7 +9,7 @@
   </span>
   <!-- 🎯 IMPLEMENTASI: Menampilkan icon disabled untuk COT yang belum selesai -->
   <!-- Hanya tampilkan icon disabled jika ada action icons lain (edit/delete/detail) -->
-  <span *ngIf="!printLink && (editLink || delete || detailLink)" class="disabled-certificate-icon">
+  <span *ngIf="showIconPrint && !disableIconPrint" class="disabled-certificate-icon">
     <i
       class="fa-solid fa-print disabled-icon"
       title="Sertifikat belum tersedia - COT belum selesai"

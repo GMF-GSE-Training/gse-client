@@ -175,13 +175,17 @@ export class CotDetailComponent implements OnInit {
               // Certificate exists, link to view page
               printLink = {
                 path: `/cot/certificate/${certificateResponse.data.id}/view`,
-                state: { previousUrl: `/cot/${this.cotId}/detail` }
+                state: { previousUrl: `/cot/${this.cotId}/detail` },
+                endDate: cot.endDate,
+                showIcon: true
               };
             } else {
               // No certificate, link to create page with navigation state
               printLink = {
                 path: `/cot/certificate/${this.cotId}/create/${participant.id}`,
-                state: { previousUrl: `/cot/${this.cotId}/detail` }
+                state: { previousUrl: `/cot/${this.cotId}/detail` },
+                endDate: cot.endDate,
+                showIcon: true
               };
             }
           } catch (error) {
@@ -189,7 +193,9 @@ export class CotDetailComponent implements OnInit {
             console.log(`🔍 No certificate found for participant ${participant.id}:`, error);
             printLink = {
               path: `/cot/certificate/${this.cotId}/create/${participant.id}`,
-              state: { previousUrl: `/cot/${this.cotId}/detail` }
+              state: { previousUrl: `/cot/${this.cotId}/detail` },
+              endDate: cot.endDate,
+              showIcon: true
             };
           }
         }

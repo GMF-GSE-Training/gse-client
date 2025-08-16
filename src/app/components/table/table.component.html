@@ -58,7 +58,7 @@
                     {{ item[column.field] }}
                   }
                 } @else {
-                  <app-icon-action [printLink]="item.printLink"[editLink]="item.editLink" [delete]="item.deleteMethod" [detailLink]="item.detailLink" [select]="item.select" [state]="state"></app-icon-action>
+                  <app-icon-action [showIconPrint]="item.printLink && item.printLink.showIcon" [disableIconPrint]="isPrintIconDisable(item.printLink)" [printLink]="item.printLink" [editLink]="item.editLink" [delete]="item.deleteMethod" [detailLink]="item.detailLink" [select]="item.select" [state]="state"></app-icon-action>
                 }
               </td>
             }

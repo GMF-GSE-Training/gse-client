@@ -41,15 +41,24 @@ export class  TableComponent {
     return this.data || [];
   }
 
+  isPrintIconDisable(printLink: any): boolean {
+    if (!printLink) return false;
+
+    const endDate = new Date(printLink.endDate);
+    const now = new Date();
+
+    return endDate > now;
+  }
+
   handleSort(field: string) {
     // Find the column configuration
     const column = this.columns.find(col => col.field === field);
-    
+
     // Don't handle sort if column is not found or not sortable
     if (!column || !this.isColumnSortable(column)) {
       return;
     }
-    
+
     if (this.sortBy === field) {
       const newSortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
       this.sortChange.emit({ sortBy: field, sortOrder: newSortOrder });
@@ -64,7 +73,7 @@ export class  TableComponent {
       item.printLink || item.addLink || item.editLink || item.deleteMethod || item.detailLink || item.select
     );
   }
-  
+
   // Metode untuk memeriksa apakah kolom bisa diurutkan
   isColumnSortable(column: { header: string, field: string, sortable?: boolean }): boolean {
     // Action column is never sortable

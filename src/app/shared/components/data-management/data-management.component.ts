@@ -50,7 +50,7 @@ export class DataManagementComponent {
     return this._data;
   }
   private _data: any[] = [];
-  
+
   @Input() state: { data: any; } = { data: '' };
   @Input() isLoading: boolean = false;
 
@@ -108,7 +108,7 @@ export class DataManagementComponent {
   @Input() sortBy: string = '';
   @Input() sortOrder: 'asc' | 'desc' = 'asc';
   @Output() sortChange = new EventEmitter<{ sortBy: string, sortOrder: 'asc' | 'desc' }>();
-  
+
   // Info message from backend (for search + sort scenarios)
   @Input() infoMessage: string | null = null;
 
@@ -120,16 +120,16 @@ export class DataManagementComponent {
   toggleSort(col: string) {
     // Find the column configuration
     const column = this.columns.find(c => c.field === col);
-    
+
     // Don't sort if column is not sortable (action column or explicitly marked non-sortable)
     if (col === 'action' || (column && column.sortable === false)) {
       return;
     }
-    
+
     // Check if search is active - provide informative feedback
     const searchInput = document.querySelector('input[name="q"]') as HTMLInputElement;
     const isSearchActive = searchInput && searchInput.value.trim().length > 0;
-    
+
     if (isSearchActive) {
       console.log('🔍 Sorting within search results:', {
         searchQuery: searchInput.value,
@@ -137,7 +137,7 @@ export class DataManagementComponent {
         message: 'Sorting applied to filtered search results for optimal relevance'
       });
     }
-    
+
     // Allow normal sorting behavior regardless of search state
     if (this.sortBy === col) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -160,12 +160,12 @@ export class DataManagementComponent {
   // Handle search clearing from month filter
   onSearchClearedByMonthFilter(): void {
     console.log('🧹 DATA MANAGEMENT: Search cleared by month filter navigation');
-    
+
     // Clear the search input visually
     if (this.searchComponent) {
       this.searchComponent.clearSearchExternally();
     }
-    
+
     // Emit empty search to parent component
     this.searchChange.emit('');
   }

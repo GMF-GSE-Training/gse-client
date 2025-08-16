@@ -13,15 +13,17 @@ import { RouterLink } from '@angular/router';
   styleUrl: './icon-action.component.css',
 })
 export class IconActionComponent {
-  @Input() printLink?: string | { path: string; state: any };
+  @Input() printLink?: string | { path: string; state: any, endDate: string, showIcon: boolean };
   @Input() editLink?: string;
   @Input() detailLink?: string;
   @Input() delete?: () => any;
-  @Input() showSelectIcon: boolean = false;
+  @Input() showSelectIcon?: boolean = false;
   @Input() select?: boolean | undefined = undefined;
   @Input() itemId?: number | string;
   @Input() state: { data: any; } = { data: '' };
   @Input() certificateState: any;
+  @Input() showIconPrint: boolean = false;
+  @Input() disableIconPrint: boolean = false;
 
   @Output() selectChange = new EventEmitter<number | string>();
 
@@ -46,5 +48,11 @@ export class IconActionComponent {
       return this.printLink.state;
     }
     return this.certificateState || this.state;
+  }
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    console.log("4. Icon : ", this.showIconPrint)
   }
 }

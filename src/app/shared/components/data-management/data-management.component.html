@@ -33,7 +33,7 @@
       <div class="table-container">
         <!-- Month filter di dalam table container, di atas table -->
         <div class="month-filter-container">
-          <app-month-filter 
+          <app-month-filter
             [selectedMonth]="selectedMonth"
             [selectedYear]="selectedYear"
             [autoClearSearchOnMonthChange]="true"
@@ -41,7 +41,7 @@
             (searchCleared)="onSearchClearedByMonthFilter()">
           </app-month-filter>
         </div>
-        
+
         <app-table
           [columns]="columns"
           [data]="data"
@@ -102,13 +102,13 @@
   </app-pagination>
 
   <div class="button-container">
-    <app-white-button 
-      *ngIf="whiteButtonClick.observers.length === 0" 
-      [routerLink]="whiteButtonRoute" 
+    <app-white-button
+      *ngIf="whiteButtonClick.observers.length === 0"
+      [routerLink]="whiteButtonRoute"
       class="button">Kembali</app-white-button>
-    <app-white-button 
-      *ngIf="whiteButtonClick.observers.length > 0" 
-      (whiteButtonClick)="onWhiteButtonClick()" 
+    <app-white-button
+      *ngIf="whiteButtonClick.observers.length > 0"
+      (whiteButtonClick)="onWhiteButtonClick()"
       class="button">Kembali</app-white-button>
     @if (blueButtonRoute) {
       <app-blue-button *appRoleBasedAccess="roleBassedAccess" [routerLink]="blueButtonRoute" class="button" [disabled]="cotStatus === 'Selesai'" [title]="cotStatus === 'Selesai' ? 'Tidak dapat menambah peserta pada COT yang sudah selesai' : ''">Tambahkan</app-blue-button>
