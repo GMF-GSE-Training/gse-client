@@ -250,7 +250,7 @@
         <app-blue-button
           type="submit"
           class="button"
-          [disabled]="(form.invalid ||
+          [disabled]="!isUpdate && (form.invalid ||
             !participant.simA ||
             !participant.ktp ||
             !participant.foto ||
