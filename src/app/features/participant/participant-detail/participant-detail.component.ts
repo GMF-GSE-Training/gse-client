@@ -289,13 +289,13 @@ export class ParticipantDetailComponent implements OnInit {
         // Map backend response to table format
         this.certificates = response.data.map((cert: Certificate) => ({
           id: cert.id,
+          cotId: cert.cotId,
           capabilityName: cert.capabilityName,
           expDate: cert.expDate ? new Date(cert.expDate).toLocaleDateString('id-ID', this.dateOptions) : '-',
           detailLink: response.actions?.canView
             ? `/certificates/${cert.id}/detail`
             : ''
         }));
-        console.log("DATA SERTIFIKAT: ", this.certificates);
         this.certificateTotalPages = response.paging?.totalPage ?? 1;
       },
       error: (error) => {

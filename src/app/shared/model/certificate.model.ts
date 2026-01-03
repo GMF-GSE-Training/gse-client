@@ -6,6 +6,7 @@ export interface CreateCertificate {
 
 export interface Certificate {
   id: string;
+  cotId: string;
   capabilityName: string;
   expDate: string;
   detailLink: string;
