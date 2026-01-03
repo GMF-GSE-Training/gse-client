@@ -10,4 +10,5 @@ export interface Certificate {
   capabilityName: string;
   expDate: string;
   detailLink: string;
+  cotDetail?: string;
 }

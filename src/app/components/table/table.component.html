@@ -46,6 +46,8 @@
                     <a [routerLink]="item.expSuratBebasNarkoba.value" [state]="state">{{ item.expSuratBebasNarkoba.label }}</a>
                   } @else if (column.field === 'eSign') {
                     <a [routerLink]="item.eSign">lihat</a>
+                  } @else if (column.field === 'capabilityName') {
+                    <a [routerLink]="item.cotDetail">{{item.capabilityName}}</a>
                   } @else {
                     {{ item[column.field] }}
                   }

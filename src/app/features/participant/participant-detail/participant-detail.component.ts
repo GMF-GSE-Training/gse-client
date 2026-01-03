@@ -293,8 +293,9 @@ export class ParticipantDetailComponent implements OnInit {
           capabilityName: cert.capabilityName,
           expDate: cert.expDate ? new Date(cert.expDate).toLocaleDateString('id-ID', this.dateOptions) : '-',
           detailLink: response.actions?.canView
-            ? `/certificates/${cert.id}/detail`
-            : ''
+            ? `/certificates/${cert.id}/view`
+            : '',
+          cotDetail: `/cot/${cert.cotId}/detail`
         }));
         this.certificateTotalPages = response.paging?.totalPage ?? 1;
       },
