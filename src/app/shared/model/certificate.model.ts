@@ -3,3 +3,10 @@ export interface CreateCertificate {
   practiceScore: number;
   certificateNumber: string;
 }
+
+export interface Certificate {
+  id: string;
+  capabilityName: string;
+  expDate: string;
+  detailLink: string;
+}

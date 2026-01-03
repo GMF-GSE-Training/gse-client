@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlueButtonComponent } from '../../../components/button/blue-button/blue-button.component';
 import { VerticalTableComponent } from "../../../components/vertical-table/vertical-table.component";
-import { TableComponent } from "../../../components/table/table.component";
 import { ParticipantService } from '../../../shared/service/participant.service';
 import { Participant } from '../../../shared/model/participant.model';
 import { map, switchMap } from 'rxjs/operators';
@@ -19,6 +18,9 @@ import { LoaderComponent } from "../../../components/loader/loader.component";
 import { AuthService } from '../../../shared/service/auth.service';
 import { UpdatePassword } from '../../../shared/model/auth.model';
 import { HeaderComponent } from "../../../components/header/header.component";
+import { Certificate } from '../../../shared/model/certificate.model';
+import { DataManagementComponent } from "../../../shared/components/data-management/data-management.component";
+import { CertificateService } from '../../../shared/service/certificate.service';
 
 @Component({
   selector: 'app-participant-detail',
@@ -27,15 +29,15 @@ import { HeaderComponent } from "../../../components/header/header.component";
     RouterLink,
     BlueButtonComponent,
     VerticalTableComponent,
-    TableComponent,
     RoleBasedAccessDirective,
     CommonModule,
     WhiteButtonComponent,
     EmailFormCardComponent,
     PasswordUpdateFormCardComponent,
     LoaderComponent,
-    HeaderComponent
-  ],
+    HeaderComponent,
+    DataManagementComponent
+],
   templateUrl: './participant-detail.component.html',
   styleUrl: './participant-detail.component.css'
 })
@@ -60,14 +62,21 @@ export class ParticipantDetailComponent implements OnInit {
   };
 
   columns = [
-    { header: 'Kompetensi', field: 'trainingName' },
-    { header: 'Exp Sertifikat', field: 'expiryDate' },
+    { header: 'Kompetensi', field: 'capabilityName' },
+    { header: 'Exp Sertifikat', field: 'expDate' },
+    { header: 'Action', field: 'action' }
   ];
 
-  data: any[] = [];
+  certificates: Certificate[] = [];
   
-  // Certificate table sorting
-  certificateSortBy: string = 'trainingName';
+  // Certificate table pagination and search
+  certificateCurrentPage: number = 1;
+  certificateTotalPages: number = 1;
+  certificateItemsPerPage: number = 10;
+  certificateSearchQuery: string = '';
+  
+  // Certificate table sorting (using table field names)
+  certificateSortBy: string = 'expiryDate';
   certificateSortOrder: 'asc' | 'desc' = 'asc';
   isLoadingCertificates: boolean = false;
 
@@ -82,6 +91,7 @@ export class ParticipantDetailComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly sweetalertService: SweetalertService,
     private readonly errorHandlerService: ErrorHandlerService,
+    private readonly certificateService: CertificateService,
   ) {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state;
@@ -230,7 +240,7 @@ export class ParticipantDetailComponent implements OnInit {
     if (this.participant) {
       this.getFoto(this.participant.id);
       this.getQrCode(this.participant.id);
-      this.loadCertificates();
+      this.getListCertificates();
     }
   }
 
@@ -263,67 +273,63 @@ export class ParticipantDetailComponent implements OnInit {
   }
 
   // Load certificates for the participant
-  private loadCertificates(): void {
-    // For now, use mock data. This should be replaced with actual API call
-    // when the certificate service is fully implemented
-    this.data = [
-      { 
-        trainingName: "Forklift", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-      { 
-        trainingName: "Regulasi GSE", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-      { 
-        trainingName: "Baggage Towing Tractor", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-      { 
-        trainingName: "Air Conditioning System Refreshment", 
-        expiryDate: "10 February 2026",
-        rawExpiryDate: new Date('2026-02-10')
-      },
-    ];
+  private getListCertificates(): void {
+    this.isLoadingCertificates = true;
+    // Map sortBy from table field to backend field
+    const backendSortBy = this.certificateSortBy === 'trainingName' ? 'capabilityName' : this.certificateSortBy === 'expDate' ? 'expDate' : 'expDate';
     
-    // Apply current sorting
-    this.sortCertificates();
+    this.certificateService.listCertificates(
+      this.certificateSearchQuery || undefined,
+      this.certificateCurrentPage,
+      this.certificateItemsPerPage,
+      backendSortBy,
+      this.certificateSortOrder
+    ).subscribe({
+      next: (response) => {
+        // Map backend response to table format
+        this.certificates = response.data.map((cert: Certificate) => ({
+          id: cert.id,
+          capabilityName: cert.capabilityName,
+          expDate: cert.expDate ? new Date(cert.expDate).toLocaleDateString('id-ID', this.dateOptions) : '-',
+          detailLink: response.actions?.canView
+            ? `/certificates/${cert.id}/detail`
+            : ''
+        }));
+        console.log("DATA SERTIFIKAT: ", this.certificates);
+        this.certificateTotalPages = response.paging?.totalPage ?? 1;
+      },
+      error: (error) => {
+        console.error('Error fetching certificates:', error);
+        this.errorHandlerService.alertError(error);
+        this.isLoadingCertificates = false;
+      },
+      complete: () => {
+        this.isLoadingCertificates = false;
+      }
+    });
   }
 
-  // Handle certificate table sorting
+  onCertificateSearchChanged(query: string): void {
+    this.certificateSearchQuery = query;
+    this.certificateCurrentPage = 1;
+    this.getListCertificates();
+  }
+
+  onCertificatePageChanged(page: number): void {
+    this.certificateCurrentPage = page;
+    this.getListCertificates();
+  }
+
   onCertificateSortChange(event: { sortBy: string, sortOrder: 'asc' | 'desc' }): void {
     this.certificateSortBy = event.sortBy;
     this.certificateSortOrder = event.sortOrder;
-    this.sortCertificates();
+    this.certificateCurrentPage = 1;
+    this.getListCertificates();
   }
 
-  // Sort certificates based on current sort criteria
-  private sortCertificates(): void {
-    if (!this.data || this.data.length === 0) return;
-    
-    this.data.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
-      
-      if (this.certificateSortBy === 'expiryDate') {
-        aValue = a.rawExpiryDate ? a.rawExpiryDate.getTime() : 0;
-        bValue = b.rawExpiryDate ? b.rawExpiryDate.getTime() : 0;
-      } else {
-        aValue = (a[this.certificateSortBy] || '').toString().toLowerCase();
-        bValue = (b[this.certificateSortBy] || '').toString().toLowerCase();
-      }
-      
-      let comparison = 0;
-      if (aValue < bValue) {
-        comparison = -1;
-      } else if (aValue > bValue) {
-        comparison = 1;
-      }
-      
-      return this.certificateSortOrder === 'desc' ? -comparison : comparison;
-    });
+  viewAllCertificates(): void {
+    this.certificateSearchQuery = '';
+    this.certificateCurrentPage = 1;
+    this.getListCertificates();
   }
 }

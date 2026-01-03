@@ -70,14 +70,23 @@
       </div>
     </div>
     <div class="certificate-table">
-      <app-table 
-        [columns]="columns" 
-        [data]="data"
+      <app-data-management
+        [pageTitle]="'Daftar Sertifikat'"
+        [columns]="columns"
+        [data]="certificates"
+        [isLoading]="isLoadingCertificates"
+        [isWhiteButton]="false"
+        [totalPages]="certificateTotalPages"
+        [currentPage]="certificateCurrentPage"
+        [isLoadingPagination]="isLoadingCertificates"
+        (pageChange)="onCertificatePageChanged($event)"
+        [placeHolder]="'Cari Sertifikat'"
+        (searchChange)="onCertificateSearchChanged($event)"
+        (viewAllChange)="viewAllCertificates()"
         [sortBy]="certificateSortBy"
         [sortOrder]="certificateSortOrder"
-        [isLoading]="isLoadingCertificates"
-        (sortChange)="onCertificateSortChange($event)">
-      </app-table>
+        (sortChange)="onCertificateSortChange($event)"
+      ></app-data-management>
     </div>
 
     <div class="button-container">

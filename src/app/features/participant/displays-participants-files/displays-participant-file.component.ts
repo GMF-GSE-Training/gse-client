@@ -59,7 +59,7 @@ export class DisplaysParticipantFilesComponent implements OnInit {
       'sim-b',
       'ktp',
       'surat-sehat-buta-warna',
-      'surat-bebas-narkoba'
+      'surat-bebas-narkoba',
     ];
 
     const matchedType = fileTypes.find(type => path.includes(type));

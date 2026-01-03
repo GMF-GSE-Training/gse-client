@@ -88,6 +88,7 @@ export interface EnvironmentEndpoints {
   };
   certificate: {
     base: string;
+    list: string;
   };
 }
 
@@ -218,6 +219,7 @@ export class EnvironmentService {
       },
       certificate: {
         base: 'certificate',
+        list: 'certificate/list/result'
       },
     };
   }

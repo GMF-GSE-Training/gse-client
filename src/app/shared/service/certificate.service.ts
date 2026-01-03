@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { CreateCertificate } from "../model/certificate.model";
+import { CreateCertificate, Certificate } from "../model/certificate.model";
 import { Observable } from "rxjs";
 import { EnvironmentService } from "./environment.service";
 import { WebResponse } from "../model/web.model";
@@ -27,5 +27,21 @@ export class CertificateService {
     return this.http.post<WebResponse<string>>(url, request, {
       withCredentials: true
     });
+  }
+
+  listCertificates(q?: string, page?: number, size?: number, sortBy?: string, sortOrder?: string): Observable<WebResponse<Certificate[]>> {
+    const params: any = {};
+    if (q) params.q = q;
+    if (page) params.page = page;
+    if (size) params.size = size;
+    if (sortBy) params.sort_by = sortBy;
+    if (sortOrder) params.sort_order = sortOrder;
+    
+    const url = this.envService.buildUrl(this.envService.getEndpoint('certificate', 'list'));
+    
+    console.log('🔍 Certificate Service Debug - URL:', url);
+    console.log('🔍 Certificate Service Debug - Params:', params);
+    
+    return this.http.get<WebResponse<Certificate[]>>(url, { params, withCredentials: true });
   }
 }

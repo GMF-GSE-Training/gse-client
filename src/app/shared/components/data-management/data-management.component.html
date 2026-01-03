@@ -39,7 +39,9 @@
   </app-pagination>
 
   <div class="button-container">
-    <app-white-button [routerLink]="whiteButtonRoute" class="button">Kembali</app-white-button>
+    @if (isWhiteButton) {
+      <app-white-button [routerLink]="whiteButtonRoute" class="button">Kembali</app-white-button>
+    }
     @if (blueButtonRoute) {
       <app-blue-button *appRoleBasedAccess="roleBassedAccess" [routerLink]="blueButtonRoute" class="button" [disabled]="cotStatus === 'Selesai'" [title]="cotStatus === 'Selesai' ? 'Tidak dapat menambah peserta pada COT yang sudah selesai' : ''">Tambahkan</app-blue-button>
     } @else {
