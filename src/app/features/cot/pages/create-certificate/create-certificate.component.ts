@@ -28,7 +28,7 @@ export class CreateCertificateComponent {
   certificate: CreateCertificate = {
     theoryScore: 0,
     practiceScore: 0,
-    attendance: 0
+    certificateNumber: ""
   }
 
   cotId = this.route.snapshot.paramMap.get('cotId');
