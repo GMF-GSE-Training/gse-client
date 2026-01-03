@@ -5,6 +5,7 @@ import { CapabilityService } from '../../../shared/service/capability.service';
 import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { Capability } from '../../../shared/model/capability.model';
 import { HeaderComponent } from "../../../components/header/header.component";
+import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
 
 @Component({
   selector: 'app-capability-list',
@@ -50,6 +51,7 @@ export class CapabilityListComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private sweetalertService: SweetalertService,
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -123,8 +125,8 @@ export class CapabilityListComponent implements OnInit {
             queryParamsHandling: 'merge',
           });
         },
-        error: () => {
-          this.sweetalertService.alert('Pemberitahuan', 'Server sedang sibuk atau terjadi gangguan. Silakan coba beberapa saat lagi.', 'error');
+        error: (error) => {
+          this.errorHandlerService.alertError(error);
         }
       });
     }

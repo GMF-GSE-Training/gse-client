@@ -32,6 +32,8 @@ export interface User {
     id: string,
     name: string,
   },
+  editLink?: string;
+  deleteMethod?: () => void;
 }
 
 export interface UserResponse {

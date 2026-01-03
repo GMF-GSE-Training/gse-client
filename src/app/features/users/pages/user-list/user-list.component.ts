@@ -67,12 +67,13 @@ export class UserListComponent implements OnInit {
     this.isLoading = true;
     this.userService.listUsers(query, page, size, sortBy, sortOrder).subscribe({
       next: (response) => {
-        this.users = response.data.map((user: User) => ({
-          ...user,
-          idNumber: user.idNumber ?? '-',
-          dinas: user.dinas ?? '-',
-          roleName: user.role?.name ?? '-',
-        }));
+        // this.users = response.data.map((user: User) => ({
+        //   ...user,
+        //   idNumber: user.idNumber ?? '-',
+        //   dinas: user.dinas ?? '-',
+        //   roleName: user.role?.name ?? '-',
+        // }));
+        this.users = this.mapUsers(response);
         this.totalPages = response.paging?.totalPage ?? 1;
       },
       error: (error) => {
@@ -171,4 +172,15 @@ export class UserListComponent implements OnInit {
 
     this.searchQuery = '';
   }
+
+  private mapUsers(response: any): User[] {
+      return response.data.map((user: User) => ({
+        ...user,
+        idNumber: user.idNumber ?? '-',
+        dinas: user.dinas ?? '-',
+        roleName: user.role?.name ?? '-',
+        editLink: response.actions?.canEdit ? `/users/${user.id}/edit` : null,
+        deleteMethod: response.actions?.canDelete ? () => this.deleteParticipant(user) : null,
+      }));
+    }
 }

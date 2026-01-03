@@ -5,6 +5,7 @@ import { Participant } from '../../../shared/model/participant.model';
 import { SweetalertService } from '../../../shared/service/sweetalert.service';
 import { DataManagementComponent } from "../../../shared/components/data-management/data-management.component";
 import { HeaderComponent } from "../../../components/header/header.component";
+import { ErrorHandlerService } from '../../../shared/service/error-handler.service';
 
 @Component({
   selector: 'app-participant-list',
@@ -52,6 +53,7 @@ export class ParticipantListComponent implements OnInit {
   constructor(
     private participantService: ParticipantService,
     private sweetalertService: SweetalertService,
+    private readonly errorHandlerService: ErrorHandlerService,
     private router: Router,
     private route: ActivatedRoute,
   ) {}
@@ -117,7 +119,7 @@ export class ParticipantListComponent implements OnInit {
         },
         error: (error) => {
           console.log(error);
-          this.sweetalertService.alert('Gagal!', 'Terjadi kesalahan, coba lagi nanti', 'error');
+          this.errorHandlerService.alertError(error);
         }
       });
     }

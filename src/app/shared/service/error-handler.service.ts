@@ -168,59 +168,50 @@ export class ErrorHandlerService {
     return 'Server sedang sibuk atau terjadi gangguan. Silakan coba beberapa saat lagi.';
   }
 
-  // --- PRIVATE ROUTE CHECKERS ---
+  // --- PRIVATE ROUTE CHECKERS (FIXED WITH REGEX) ---
 
   private isAuthRoute(): boolean {
-    const authPaths = ['/auth/'];
-    return authPaths.some(path => this.router.url.includes(path));
+    return /\/auth(\/|$)/.test(this.router.url);
   }
 
   private isCapabilityRoute(): boolean {
-    const capabilityPaths = ['/capability/'];
-    return capabilityPaths.some(path => this.router.url.includes(path)) || this.isCapabilityIdRoute();
+    return /\/capability(\/|$)/.test(this.router.url) || this.isCapabilityIdRoute();
   }
 
   private isCotRoute(): boolean {
-    const cotPaths = ['/cot/'];
-    return cotPaths.some(path => this.router.url.includes(path)) || this.isCotIdRoute();
+    return /\/cot(\/|$)/.test(this.router.url) || this.isCotIdRoute();
   }
 
   private isCertificateRoute(): boolean {
-    const certificatePaths = ['/certificate/'];
-    return certificatePaths.some(path => this.router.url.includes(path)) || this.isCertificateIdRoute();
+    return /\/certificate(\/|$)/.test(this.router.url) || this.isCertificateIdRoute();
   }
 
   private isESignRoute(): boolean {
-    const eSignPaths = ['/e-sign/'];
-    return eSignPaths.some(path => this.router.url.includes(path)) || this.isESignIdRoute();
+    return /\/e-sign(\/|$)/.test(this.router.url) || this.isESignIdRoute();
   }
 
-  // --- NEW ADDED ROUTES BASED ON BACKEND CONTROLLERS ---
-
   private isParticipantRoute(): boolean {
-    const participantPaths = ['/participants/'];
-    return participantPaths.some(path => this.router.url.includes(path)) || this.isParticipantIdRoute();
+    return /\/participants(\/|$)/.test(this.router.url) || this.isParticipantIdRoute();
   }
 
   private isUserRoute(): boolean {
-    const userPaths = ['/users/'];
-    return userPaths.some(path => this.router.url.includes(path)) || this.isUserIdRoute();
+    return /\/users(\/|$)/.test(this.router.url) || this.isUserIdRoute();
   }
 
   private isRoleRoute(): boolean {
-    return this.router.url.includes('/roles/');
+    return /\/roles(\/|$)/.test(this.router.url);
   }
 
   private isParticipantCotRoute(): boolean {
-    return this.router.url.includes('/participant-cot/');
+    return /\/participant-cot(\/|$)/.test(this.router.url);
   }
 
   private isCurriculumSyllabusRoute(): boolean {
-    return this.router.url.includes('/curriculum-syllabus/');
+    return /\/curriculum-syllabus(\/|$)/.test(this.router.url);
   }
 
   private isFileUploadRoute(): boolean {
-    return this.router.url.includes('/file-upload/');
+    return /\/file-upload(\/|$)/.test(this.router.url);
   }
 
   // --- ID PATTERN CHECKERS ---
