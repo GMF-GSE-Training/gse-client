@@ -4,6 +4,12 @@ export interface CreateCertificate {
   certificateNumber: string;
 }
 
+export interface UpdateCertificate {
+  theoryScore: number;
+  practiceScore: number;
+  certificateNumber: string;
+}
+
 export interface Certificate {
   id: string;
   cotId: string;

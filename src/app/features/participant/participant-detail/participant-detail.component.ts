@@ -84,6 +84,9 @@ export class ParticipantDetailComponent implements OnInit {
 
   updateEmail: { email: string } = { email: '' };
 
+  // State untuk navigasi certificate view
+  certificateNavigationState: { data: string } = { data: '' };
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -110,9 +113,23 @@ export class ParticipantDetailComponent implements OnInit {
       }
     });
 
+    // Set certificate navigation state untuk kembali ke halaman participant detail saat ini
+    if (this.userProfile.role.name === 'user') {
+      this.certificateNavigationState = { data: `/participants/${this.id}/profile/personal` };
+    } else {
+      this.certificateNavigationState = { data: `/participants/${this.id}/detail` };
+    }
+
     this.route.url.subscribe(urlSegments => {
       const url = urlSegments.map(segment => segment.path).join('/');
       this.selectedItem = url === `participants/${this.id}/profile/personal` ? 0 : url === `participants/${this.id}/profile/account` ? 1 : 0;
+      
+      // Update certificate navigation state jika URL berubah
+      if (this.userProfile.role.name === 'user') {
+        this.certificateNavigationState = { data: `/participants/${this.id}/profile/personal` };
+      } else {
+        this.certificateNavigationState = { data: `/participants/${this.id}/detail` };
+      }
     });
 
     if (this.userProfile.role.name === 'user') {
@@ -285,19 +302,23 @@ export class ParticipantDetailComponent implements OnInit {
       backendSortBy,
       this.certificateSortOrder
     ).subscribe({
-      next: (response) => {
+      next: ({ data, actions, paging }) => {
         // Map backend response to table format
-        this.certificates = response.data.map((cert: Certificate) => ({
+        this.certificates = data.map((cert: any) => ({
           id: cert.id,
           cotId: cert.cotId,
           capabilityName: cert.capabilityName,
           expDate: cert.expDate ? new Date(cert.expDate).toLocaleDateString('id-ID', this.dateOptions) : '-',
-          detailLink: response.actions?.canView
+          detailLink: actions?.canView
             ? `/certificates/${cert.id}/view`
             : '',
+          editLink: actions?.canEdit
+            ? `/certificates/${cert.id}/edit`
+            : '',
+          deleteMethod: actions?.canDelete ? () => this.deleteCertificate(cert) : null,
           cotDetail: `/cot/${cert.cotId}/detail`
         }));
-        this.certificateTotalPages = response.paging?.totalPage ?? 1;
+        this.certificateTotalPages = paging?.totalPage ?? 1;
       },
       error: (error) => {
         console.error('Error fetching certificates:', error);
@@ -332,5 +353,33 @@ export class ParticipantDetailComponent implements OnInit {
     this.certificateSearchQuery = '';
     this.certificateCurrentPage = 1;
     this.getListCertificates();
+  }
+
+  async deleteCertificate(cert: Certificate): Promise<void> {
+    const isConfirmed = await this.sweetalertService.confirm(
+      'Anda Yakin?',
+      `Apakah anda ingin menghapus sertifikat ${cert.capabilityName}?`,
+      'warning',
+      'Ya, hapus!'
+    );
+    if (isConfirmed) {
+      this.sweetalertService.loading('Mohon tunggu', 'Proses...');
+      this.certificateService.deleteCertificate(cert.id).subscribe({
+        next: () => {
+          this.sweetalertService.alert('Dihapus!', 'Data sertifikat berhasil dihapus', 'success');
+          this.certificates = this.certificates.filter(c => c.id !== cert.id);
+
+          if (this.certificates.length === 0 && this.certificateCurrentPage > 0) {
+            this.certificateCurrentPage -= 1;
+          }
+
+          this.getListCertificates();
+        },
+        error: (error) => {
+          console.error(error);
+          this.errorHandlerService.alertError(error);
+        }
+      });
+    }
   }
 }

@@ -1,0 +1,18 @@
+.image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pdf {
+  width: 40%;
+  min-height: 100vh;
+}
+
+.no-files {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  height: 50vh;
+}
+

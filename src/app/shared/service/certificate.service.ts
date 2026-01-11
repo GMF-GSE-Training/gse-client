@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { CreateCertificate, Certificate } from "../model/certificate.model";
+import { CreateCertificate, UpdateCertificate, Certificate } from "../model/certificate.model";
 import { Observable } from "rxjs";
 import { EnvironmentService } from "./environment.service";
 import { WebResponse } from "../model/web.model";
@@ -43,5 +43,25 @@ export class CertificateService {
     console.log('🔍 Certificate Service Debug - Params:', params);
     
     return this.http.get<WebResponse<Certificate[]>>(url, { params, withCredentials: true });
+  }
+
+  deleteCertificate(id: string): Observable<WebResponse<string>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${id}`);
+    return this.http.delete<WebResponse<string>>(url, { withCredentials: true });
+  }
+
+  viewFile(certificateId: string): Observable<WebResponse<string>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${certificateId}/view`);
+    return this.http.get<WebResponse<string>>(url, { withCredentials: true });
+  }
+
+  getCertificateById(id: string): Observable<WebResponse<Certificate>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${id}`);
+    return this.http.get<WebResponse<Certificate>>(url, { withCredentials: true });
+  }
+
+  updateCertificate(id: string, request: UpdateCertificate): Observable<WebResponse<string>> {
+    const url = this.envService.buildUrl(`${this.envService.getEndpoint('certificate', 'base')}/${id}`);
+    return this.http.put<WebResponse<string>>(url, request, { withCredentials: true });
   }
 }

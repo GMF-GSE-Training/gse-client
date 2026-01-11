@@ -57,10 +57,13 @@ export class CertificateFormComponent implements OnInit {
   }
 
   private setBackButtonRoute(): void {
-    if(this.cotId) {
-      this.backButtonRoute = `/cot/${this.cotId}/detail`;
-    } else {
-      this.backButtonRoute = '/cot';
+    // Only set backButtonRoute if it's not already set from input (for edit mode)
+    if (!this.backButtonRoute) {
+      if(this.cotId) {
+        this.backButtonRoute = `/cot/${this.cotId}/detail`;
+      } else {
+        this.backButtonRoute = '/cot';
+      }
     }
   }
 
