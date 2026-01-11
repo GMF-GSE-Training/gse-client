@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CapabilityService } from '../../../../shared/service/capability.service';
 import { CurriculumSyllabusService } from '../../../../shared/service/curriculum-syllabus.service';
 import { SweetalertService } from '../../../../shared/service/sweetalert.service';
+import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
 import { CurriculumSyllabusFormComponent } from "../../components/curriculum-syllabus-form/curriculum-syllabus-form.component";
 
 @Component({
@@ -45,6 +46,7 @@ export class EditCurriculumSyllabusComponent implements OnInit {
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly sweetalertService: SweetalertService,
+    private readonly errorHandlerService: ErrorHandlerService,
     private readonly capabilityService: CapabilityService,
     private readonly curriculumSyllabusService: CurriculumSyllabusService,
   ) { }
@@ -118,16 +120,17 @@ export class EditCurriculumSyllabusComponent implements OnInit {
     const curriculumSyllabusData = [
       ...this.regulasiGSEs,
       ...this.kompetensis
-    ];+
+    ];
 
     // Send the data to the backend using the service
+    this.sweetalertService.loading('Mohon tunggu', 'Proses...');
     this.curriculumSyllabusService.updateCurriculumSyllabus(this.capability.id, { curriculumSyllabus: curriculumSyllabusData }).subscribe({
       next: (response) => {
         this.sweetalertService.alert('Berhasil', response.data, 'success');
         this.router.navigateByUrl('/capability');
       },
       error: (error) => {
-        console.error(error);
+        this.errorHandlerService.alertError(error);
       }
     });
   }
