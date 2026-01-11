@@ -72,7 +72,7 @@ export class SignatureListComponent {
           status: eSign.status ? 'Aktif' : 'Tidak aktif',
           eSign: `/e-sign/${eSign.id}/view`,
           editLink: actions?.canEdit ? `/e-sign/${eSign.id}/edit` : null,
-          deleteMethod: actions?.canDelete ? () => this.delteSignature(eSign) : null,
+          deleteMethod: actions?.canDelete ? () => this.deleteSignature(eSign) : null,
         }));
         this.totalPages = paging?.totalPage || 1;
       },
@@ -86,7 +86,7 @@ export class SignatureListComponent {
     });
   }
 
-  async delteSignature(eSign: ESign): Promise<void> {
+  async deleteSignature(eSign: ESign): Promise<void> {
     const isConfirmed = await this.sweetalertService.confirm('Anda Yakin?', `Apakah anda ingin menghapus E-Sign ini : ${eSign.name}?`, 'warning', 'Ya, hapus!');
     if(isConfirmed) {
       this.sweetalertService.loading('Mohon tunggu', 'Proses...');
