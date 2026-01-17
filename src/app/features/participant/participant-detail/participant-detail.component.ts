@@ -21,6 +21,7 @@ import { HeaderComponent } from "../../../components/header/header.component";
 import { Certificate } from '../../../shared/model/certificate.model';
 import { DataManagementComponent } from "../../../shared/components/data-management/data-management.component";
 import { CertificateService } from '../../../shared/service/certificate.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-participant-detail',
@@ -49,8 +50,8 @@ export class ParticipantDetailComponent implements OnInit {
   backButtonRoute: string = '/participants';
   selectedItem: number = 0;
   isLoading: boolean = false;
-  pasFoto: string | null = localStorage.getItem('pas_foto');
-  qrCode: string | null = localStorage.getItem('qr_code');
+  pasFoto: SafeResourceUrl | string = "";
+  qrCode: SafeResourceUrl | string = "";
   qrCodeDownloadName: string = 'QR_Code.png';
   id = this.route.snapshot.paramMap.get('participantId') || JSON.parse(localStorage.getItem('user_profile') || '{}').participant.id;
   idCardLink: string = '';
@@ -95,6 +96,7 @@ export class ParticipantDetailComponent implements OnInit {
     private readonly sweetalertService: SweetalertService,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly certificateService: CertificateService,
+    private readonly sanitizer: DomSanitizer,
   ) {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state;
@@ -114,7 +116,7 @@ export class ParticipantDetailComponent implements OnInit {
     });
 
     // Set certificate navigation state untuk kembali ke halaman participant detail saat ini
-    if (this.userProfile.role.name === 'user') {
+    if (this.userProfile?.role?.name === 'user') {
       this.certificateNavigationState = { data: `/participants/${this.id}/profile/personal` };
     } else {
       this.certificateNavigationState = { data: `/participants/${this.id}/detail` };
@@ -125,25 +127,28 @@ export class ParticipantDetailComponent implements OnInit {
       this.selectedItem = url === `participants/${this.id}/profile/personal` ? 0 : url === `participants/${this.id}/profile/account` ? 1 : 0;
       
       // Update certificate navigation state jika URL berubah
-      if (this.userProfile.role.name === 'user') {
+      if (this.userProfile?.role?.name === 'user') {
         this.certificateNavigationState = { data: `/participants/${this.id}/profile/personal` };
       } else {
         this.certificateNavigationState = { data: `/participants/${this.id}/detail` };
       }
     });
 
-    if (this.userProfile.role.name === 'user') {
-      if (this.id !== this.userProfile.participant.id) this.getParticipantById();
+    if (this.userProfile?.role?.name === 'user') {
+      if (this.id !== this.userProfile?.participant?.id) this.getParticipantById();
       else this.getParticipantFromLocalStorage();
     } else {
       this.getParticipantById();
     }
+    
+    this.getFoto(this.id);
+    this.getQrCode(this.id);
+    this.getListCertificates();
   }
 
   private getParticipantFromLocalStorage() {
     this.isLoading = true;
     this.participant = this.userProfile.participant;
-    if (this.participant) this.setParticipantData(this.participant);
     this.isLoading = false;
   }
 
@@ -169,36 +174,23 @@ export class ParticipantDetailComponent implements OnInit {
 
   private getFoto(id: string): void {
     this.participantService.getFoto(id).pipe(
-      map(blob => new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      })),
-      switchMap(promise => from(promise))
+      map(response => response.data)
     ).subscribe({
-      next: (base64String: string) => {
-        this.photoType = this.getMediaType(base64String);
-        this.pasFoto = base64String.split(',')[1]; // Ambil bagian base64 saja
-        if (this.userProfile.role.name === 'user') localStorage.setItem('pas_foto', this.pasFoto);
+      next: (pasFoto: string) => {
+        this.pasFoto = this.sanitizer.bypassSecurityTrustResourceUrl(pasFoto);
       },
       error: (error) => console.error('Error fetching photo:', error),
     });
   }
 
   private getQrCode(id: string): void {
-    this.participantService.getQrCode(id).subscribe({
-      next: (blob: Blob) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          this.qrCode = reader.result as string; // data:image/png;base64,...
-          if (this.userProfile.role.name === 'user') {
-            localStorage.setItem('qr_code', this.qrCode);
-          }
-        };
-        reader.readAsDataURL(blob);
+    this.participantService.getQrCode(id).pipe(
+      map(response => response.data)
+    ).subscribe({
+      next: (qrCode: string) => {
+        this.qrCode = this.sanitizer.bypassSecurityTrustResourceUrl(qrCode);
       },
-      error: (error) => console.error('Error fetching QR code:', error),
+      error: (error) => console.error('Error fetching photo:', error),
     });
   }
 
@@ -244,20 +236,16 @@ export class ParticipantDetailComponent implements OnInit {
   }
 
   private setParticipantData(participant: Participant) {
-    this.participant = participant;
-    this.verticalTableData = this.transformData(this.participant);
+    if(participant) {
+      this.participant = participant;
+      this.verticalTableData = this.transformData(this.participant);
+      this.qrCodeDownloadName = `QR_Code_${participant.name.replace(/ /g, '_')}_${participant.id}.png`;
+    }
     this.editLink = `/participants/${this.id}/edit`;
     this.idCardLink = `/participants/${this.id}/id-card`;
-    this.qrCodeDownloadName = `QR_Code_${participant.name.replace(/ /g, '_')}_${participant.id}.png`;
 
     if (this.userProfile.role.name === 'user') {
       localStorage.setItem('user_profile', JSON.stringify({ ...this.userProfile, participant: this.participant }));
-    }
-
-    if (this.participant) {
-      this.getFoto(this.participant.id);
-      this.getQrCode(this.participant.id);
-      this.getListCertificates();
     }
   }
 

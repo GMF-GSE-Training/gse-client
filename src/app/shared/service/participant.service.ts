@@ -60,20 +60,14 @@ export class ParticipantService {
     });
   }
 
-  getFoto(id: string): Observable<Blob> {
+  getFoto(id: string): Observable<WebResponse<string>> {
     const url = this.envService.buildUrl(`participants/${id}/foto`);
-    return this.http.get(url, {
-      responseType: 'blob',
-      withCredentials: true,
-    });
+    return this.http.get<WebResponse<string>>(url, { withCredentials: false });
   }
 
-  getQrCode(id: string): Observable<Blob> {
+  getQrCode(id: string): Observable<WebResponse<string>> {
     const url = this.envService.buildUrl(`${this.envService.getEndpoint('participant', 'base')}/${id}/qr-code`);
-    return this.http.get(url, {
-      responseType: 'blob',
-      withCredentials: true,
-    });
+    return this.http.get<WebResponse<string>>(url, { withCredentials: false });
   }
 
   downloadIdCard(id: string): Observable<Blob> {

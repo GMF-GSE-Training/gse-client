@@ -20,12 +20,6 @@ const routes: Routes = [
     data: { roles: ['super admin', 'supervisor', 'lcu'] }
   },
   {
-    path: ':participantId/detail',
-    component: ParticipantDetailComponent,
-    canActivate: [AuthGuard, RoleGuard, DataCompleteGuard],
-    data: { roles: ['super admin', 'supervisor', 'lcu'] }
-  },
-  {
     path: ':participantId/profile/personal',
     component: ParticipantDetailComponent,
     canActivate: [AuthGuard, RoleGuard, DataCompleteGuard],

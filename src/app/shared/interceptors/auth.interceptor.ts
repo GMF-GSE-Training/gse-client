@@ -20,6 +20,9 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   let isRefreshing = false;
   const refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
+  // Cek apakah request ini untuk public route (participant detail)
+  const isPublicRoute = router.url.includes('/participants/') && router.url.includes('/detail');
+
   const userProfile = authService.getUserProfile();
   const authToken = userProfile?.accessToken;
 
@@ -44,7 +47,13 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
         return throwError(() => new Error('Server returned HTML instead of JSON. Please login again.'));
       }
       
+      // Untuk public route (participant detail), jangan redirect ke login saat 401
       if (error.status === 401 && !req.url.includes('/token')) {
+        const isPublicRoute = router.url.includes('/participants/') && router.url.includes('/detail');
+        if (isPublicRoute) {
+          // Untuk public route, biarkan error diteruskan tanpa redirect
+          return throwError(() => error);
+        }
         return handle401Error(req, next, authService, router, sweetalertService, isRefreshing, refreshTokenSubject);
       }
       return throwError(() => error);
@@ -81,9 +90,12 @@ const handle401Error = (
       }),
       catchError((err) => {
         isRefreshing = false;
-        clearLocalStorageAndLogout(router, authService);
-        sweetalertService.alert('Selamat Datang!', 'Sesi tidak ditemukan, sudah mencoba login?', 'warning');
-        router.navigate(['/login']);
+        const isPublicRoute = router.url.includes('/participants/') && router.url.includes('/detail');
+        if (!isPublicRoute) {
+          clearLocalStorageAndLogout(router, authService);
+          sweetalertService.alert('Selamat Datang!', 'Sesi tidak ditemukan, sudah mencoba login?', 'warning');
+          router.navigate(['/login']);
+        }
         return throwError(() => err);
       })
     );

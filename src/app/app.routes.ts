@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
   },
   {
+    path: 'participants/:participantId/detail',
+    loadComponent: () => import('./features/participant/participant-detail/participant-detail.component').then(m => m.ParticipantDetailComponent),
+  },
+  {
     path: 'participants',
     loadChildren: () => import('./features/participant/participant.module').then(m => m.ParticipantModule),
     canActivate: [AuthGuard],
