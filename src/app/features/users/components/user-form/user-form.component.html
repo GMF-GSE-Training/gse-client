@@ -153,7 +153,7 @@
 
       <div class="buttons-container">
         <app-white-button *ngIf="!isRegister" class="button" type="button" routerLink="/users">Kembali</app-white-button>
-        <app-blue-button class="button" type="submit" [ngClass]="isRegister ? 'submit' : ''" [disabled]="form.invalid!">{{ blueButtonLabel }}</app-blue-button>
+        <app-blue-button class="button" type="submit" [ngClass]="isRegister ? 'submit' : ''" [disabled]="!isFormValidForSubmit()">{{ blueButtonLabel }}</app-blue-button>
       </div>
     </form>
   </div>

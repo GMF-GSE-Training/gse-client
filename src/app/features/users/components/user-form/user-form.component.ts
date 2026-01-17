@@ -88,6 +88,15 @@ export class UserFormComponent implements OnInit {
             label: role.name,
             value: role.id
           }));
+          
+          // Inisialisasi selectedRole dari initialRole saat edit
+          if (this.initialRole && !this.isRegister) {
+            const role = this.roleData.find(r => r.id === this.initialRole);
+            if (role) {
+              this.selectedRole = role.name;
+              this.user.roleId = role.id;
+            }
+          }
         },
         error: (error: any) => {
           console.log(error);
@@ -97,7 +106,7 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.valid) {
+    if (this.isFormValidForSubmit()) {
       if(this.isCreate) {
         this.formSubmit.emit(this.user);
       } else {
@@ -115,5 +124,45 @@ export class UserFormComponent implements OnInit {
     if(this.selectedRole !== 'user') {
       this.user.nik = null;
     }
+  }
+
+  isFormValidForSubmit(): boolean {
+    if (!this.form) {
+      return false;
+    }
+
+    // Untuk mode register/create, gunakan validasi form standar
+    if (this.isRegister || this.isCreate) {
+      return !!this.form.valid && !this.passwordMismatch;
+    }
+
+    // Untuk mode edit, validasi manual
+    // Field yang selalu required
+    const isNameValid = this.user.name && this.user.name.trim() !== '';
+    const isRoleSelected = this.user.roleId && this.user.roleId.trim() !== '';
+
+    // Email hanya required jika super admin (karena non-super admin tidak bisa edit email)
+    let isEmailValid = true;
+    if (this.currentUserRole === 'super admin') {
+      isEmailValid = this.user.email && this.user.email.trim() !== '';
+    }
+
+    // Field NIK hanya required jika role adalah 'user'
+    let isNikValid = true;
+    if (this.selectedRole === 'user') {
+      isNikValid = this.user.nik && this.user.nik.trim() !== '';
+    }
+
+    // Password hanya required jika diisi (untuk update password)
+    let isPasswordValid = true;
+    if (this.user.password || this.user.confirmPassword) {
+      isPasswordValid = 
+        this.user.password && 
+        this.user.password.length >= 8 &&
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).+$/.test(this.user.password) &&
+        !this.passwordMismatch;
+    }
+
+    return isNameValid && isEmailValid && isRoleSelected && isNikValid && isPasswordValid;
   }
 }
