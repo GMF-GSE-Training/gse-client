@@ -31,6 +31,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/participant/participant-detail/participant-detail.component').then(m => m.ParticipantDetailComponent),
   },
   {
+    path: 'certificates/:certificateId/view',
+    loadComponent: () => import('./features/certificate/pages/displays-certificate-file/displays-certificate-file.component').then(m => m.DisplaysCertificateFileComponent),
+  },
+  {
     path: 'participants',
     loadChildren: () => import('./features/participant/participant.module').then(m => m.ParticipantModule),
     canActivate: [AuthGuard],

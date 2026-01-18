@@ -35,7 +35,7 @@ const routes: Routes = [
     path: ':eSignId/view', // For /e-sign/:eSignId/view
     component: DisplaysSignatureFileComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['super admin'] }
+    data: { roles: ['super admin', 'supervisor'] }
   }
 ];
 

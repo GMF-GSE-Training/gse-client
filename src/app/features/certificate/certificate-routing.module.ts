@@ -11,12 +11,6 @@ import { RoleGuard } from '../../shared/guard/role.guard';
 
 const routes: Routes = [
   {
-    path: ':certificateId/view', // For /certificates/:certificateId/view
-    component: DisplaysCertificateFileComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['super admin', 'supervisor', 'lcu', 'user'] }
-  },
-  {
     path: ':certificateId/edit', // For /certificates/:certificateId/edit
     component: EditCertificateComponent,
     canActivate: [AuthGuard, RoleGuard],
