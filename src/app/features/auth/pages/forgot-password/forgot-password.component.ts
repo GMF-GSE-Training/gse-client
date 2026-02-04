@@ -4,12 +4,11 @@ import { SweetalertService } from '../../../../shared/service/sweetalert.service
 import { EmailFormComponent } from "../../components/email-form/email-form.component";
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../../../../shared/service/error-handler.service';
-import { NgHcaptchaModule } from 'ng-hcaptcha';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [EmailFormComponent, NgHcaptchaModule],
+  imports: [EmailFormComponent],
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent implements OnInit {

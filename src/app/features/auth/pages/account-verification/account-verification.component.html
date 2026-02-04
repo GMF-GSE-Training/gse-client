@@ -4,5 +4,6 @@
   [errorMessage]="errorMessage"
   (formSubmit)="onSubmit($event)"
   (captchaVerified)="onCaptchaVerify($event)"
-  [hcaptchaToken]="hcaptchaToken">
+  (captchaExpired)="onCaptchaExpired()"
+  (captchaError)="onCaptchaError($event)">
 </app-email-form>

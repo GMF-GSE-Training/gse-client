@@ -16,11 +16,6 @@ import { AccountVerificationComponent } from './pages/account-verification/accou
     FormsModule,
     ReactiveFormsModule,
     AuthRoutingModule,
-    NgHcaptchaModule.forRoot({
-      // Environment Service akan di-inject secara otomatis
-      // siteKey akan diambil dari Environment Service
-      siteKey: '', // Akan di-override oleh Environment Service
-    }),
     // Import standalone components that are used in routes
     LoginComponent,
     RegisterComponent,

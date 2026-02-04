@@ -49,8 +49,16 @@ export class AccountVerificationComponent implements OnInit {
     });
   }
 
-  onSubmit(data: { email: string }) {
+  onSubmit(data: { email: string }): void {
+    // reset error
     this.errorMessage = '';
+
+    // validasi captcha
+    if (!this.hcaptchaToken) {
+      this.errorMessage = 'Silakan selesaikan verifikasi hCaptcha.';
+      return;
+    }
+    
     this.sweetalertService.loading('Mohon tunggu', 'Proses...');
     this.authService.resendVerification(data.email).subscribe({
       next: () => {
@@ -60,13 +68,33 @@ export class AccountVerificationComponent implements OnInit {
           'Tautan verifikasi telah dikirim ke email Anda. Periksa kotak masuk/spam.', 
           'success'
         );
+        // reset token
+        this.hcaptchaToken = '';
       },
       error: (error) => {
         this.sweetalertService.close();
         this.errorMessage = error?.error?.errors || 'Terjadi kesalahan. Coba lagi.';
+        this.hcaptchaToken = '';
       }
     });
   }
+
+  onCaptchaVerify(token: string): void {
+    console.log('✅ Captcha verified, token:', token.substring(0, 20) + '...');
+    this.hcaptchaToken = token;
+  }
+
+  onCaptchaExpired(): void {
+    console.warn('⚠️ Captcha expired');
+    this.hcaptchaToken = '';
+  }
+
+  onCaptchaError(event: any): void {
+    console.error('❌ Captcha error:', event);
+    this.hcaptchaToken = '';
+    this.errorMessage = 'Terjadi kesalahan pada hCaptcha. Silakan coba lagi.';
+  }
+  
   
   // Metode untuk memverifikasi akun dengan token dari URL
   private verifyAccount(token: string) {
@@ -110,9 +138,5 @@ export class AccountVerificationComponent implements OnInit {
         }
       }
     });
-  }
-
-  onCaptchaVerify(token: string) {
-    this.hcaptchaToken = token;
   }
 }
