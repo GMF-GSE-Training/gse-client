@@ -28,14 +28,19 @@
           required
         >
         </app-base-input>
+
         <div *ngIf="errorMessage" class="alert-error-custom">
           <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
         </div>
+
+        <!-- ✅ TAMBAHKAN [siteKey] + PERBAIKI EVENT BINDING -->
         <div class="captcha-container">
           <ng-hcaptcha
-            (verify)="captchaVerified.emit($event)"
-            (expired)="captchaExpired.emit()"
-            (error)="captchaError.emit($event)"
+            [siteKey]="hcaptchaSitekey"
+            (verify)="onCaptchaVerified($event)"
+            (expired)="onCaptchaExpired()"
+            (error)="onCaptchaError($event)"
+            [languageCode]="'id'"
           ></ng-hcaptcha>
         </div>
       </div>
