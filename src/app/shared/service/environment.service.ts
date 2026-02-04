@@ -1,31 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '../utils/logger.util';
 
-// Type definitions untuk window environment variables
-declare global {
-  interface Window {
-    __env?: {
-      API_URL?: string;
-      BACKEND_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-      DEV_API_URL?: string;
-      DEV_PORT?: string;
-      DEFAULT_DEV_API_URL?: string;
-      DEFAULT_DEV_PORT?: string;
-      PRODUCTION_API_URL?: string;
-      DEFAULT_HCAPTCHA_SITEKEY?: string;
-      [key: string]: string | undefined; // <-- tambahkan index signature
-    };
-    _env?: {
-      BASE_URL?: string;
-      HCAPTCHA_SITEKEY?: string;
-      DEV_API_URL?: string;
-      DEV_PORT?: string;
-      [key: string]: string | undefined;
-    };
-  }
-}
-
 export interface Environment {
   apiUrl: string;
   hcaptchaSiteKey: string;
